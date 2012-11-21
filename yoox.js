@@ -18,7 +18,7 @@ casper.then(function() {
 });
 
 casper.then(function() {
-        this.clickLabel('Procees to purchase', 'a');
+        this.clickLabel('Proceed to purchase', 'a');
 
 //    casper.test.assertExists('#ctl00_mainContentPlaceHolder_shoppingBagTotals_proceedToCheckoutButton2Panel > a', 'the checkout buttons exists');
 });
