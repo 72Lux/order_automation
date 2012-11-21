@@ -9,6 +9,7 @@ casper.start(url, function () {
 });
 
 // STEP 1: Size & Color
+// NOTE: Need to add select color given a SINGLE size
 casper.then(function () {
   this.click('.lineItemOptionSelect select:nth-of-type(1) option[value="38.5B/8.5B"]');
 });
