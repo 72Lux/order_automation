@@ -18,6 +18,7 @@ casper.waitFor(function checkColorsForSize () {
     return document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(2) option').length > 1;
   });
 }, function then () {
+  this.echo('is this hitting?');
   // in stock in that size and there are multiple colors available
   this.click('.lineItemOptionSelect select:nth-of-type(2) option[value="BLACK"]');
   casper.waitFor(function checkStockForColor () {
