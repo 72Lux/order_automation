@@ -54,11 +54,22 @@ casper.waitFor(function () {
 // go to checkout page
 casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true');
 
-// make sure you are at the checkout page
-// check for the 'checkout as anon button'
-casper.then(function () {
-  casper.test.assertExists('#anonSignInBtn');
+// need to wait for button to render
+casper.waitFor(function () {
+  return this.evaluate(function () {
+    return document.querySelectorAll('#anonSignInBtn') > 0;
+  });
+}, function then () {
+  // make sure you are at the checkout page
+  // check for the 'checkout as anon button'
+  casper.then(function () {
+    casper.test.assertExists('#anonSignInBtn');
+  });
+
+}, function timeout () {
+  this.echo('waitFor() timed out before a#anonSignInBtn was able to render');
 });
+
 
 // unfortunately this is still taking a snapshot of the page w/ no javascript changes
 casper.then(function () {
