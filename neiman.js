@@ -21,7 +21,7 @@ casper.then(function () {
   this.click('.lineItemOptionSelect select:nth-of-type(1)');
 });
 
-// select the proper select option
+// wait for the select dropdown to appear
 casper.waitFor(function () {
   return this.evaluate(function () {
     // this just isn't working
