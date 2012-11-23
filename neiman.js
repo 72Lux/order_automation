@@ -6,7 +6,10 @@ var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod1
 
 casper = require('casper').create({
   //verbose: true,
-  //logLevel: "debug"
+  //logLevel: "debug",
+  onAlert: function () {
+    this.echo('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
+  }
 });
 
 casper.start(url, function () {
@@ -15,29 +18,29 @@ casper.start(url, function () {
 
 // select size first
 casper.then(function () {
+  // this isn't properly selecting the option we want
   this.click('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]');
 });
 
 // did the 'in stock' icon pop up?
 casper.waitFor(function () {
   return this.evaluate(function () {
-    return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]');
+    return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]') > 0;
   });
 }, function then () {
   this.echo('product available in that size');
 
   this.click('#topAddToCartButton');
-  // we can test for an alert() event after this to see if a color needs to be select
+  // testing for an alert whether item is being added - and it isn't
 
 
 }, function timeout () {
   this.echo('not available, may need to select a color');
 });
 
-// do we now have a single item in the shopping cart?  (warning: should pop true if something already existed in cart)
+// do we now have a single item in the shopping cart?
+// (warning: should pop true if something already existed in cart)
 casper.waitFor(function () {
-  // ISSUE LIES HERE:
-  // Trying to determine how to tell whether an item exists in cart
   return this.evaluate(function () {
     // element is created when a product is placed into the shopping bag
     return document.querySelectorAll('.itemsincart').length > 0;
