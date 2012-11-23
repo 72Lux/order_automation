@@ -25,7 +25,11 @@ casper.waitFor(function () {
   });
 }, function then () {
   this.echo('product available in that size');
+
   this.click('#topAddToCartButton');
+  // we can test for an alert() event after this to see if a color needs to be select
+
+
 }, function timeout () {
   this.echo('not available, may need to select a color');
 });
@@ -41,6 +45,18 @@ casper.waitFor(function () {
   this.echo('was not added to cart');
 });
 
+// go to checkout page
+casper.then(function () {
+  this.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"');
+});
+
+// make sure you are at the checkout page
+// check for the 'checkout as anon button'
+casper.then(function () {
+  casper.test.assertExists('#anonSignInBtn');
+});
+
+// unfortunately this is still taking a snapshot of the page w/ no javascript changes
 casper.then(function () {
   this.capture('results.png', {
     top: 0,
