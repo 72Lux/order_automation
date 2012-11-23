@@ -39,11 +39,8 @@ casper.waitFor(function () {
   // ISSUE LIES HERE:
   // Trying to determine how to tell whether an item exists in cart
   return this.evaluate(function () {
-    // each product row
-    //return document.querySelectorAll('div.miniCartProduct').length > 0;
-
     // element is created when a product is placed into the shopping bag
-    return document.querySelectorAll('a.itemsincart').length > 0;
+    return document.querySelectorAll('.itemsincart').length > 0;
   });
 }, function then () {
   this.echo('added to cart');
@@ -53,7 +50,7 @@ casper.waitFor(function () {
   })
 }, function timeout () {
   this.echo('was not added to cart');
-  casper.test.assertExists('a.itemsincart');
+  this.exit();
 });
 
 
