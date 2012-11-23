@@ -46,9 +46,13 @@ casper.waitFor(function () {
 });
 
 // go to checkout page
-casper.then(function () {
-  this.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"');
-});
+//casper.then(function () {
+  // just go to https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true
+//  this.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"');
+//});
+
+// go to checkout page
+casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true');
 
 // make sure you are at the checkout page
 // check for the 'checkout as anon button'
