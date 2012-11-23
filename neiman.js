@@ -16,10 +16,23 @@ casper.start(url, function () {
   casper.test.assertExists('#topAddToCartButton');
 });
 
-// select size first
+// select the size select :)
 casper.then(function () {
-  // this isn't properly selecting the option we want
+  this.click('.lineItemOptionSelect select:nth-of-type(1)');
+});
+
+// select the proper select option
+casper.waitFor(function () {
+  return this.evaluate(function () {
+    // this just isn't working
+    return document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]') > 0;
+  });
+}, function then () {
+  this.echo('now to select the size');
   this.click('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]');
+}, function timeout () {
+  this.echo('size select options did not show up');
+  this.exit();
 });
 
 // did the 'in stock' icon pop up?
@@ -29,11 +42,8 @@ casper.waitFor(function () {
   });
 }, function then () {
   this.echo('product available in that size');
-
   this.click('#topAddToCartButton');
   // testing for an alert whether item is being added - and it isn't
-
-
 }, function timeout () {
   this.echo('not available, may need to select a color');
 });
