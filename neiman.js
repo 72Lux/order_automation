@@ -34,14 +34,8 @@ casper.waitFor(function () {
   this.echo('not available, may need to select a color');
 });
 
-// click and open the shopping cart
-casper.then(function () {
-  this.click('a[href="#mycart"]');
-})
-
 // do we now have a single item in the shopping cart?  (warning: should pop true if something already existed in cart)
 casper.waitFor(function () {
-  console.log(document.querySelectorAll('#itemItems1'));
   // ISSUE LIES HERE:
   // Trying to determine how to tell whether an item exists in cart
   return this.evaluate(function () {
@@ -53,10 +47,18 @@ casper.waitFor(function () {
   });
 }, function then () {
   this.echo('added to cart');
+  // click and open the shopping cart
+  casper.then(function () {
+    this.click('a[href="#mycart"]');
+  })
 }, function timeout () {
   this.echo('was not added to cart');
-  casper.test.assertExists('div.miniCartProduct');
+  casper.test.assertExists('a.itemsincart');
 });
+
+
+
+// NEXT PHASE, Still resolving add to bag issue
 
 // go to checkout page
 casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true');
