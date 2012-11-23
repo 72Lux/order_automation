@@ -29,6 +29,15 @@ casper.waitFor(function () {
   this.echo('not available, may need to select a color');
 });
 
+casper.then(function () {
+  this.capture('results.png', {
+    top: 0,
+    left: 0,
+    width: 1024,
+    height: 1024
+  });
+});
+
 // select color
 //casper.then(function () {
 //  this.click('.lineItemOptionSelect select:nth-of-type(2) option[value="BLACK"]');
