@@ -18,6 +18,7 @@ casper.then(function () {
   this.click('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]');
 });
 
+// did the 'in stock' icon pop up?
 casper.waitFor(function () {
   return this.evaluate(function () {
     return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]');
@@ -27,6 +28,17 @@ casper.waitFor(function () {
   this.click('#topAddToCartButton');
 }, function timeout () {
   this.echo('not available, may need to select a color');
+});
+
+// do we now have a single item in the shopping cart?  (warning: should pop true if something already existed in cart)
+casper.waitFor(function () {
+  return this.evaluate(function () {
+    return document.querySelectorAll('a.itemsincart');
+  });
+}, function then () {
+  this.echo('added to cart');
+}, function timeout () {
+  this.echo('was not added to cart');
 });
 
 casper.then(function () {
