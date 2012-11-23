@@ -24,9 +24,9 @@ casper.waitFor(function () {
   });
 }, function then () {
   this.echo('product available in that size');
+  this.click('#topAddToCartButton');
 }, function timeout () {
   this.echo('not available, may need to select a color');
-  casper.test.assertExists('.prodStatus img[src="/category/images/prod_stock1.gif"]');
 });
 
 // select color
