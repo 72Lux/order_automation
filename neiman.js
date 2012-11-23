@@ -62,8 +62,9 @@ casper.waitFor(function () {
   this.echo('waitFor() timed out before a#anonSignInBtn was able to render');
 });
 
-
-// unfortunately this is still taking a snapshot of the page w/ no javascript changes
+// this is only takin a pic of page at initial rendering
+// javascript changes are not showing up, however serves
+// as a method to confirm that a new page has been opened
 casper.then(function () {
   this.capture('results.png', {
     top: 0,
