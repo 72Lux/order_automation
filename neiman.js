@@ -14,25 +14,34 @@ casper = require('casper').create({
 
 casper.start(url, function () {
   casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
+
+  //console.log(document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(1)').getAttribute('value'));
+
 });
 
 casper.then(function () {
+  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(3)', 'select option(3) exists');
+  //this.echo(document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(3)').getAttribute('value'));
+  this.echo(document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(3)')[0].getAttribute('value'));  // works in inspector, doesn't here - something wrong with page load
+});
+
+
+casper.then(function () {
   this.click('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');
-  this.mouseEvent('click', '.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');
-  document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1)').onchange();
+  this.mouseEvent('click', '.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');  // hoping this triggers onchange attribute
+  //document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1)').onchange();
 
   casper.waitFor(function () {
     return this.evaluate(function () {
-      //return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length > 0;
-      return document.querySelectorAll('.prodStatus img')[0].length;
+      return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]')[0].length;
     });
   },
   function () {
-    this.echo(document.querySelectorAll('.prodStatus img')[0]);
+    //this.echo(document.querySelectorAll('.prodStatus img')[0]);
     this.echo('image is present!');
   },
   function () {
-    this.echo(document.querySelectorAll('.prodStatus img')[0]);
+    //this.echo(document.querySelectorAll('.prodStatus img')[0]);
     this.echo('timed out');
   });
 });
