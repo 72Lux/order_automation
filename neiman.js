@@ -13,78 +13,28 @@ casper = require('casper').create({
 });
 
 casper.start(url, function () {
-  casper.test.assertExists('#topAddToCartButton');
+  casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
 });
 
-// select the size select :)
 casper.then(function () {
-  this.click('.lineItemOptionSelect select:nth-of-type(1)');
-});
+  this.click('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');
+  this.mouseEvent('click', '.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');
+  document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1)').onchange();
 
-// wait for the select dropdown to appear
-casper.waitFor(function () {
-  return this.evaluate(function () {
-    // this just isn't working
-    return document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]') > 0;
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      //return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length > 0;
+      return document.querySelectorAll('.prodStatus img')[0].length;
+    });
+  },
+  function () {
+    this.echo(document.querySelectorAll('.prodStatus img')[0]);
+    this.echo('image is present!');
+  },
+  function () {
+    this.echo(document.querySelectorAll('.prodStatus img')[0]);
+    this.echo('timed out');
   });
-}, function then () {
-  this.echo('now to select the size');
-  this.click('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]');
-}, function timeout () {
-  this.echo('size select options did not show up');
-  //this.exit();
-});
-
-// did the 'in stock' icon pop up?
-casper.waitFor(function () {
-  return this.evaluate(function () {
-    return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]') > 0;
-  });
-}, function then () {
-  this.echo('product available in that size');
-  this.click('#topAddToCartButton');
-  // testing for an alert whether item is being added - and it isn't
-}, function timeout () {
-  this.echo('not available, may need to select a color');
-});
-
-// do we now have a single item in the shopping cart?
-// (warning: should pop true if something already existed in cart)
-casper.waitFor(function () {
-  return this.evaluate(function () {
-    // element is created when a product is placed into the shopping bag
-    return document.querySelectorAll('.itemsincart').length > 0;
-  });
-}, function then () {
-  this.echo('added to cart');
-  // click and open the shopping cart
-  casper.then(function () {
-    this.click('a[href="#mycart"]');
-  })
-}, function timeout () {
-  this.echo('was not added to cart');
-  this.exit();
-});
-
-
-
-// NEXT PHASE, Still resolving add to bag issue
-
-// go to checkout page
-casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true');
-
-// need to wait for button to render
-casper.waitFor(function () {
-  return this.evaluate(function () {
-    return document.querySelectorAll('#anonSignInBtn') > 0;
-  });
-}, function then () {
-  // make sure you are at the checkout page
-  // check for the 'checkout as anon button'
-  casper.test.assertExists('#anonSignInBtn');
-
-}, function timeout () {
-  this.echo('waitFor() timed out before a#anonSignInBtn was able to render');
 });
 
 // this is only takin a pic of page at initial rendering
@@ -98,21 +48,6 @@ casper.then(function () {
     height: 1024
   });
 });
-
-// select color
-//casper.then(function () {
-//  this.click('.lineItemOptionSelect select:nth-of-type(2) option[value="BLACK"]');
-//  // check if item is in stock, if not then check for colors
-//  casper.waitFor(function checkForSizeAvailability () {
-//    return this.evaluate(function () {
-//      return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
-//    });
-//  }, function then () {
-//    this.echo('product available in that size and color');
-//  }, function timeout () {
-//    this.echo('dont know whats going on');
-//  });
-//});
 
 casper.run(function () {
   this.test.renderResults(true);
