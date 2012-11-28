@@ -7,6 +7,7 @@ var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod1
 casper = require('casper').create({
   //verbose: true,
   //logLevel: "debug",
+  clientScripts: ["jquery-1.8.3.min.js"],
   onAlert: function () {
     this.echo('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
   }
@@ -14,35 +15,39 @@ casper = require('casper').create({
 
 casper.start(url, function () {
   casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
+});
 
-  //console.log(document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(1)').getAttribute('value'));
+casper.then(function () {
+
+  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]', 'select option[value="6.5/7.5D"]');
+
+  this.evaluate(function ($) {
+    var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
+    var _option = '6.5/7.5D';
+    $select.val(_option);
+    $select.change();
+  });
 
 });
 
 casper.then(function () {
-  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(3)', 'select option(3) exists');
-  //this.echo(document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(3)').getAttribute('value'));
-  this.echo(document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(3)')[0].getAttribute('value'));  // works in inspector, doesn't here - something wrong with page load
-});
-
-
-casper.then(function () {
-  this.click('.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');
-  this.mouseEvent('click', '.lineItemOptionSelect select:nth-of-type(1) option:nth-of-type(2)');  // hoping this triggers onchange attribute
-  //document.querySelectorAll('.lineItemOptionSelect select:nth-of-type(1)').onchange();
 
   casper.waitFor(function () {
     return this.evaluate(function () {
-      return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]')[0].length;
+      return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
     });
   },
   function () {
-    //this.echo(document.querySelectorAll('.prodStatus img')[0]);
     this.echo('image is present!');
+    this.echo(this.evaluate(function ($){
+      return $('.prodStatus img').attr('src');
+    }));
   },
   function () {
-    //this.echo(document.querySelectorAll('.prodStatus img')[0]);
     this.echo('timed out');
+    this.echo(this.evaluate(function ($){
+      return $('.prodStatus img').attr('src');
+    }));
   });
 });
 
