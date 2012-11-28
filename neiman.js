@@ -27,7 +27,8 @@ casper.then(function () {
   });
 });
 
-casper.then(function () {
+// check if item is in stock at particular size
+casper.then(function () { // casper.then() not necessary, still works successfully going to keep the casper.then() more for educational purposes
   casper.waitFor(function () {
     return this.evaluate(function () {
       return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
@@ -42,18 +43,44 @@ casper.then(function () {
   });
 });
 
+// add to cart
 casper.then(function () {
   this.click('#topAddToCartButton');
 });
 
+// open cart and check for checkout button
+casper.then(function () {
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
+    });
+  },
+  function () {
+    this.echo('link to checkout visible');
+  },
+  function () {
+    this.echo('timed out');
+  });
+});
 
+// click into checkout
+casper.then(function () {
+  this.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]');
+});
 
+// make sure the anonCheckout button is there
+// else it may have already signed in anonly
+casper.then(function () {
+  casper.test.assertExists('#anonSignInBtn', 'Can anonymously check out');
+  casper.click('#anonSignInBtn');
+});
 
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
 // as a method to confirm that a new page has been opened
 casper.then(function () {
+  this.echo('Cheeeeeeese!');
   this.capture('results.png', {
     top: 0,
     left: 0,
