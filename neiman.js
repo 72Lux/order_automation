@@ -18,38 +18,37 @@ casper.start(url, function () {
 });
 
 casper.then(function () {
-
   casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]', 'select option[value="6.5/7.5D"]');
-
   this.evaluate(function ($) {
     var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
     var _option = '6.5/7.5D';
     $select.val(_option);
     $select.change();
   });
-
 });
 
 casper.then(function () {
-
   casper.waitFor(function () {
     return this.evaluate(function () {
       return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
     });
   },
   function () {
-    this.echo('image is present!');
-    this.echo(this.evaluate(function ($){
-      return $('.prodStatus img').attr('src');
-    }));
+    this.echo('product is in stock!');
   },
   function () {
-    this.echo('timed out');
-    this.echo(this.evaluate(function ($){
-      return $('.prodStatus img').attr('src');
-    }));
+    this.echo('timed out, product is either out of stock or a color needs to be selected');
+    // skipping this logic and going into adding to cart/checkout
   });
 });
+
+casper.then(function () {
+  this.click('#topAddToCartButton');
+});
+
+
+
+
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
