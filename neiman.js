@@ -9,7 +9,7 @@ casper = require('casper').create({
   //logLevel: "debug",
   clientScripts: ["jquery-1.8.3.min.js"],
   onAlert: function () {
-    this.echo('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
+    casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
   }
 });
 
@@ -35,10 +35,10 @@ casper.then(function () { // casper.then() not necessary, still works successful
     });
   },
   function () {
-    this.echo('product is in stock!');
+    casper.test.comment('product is in stock!');
   },
   function () {
-    this.echo('timed out, product is either out of stock or a color needs to be selected');
+    casper.test.comment('timed out, product is either out of stock or a color needs to be selected');
     // skipping this logic and going into adding to cart/checkout
   });
 });
@@ -56,10 +56,10 @@ casper.then(function () {
     });
   },
   function () {
-    this.echo('link to checkout visible');
+    casper.test.comment('link to checkout visible');
   },
   function () {
-    this.echo('timed out');
+    casper.test.comment('timed out');
   });
 });
 
@@ -80,7 +80,7 @@ casper.then(function () {
 // javascript changes are not showing up, however serves
 // as a method to confirm that a new page has been opened
 casper.then(function () {
-  this.echo('Cheeeeeeese!');
+  casper.test.comment('Cheeeeeeese!');
   this.capture('results.png', {
     top: 0,
     left: 0,
