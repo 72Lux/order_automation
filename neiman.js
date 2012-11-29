@@ -150,8 +150,7 @@ casper.then(function () {
     'input#saAddressLine2_se' : 'Apt 13M',
     'input#saCity_se' : 'Anycity',
     'input#saZip_se' : '12345',
-    'input#saDayTelephone_se' : '123 123 1234',
-    'input#useAsBillingFlag_se' : 'false'
+    'input#saDayTelephone_se' : '123 123 1234'
   };
 
   // This is for situations where form inputs have no name attribute
@@ -166,7 +165,15 @@ casper.then(function () {
     'poBox' : 'false'
   }, false);
 
-  this.click('span#shippingContinue_se');
+  // Check/uncheck useAsBillingFlag_se
+  this.evaluate(function () {
+    document.querySelector('#useAsBillingFlag_se').checked = false;
+  });
+
+  // click NEXT step
+  this.evaluate(function () {
+    document.querySelector('#shippingContinue_se').click();
+  });
 });
 
 // test whether any error messages popped up
