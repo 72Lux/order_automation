@@ -196,6 +196,24 @@ casper.then(function () {
   });
 });
 
+// check for billing form
+casper.then(function () {
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('form#billingForm').length;
+    });
+  },
+  function () {
+    casper.test.comment('Billing form present, begin filling it out!');
+  },
+  function () {
+    casper.test.comment('Timed out');
+  });
+});
+
+casper.then(function () {
+  // test each of the fields
+});
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
