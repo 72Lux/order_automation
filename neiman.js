@@ -146,10 +146,10 @@ casper.then(function () {
   var formValues = {
     '#saFirstName_se' : 'Ed',
     '#saLastName_se' : 'Bast',
-    'input#saAddressLine1_se' : '123 Anystreet',
-    'input#saAddressLine2_se' : 'Apt 13M',
-    'input#saCity_se' : 'Anycity',
-    'input#saZip_se' : '12345',
+    'input#saAddressLine1_se' : '115 East 57th Avenue',
+    'input#saAddressLine2_se' : '11th Floor',
+    'input#saCity_se' : 'New York',
+    'input#saZip_se' : '10022',
     'input#saDayTelephone_se' : '123 123 1234'
   };
 
