@@ -81,7 +81,7 @@ casper.then(function () {
 casper.then(function () {
   casper.waitFor(function () {
     return this.evaluate(function () {
-      return document.querySelectorAll('#coShippingContainer').length;
+      return document.querySelectorAll('#shippingForm_se').length;
     });
   },
   function () {
