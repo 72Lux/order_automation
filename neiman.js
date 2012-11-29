@@ -150,7 +150,8 @@ casper.then(function () {
     'input#saAddressLine2_se' : 'Apt 13M',
     'input#saCity_se' : 'Anycity',
     'input#saZip_se' : '12345',
-    'input#saDayTelephone_se' : '123 123 1234'
+    'input#saDayTelephone_se' : '123 123 1234',
+    'input#useAsBillingFlag_se' : 'false'
   };
 
   // This is for situations where form inputs have no name attribute
