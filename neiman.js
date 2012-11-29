@@ -19,7 +19,7 @@ casper.start(url, function () {
 
 casper.then(function () {
   casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="6.5/7.5D"]', 'select option[value="6.5/7.5D"]');
-  this.evaluate(function ($) {
+  this.evaluate(function () {
     var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
     var _option = '6.5/7.5D';
     $select.val(_option);
