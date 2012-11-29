@@ -102,7 +102,8 @@ casper.then(function () {
 
   // fill out form but do not hit submit
   this.fill('#shippingForm_se.shippingForm', {
-
+    '#saFirstName_se' : 'Ed',
+    '#saLastName_se' : 'Bast'
   }, false);
 
 });
