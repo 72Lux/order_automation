@@ -124,7 +124,13 @@ casper.then(function () {
   });
   this.evaluate(function () {
     var $select = $('select#country_se');
-    var _option = 'US'; // need to create an array mapping for various titles to their option[value]
+    var _option = 'US';
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#state_se');
+    var _option = 'NY';
     $select.val(_option);
     $select.change();
   });
