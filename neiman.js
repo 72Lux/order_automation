@@ -142,13 +142,34 @@ casper.then(function () {
     $select.change();
   });
 
-  // fill out form but do not hit submit
-  //this.fill('#shippingForm_se.shippingForm', {
-  //  '#saFirstName_se' : 'Ed',
-  //  '#saLastName_se' : 'Bast'
-  //}, false);
 
+  var formValues = {
+    '#saFirstName_se' : 'Ed',
+    '#saLastName_se' : 'Bast',
+    'input#saAddressLine1_se' : '123 Anystreet',
+    'input#saAddressLine2_se' : 'Apt 13M',
+    'input#saCity_se' : 'Anycity',
+    'input#saZip_se' : '12345',
+    'input#saDayTelephone_se' : '123 123 1234'
+  };
+
+  // This is for situations where form inputs have no name attribute
+  this.evaluate(function (fields) {
+    for (var selector in fields) {
+      document.querySelector(selector).value = fields[selector];
+    }
+  }, { fields : formValues });
+
+  // Fill in that one radio selection
+  this.fill('form#shippingForm_se', {
+    'poBox' : 'false'
+  }, false);
+
+  this.click('span#shippingContinue_se');
 });
+
+
+
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
