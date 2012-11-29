@@ -177,6 +177,8 @@ casper.then(function () {
 });
 
 // test whether any error messages popped up
+// Currently isn't working .. as in errors
+// aren't popping up at all
 casper.then(function () {
   casper.waitFor(function () {
     return this.evaluate(function () {
