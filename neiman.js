@@ -39,6 +39,7 @@ casper.then(function () { // casper.then() not necessary, still works successful
   },
   function () {
     casper.test.comment('timed out, product is either out of stock or a color needs to be selected');
+    this.exit();
     // skipping this logic and going into adding to cart/checkout
   });
 });
@@ -60,6 +61,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('timed out');
+    this.exit();
   });
 });
 
@@ -89,6 +91,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('timed out');
+    this.exit();
   });
 });
 
