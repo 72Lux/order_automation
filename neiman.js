@@ -75,6 +75,37 @@ casper.then(function () {
   casper.click('#anonSignInBtn');
 });
 
+// check for shipping form
+casper.then(function () {
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('#coShippingContainer').length;
+    });
+  },
+  function () {
+    casper.test.comment('Begin filling out shipping form');
+  },
+  function () {
+    casper.test.comment('timed out');
+  });
+});
+
+// start filling out the shipping form
+casper.then(function () {
+  // select Dr
+  this.evaluate(function ($){
+    var $select = $('select#saTitleCode_se');
+    var _option = 'F'; // need to create an array mapping for various titles to their option[value]
+    $select.val(_option);
+    $select.change();
+  });
+
+  // fill out form but do not hit submit
+  this.fill('#shippingForm_se.shippingForm', {
+
+  }, false);
+
+});
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
@@ -87,6 +118,11 @@ casper.then(function () {
     width: 1024,
     height: 1024
   });
+});
+
+// beginning to hang sometimes, see if this can force an exit
+casper.then(function () {
+  casper.exit();
 });
 
 casper.run(function () {
