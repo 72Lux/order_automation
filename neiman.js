@@ -105,8 +105,10 @@ casper.then(function () {
   casper.test.assertExists('input#saAddressLine1_se', 'Address Line 1 input field exists');
   casper.test.assertExists('input#saAddressLine2_se', 'Address Line 2 input field exists');
   casper.test.assertExists('input#saCity_se', 'City input field exists');
+  casper.test.assertExists('select#state_se', 'State select exists');
   casper.test.assertExists('input#saZip_se', 'Zip input field exists');
   casper.test.assertExists('select#saPhoneType_se', 'Phone Type select exists');
+  casper.test.assertExists('input#saDayTelephone_se', 'Phone input exists');
   casper.test.assertExists('input#addr_po_true_se', 'Use as POBox radio exists');
   casper.test.assertExists('input#addr_po_false_se', 'Do not use as POBox radio exists');
   casper.test.assertExists('input#useAsBillingFlag_se', 'Use As Billing checkbox exists');
