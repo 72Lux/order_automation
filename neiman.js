@@ -71,6 +71,8 @@ casper.then(function () {
 // make sure the anonCheckout button is there
 // else it may have already signed in anonly
 casper.then(function () {
+  // this is failing?  could the anonSignInBtn need a .waitFor() or perhaps
+  // another test in case directing immediately to shipping form
   casper.test.assertExists('#anonSignInBtn', 'Can anonymously check out');
   casper.click('#anonSignInBtn');
 });
@@ -101,10 +103,10 @@ casper.then(function () {
   });
 
   // fill out form but do not hit submit
-  this.fill('#shippingForm_se.shippingForm', {
-    '#saFirstName_se' : 'Ed',
-    '#saLastName_se' : 'Bast'
-  }, false);
+  //this.fill('#shippingForm_se.shippingForm', {
+  //  '#saFirstName_se' : 'Ed',
+  //  '#saLastName_se' : 'Bast'
+  //}, false);
 
 });
 
