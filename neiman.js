@@ -94,10 +94,39 @@ casper.then(function () {
 
 // start filling out the shipping form
 casper.then(function () {
-  // select Dr
-  this.evaluate(function ($){
+
+  casper.test.assertExists('select#saTitleCode_se', 'Title select exists');
+  casper.test.assertExists('input#saFirstName_se', 'First Name input field exists');
+  casper.test.assertExists('input#saLastName_se', 'Last Name input field exists');
+  casper.test.assertExists('select#country_se', 'Country select exists');
+  casper.test.assertExists('input#saAddressLine1_se', 'Address Line 1 input field exists');
+  casper.test.assertExists('input#saAddressLine2_se', 'Address Line 2 input field exists');
+  casper.test.assertExists('input#saCity_se', 'City input field exists');
+  casper.test.assertExists('input#saZip_se', 'Zip input field exists');
+  casper.test.assertExists('select#saPhoneType_se', 'Phone Type select exists');
+  casper.test.assertExists('input#addr_po_true_se', 'Use as POBox radio exists');
+  casper.test.assertExists('input#addr_po_false_se', 'Do not use as POBox radio exists');
+  casper.test.assertExists('input#useAsBillingFlag_se', 'Use As Billing checkbox exists');
+  casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
+
+  // Select <select> <option>
+  this.evaluate(function () {
     var $select = $('select#saTitleCode_se');
     var _option = 'F'; // need to create an array mapping for various titles to their option[value]
+    // select Dr
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#country_se');
+    var _option = 'US'; // need to create an array mapping for various titles to their option[value]
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#saPhoneType_se');
+    var _option = 'O';
+    // select other
     $select.val(_option);
     $select.change();
   });
