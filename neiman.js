@@ -169,7 +169,23 @@ casper.then(function () {
   this.click('span#shippingContinue_se');
 });
 
-
+// test whether any error messages popped up
+casper.then(function () {
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('table.coErrorMessageClass').length;
+    });
+  },
+  function () {
+    casper.test.comment('Error present:');
+    casper.test.comment(this.evaluate(function () {
+      return $('table.coErrorMessageClass td.text').text();
+    }));
+  },
+  function () {
+    casper.test.comment('timed out - no error messages');
+  });
+});
 
 
 // this is only takin a pic of page at initial rendering
