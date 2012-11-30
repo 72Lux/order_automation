@@ -167,13 +167,19 @@ casper.then(function () {
 
   // Check/uncheck useAsBillingFlag_se
   this.evaluate(function () {
-    document.querySelector('#useAsBillingFlag_se').checked = false;
+    document.querySelector('#useAsBillingFlag_se').checked = true;
   });
 
+});
+
+casper.then(function () {
   // click NEXT step
+  //this.click('#shippingContinue_se');
+
   this.evaluate(function () {
-    document.querySelector('#shippingContinue_se').click();
+    document.querySelector('span#shippingContinue_se').click();
   });
+
 });
 
 // test whether any error messages popped up
