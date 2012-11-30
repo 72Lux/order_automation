@@ -194,7 +194,7 @@ casper.then(function () {
 casper.then(function () {
   casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
   // click NEXT step
-  this.click('span#shippingContinue_se');
+  casper.click('span#shippingContinue_se');
 
   //this.evaluate(function () {
   //  document.querySelector('span#shippingContinue_se').click();
