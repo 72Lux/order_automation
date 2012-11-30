@@ -233,14 +233,8 @@ casper.then(function () {
     casper.test.comment('Billing form present, begin filling it out!');
   },
   function () {
-    casper.test.comment('Timed out, exiting...');
-    casper.test.comment('Cheeeeeeese!');
-    this.capture('results.png', {
-      top: 0,
-      left: 0,
-      width: 1024,
-      height: 1024
-    });
+    casper.test.comment('Timed out, no billing form present, exiting...');
+    picit();
     casper.exit();
   });
 });
@@ -272,13 +266,7 @@ casper.then(function () {
 // javascript changes are not showing up, however serves
 // as a method to confirm that a new page has been opened
 casper.then(function () {
-  casper.test.comment('Cheeeeeeese!');
-  this.capture('results.png', {
-    top: 0,
-    left: 0,
-    width: 1024,
-    height: 1024
-  });
+  picit();
 });
 
 // beginning to hang sometimes, see if this can force an exit
