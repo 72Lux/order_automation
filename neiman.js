@@ -75,7 +75,7 @@ casper.then(function () {
     casper.test.comment('link to checkout visible');
   },
   function () {
-    casper.test.comment('timed out');
+    casper.test.comment('timed out waiting for checkout link');
     this.exit();
   });
 });
@@ -105,7 +105,7 @@ casper.then(function () {
     casper.test.comment('Begin filling out shipping form');
   },
   function () {
-    casper.test.comment('timed out');
+    casper.test.comment('timed out waiting for shipping form');
     this.exit();
   });
 });
