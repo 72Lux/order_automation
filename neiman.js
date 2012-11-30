@@ -112,7 +112,6 @@ casper.then(function () {
   casper.test.assertExists('input#addr_po_true_se', 'Use as POBox radio exists');
   casper.test.assertExists('input#addr_po_false_se', 'Do not use as POBox radio exists');
   casper.test.assertExists('input#useAsBillingFlag_se', 'Use As Billing checkbox exists');
-  casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
 
   // Select <select> <option>
   this.evaluate(function () {
@@ -173,18 +172,19 @@ casper.then(function () {
 
   // Check/uncheck useAsBillingFlag_se
   this.evaluate(function () {
-    document.querySelector('#useAsBillingFlag_se').checked = true;
+    document.querySelector('#useAsBillingFlag_se').checked = false;
   });
 
 });
 
 casper.then(function () {
+  casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
   // click NEXT step
-  //this.click('#shippingContinue_se');
+  this.click('span#shippingContinue_se');
 
-  this.evaluate(function () {
-    document.querySelector('span#shippingContinue_se').click();
-  });
+  //this.evaluate(function () {
+  //  document.querySelector('span#shippingContinue_se').click();
+  //});
 
 });
 
@@ -219,6 +219,7 @@ casper.then(function () {
     casper.test.comment('Billing form present, begin filling it out!');
   },
   function () {
+    casper.test.comment('Timed out, exiting...');
     casper.test.comment('Cheeeeeeese!');
     this.capture('results.png', {
       top: 0,
@@ -226,7 +227,6 @@ casper.then(function () {
       width: 1024,
       height: 1024
     });
-    casper.test.comment('Timed out, exiting...');
     casper.exit();
   });
 });
