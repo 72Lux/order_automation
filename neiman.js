@@ -141,7 +141,13 @@ casper.then(function () {
     $select.val(_option);
     $select.change();
   });
-
+  this.evaluate(function () {
+    var $select = $('select.shippingmethod');
+    var _option = 'SL3';
+    // ship via standard
+    $select.val(_option);
+    $select.change();
+  });
 
   var formValues = {
     '#saFirstName_se' : 'Ed',
