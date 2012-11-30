@@ -207,7 +207,15 @@ casper.then(function () {
     casper.test.comment('Billing form present, begin filling it out!');
   },
   function () {
-    casper.test.comment('Timed out');
+    casper.test.comment('Cheeeeeeese!');
+    this.capture('results.png', {
+      top: 0,
+      left: 0,
+      width: 1024,
+      height: 1024
+    });
+    casper.test.comment('Timed out, exiting...');
+    casper.exit();
   });
 });
 
