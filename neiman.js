@@ -213,6 +213,25 @@ casper.then(function () {
 
 casper.then(function () {
   // test each of the fields
+  casper.test.assertExists('input#emailAddress', 'Email Address input exists');
+  casper.test.assertExists('select#billingAddrTitle', 'Title select exists');
+  casper.test.assertExists('input#billingAddrFirstName', 'First name input exists');
+  casper.test.assertExists('input#billingAddrLastName', 'Last name input exists');
+  casper.test.assertExists('select#billingAddrCountry', 'Country select exists');
+  casper.test.assertExists('input#billingAddrLine1', 'Address line 1 exists');
+  casper.test.assertExists('input#billingAddrLine2', 'Address line 2 exists');
+  casper.test.assertExists('input#billingAddrCity', 'City input exists');
+  casper.test.assertExists('select#billingAddrState', 'State select exists');
+  casper.test.assertExists('input#billingAddrZipCode', 'Zip Code input exists');
+  casper.test.assertExists('select#billingAddrPhoneType', 'Phone type select exists');
+  casper.test.assertExists('input#billingAddrDayPhone', 'Day phone input exists');
+  casper.test.assertExists('select#cardtype', 'Card type select exists');
+  casper.test.assertExists('input#cardnumber', 'Card number input exists');
+  casper.test.assertExists('input#securitycode', 'Security code input exists');
+  casper.test.assertExists('input#cardExpMonth', 'Card expiration month input exists');
+  casper.test.assertExists('input#cardExpYear', 'Card expiration year input exists');
+  casper.test.assertExists('span#paymentSave', 'Save payment button exists');
+
 });
 
 // this is only takin a pic of page at initial rendering
