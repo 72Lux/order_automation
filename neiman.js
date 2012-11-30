@@ -191,15 +191,17 @@ casper.then(function () {
 
 });
 
+// click NEXT step
 casper.then(function () {
   casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
-  // click NEXT step
   casper.click('span#shippingContinue_se');
 
   //this.evaluate(function () {
   //  document.querySelector('span#shippingContinue_se').click();
   //});
-
+  //this.evaluate(function () {
+  //  $('span#shippingContinue_se').click();
+  //});
 });
 
 // test whether any error messages popped up
