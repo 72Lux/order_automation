@@ -24,8 +24,8 @@ casper = require('casper').create({
   }
 });
 
-casper.on('click.received', function (selector) {
-  casper.test.comment('selector clicked:' + selector);
+casper.on('click', function (selector) {
+  this.echo('selector clicked:' + selector);
 });
 
 casper.start(url, function () {
@@ -61,7 +61,7 @@ casper.then(function () { // casper.then() not necessary, still works successful
 
 // add to cart
 casper.then(function () {
-  this.click('#topAddToCartButton');
+  casper.click('#topAddToCartButton');
 });
 
 // open cart and check for checkout button
@@ -82,7 +82,7 @@ casper.then(function () {
 
 // click into checkout
 casper.then(function () {
-  this.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]');
+  casper.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]');
 });
 
 // make sure the anonCheckout button is there
@@ -194,7 +194,11 @@ casper.then(function () {
 // click NEXT step
 casper.then(function () {
   casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
-  casper.click('span#shippingContinue_se');
+  //casper.click('span#shippingContinue_se');
+
+  this.evaluate(function () {
+    return $('span#shippingContinue_se').trigger('click'); //.attr('sgid');
+  });
 
   //this.evaluate(function () {
   //  document.querySelector('span#shippingContinue_se').click();
