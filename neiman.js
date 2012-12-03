@@ -1,7 +1,14 @@
-picit = (function (arg) {
-  arg = arg || 'results.png';
+// product that contains multiple sizes and multiple colors for size select option[value="36.5B/6.5B"]
+var url = 'http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Tribtoo-Patent-Pump/prod139100403/?eVar4=You%20May%20Also%20Like%20RR';
+
+// product that contains multiple sizes and a single color option for size select option[value="7/8D"]
+//var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
+
+// capture a snapshot
+picit = (function (filename) {
+  filename = filename || 'results.png';
   casper.test.comment('Cheeeeeeese!');
-  casper.capture(arg, {
+  casper.capture(filename, {
     top: 0,
     left: 0,
     width: 1024,
@@ -32,16 +39,7 @@ testForm = (function () {
   });
 });
 
-
-// product that contains multiple sizes and multiple colors for size select option[value="36.5B/6.5B"]
-var url = 'http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Tribtoo-Patent-Pump/prod139100403/?eVar4=You%20May%20Also%20Like%20RR';
-
-// product that contains multiple sizes and a single color option for size select option[value="7/8D"]
-//var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
-
 casper = require('casper').create({
-  //verbose: true,
-  //logLevel: "debug",
   clientScripts: ["jquery-1.8.3.min.js"],
   onAlert: function () {
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
@@ -53,7 +51,7 @@ casper.start(url, function () {
 });
 
 casper.then(function () {
-  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="36.5B/6.5B"]', 'select option[value="36.5B/6.5B"]');
+  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="36.5B/6.5B"]', 'select option[value="36.5B/6.5B"] exists');
   this.evaluate(function () {
     var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
     var _option = '36.5B/6.5B';
@@ -63,7 +61,7 @@ casper.then(function () {
 });
 
 // check if item is in stock at particular size
-casper.then(function () { // casper.then() not necessary, still works successfully going to keep the casper.then() more for educational purposes
+casper.then(function () {
   casper.waitFor(function () {
     return this.evaluate(function () {
       return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
@@ -74,8 +72,28 @@ casper.then(function () { // casper.then() not necessary, still works successful
   },
   function () {
     casper.test.comment('timed out, product is either out of stock or a color needs to be selected');
-    this.exit();
-    // skipping this logic and going into adding to cart/checkout
+    casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(2) option[value="BLACK"]', 'select option[value="BLACK"] exists');
+    this.evaluate(function () {
+      var $select = $('.lineItemOptionSelect select:nth-of-type(2)');
+      var _option = 'BLACK';
+      $select.val(_option);
+      $select.change();
+    });
+
+    casper.waitFor(function () {
+      return this.evaluate(function () {
+        return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
+      });
+    },
+    function () {
+      casper.test.comment('product is in stock!');
+    },
+    function () {
+      casper.test.comment('Timed out.  Exiting.');
+      picit();
+      casper.exit();
+    });
+
   });
 });
 
@@ -106,10 +124,7 @@ casper.then(function () {
 });
 
 // make sure the anonCheckout button is there
-// else it may have already signed in anonly
 casper.then(function () {
-  // this is failing?  could the anonSignInBtn need a .waitFor() or perhaps
-  // another test in case directing immediately to shipping form
   casper.test.assertExists('#anonSignInBtn', 'Can anonymously check out');
   casper.click('#anonSignInBtn');
 });
@@ -218,22 +233,6 @@ casper.then(function () {
   casper.wait(2000, function () {
     casper.click('span#shippingContinue_se');
   });
-
-  // Need both to trigger event
-  //this.mouseEvent('mousedown','span#shippingContinue_se');
-  //casper.mouseEvent('mousedown', 'span#shippingContinue_se');
-  //this.mouseEvent('click','span#shippingContinue_se');
-  //casper.mouseEvent('click', 'span#shippingContinue_se');
-  //this.click('span#shippingContinue_se');
-  //casper.click('span#shippingContinue_se');
-
-  //this.evaluate(function () {
-  //  $('span#shippingContinue_se').click();
-  //  $('span#shippingContinue_se').trigger('click');
-  //  $('span#shippingContinue_se').trigger('mousedown');
-  //  document.getElementById('shippingContinue_se').click();
-  //  document.querySelector('span#shippingContinue_se').click();
-  //});
 
 });
 
@@ -364,10 +363,9 @@ casper.then(function () {
   });
 });
 
-
 casper.then(function () {
   casper.wait(2000, function () {
-    picit();  // take a snapshot right before exit to have visual
+    picit();  // take a snapshot right before exit
     casper.exit();
   })
 });
