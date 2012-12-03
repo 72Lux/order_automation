@@ -269,7 +269,6 @@ casper.then(function () {
   casper.test.assertExists('input#securitycode', 'Security code input exists');
   casper.test.assertExists('input#cardExpMonth', 'Card expiration month input exists');
   casper.test.assertExists('input#cardExpYear', 'Card expiration year input exists');
-  casper.test.assertExists('span#paymentSave', 'Save payment button exists');
 
   this.evaluate(function () {
     var $select = $('select#bilingAddrTitle');
@@ -317,6 +316,15 @@ casper.then(function () {
   }, { fields : formValues });
 
 });
+
+// click next to review
+casper.then(function () {
+  casper.test.assertExists('span#paymentSave', 'Save payment button exists');
+
+  casper.wait(2000, function () {
+    casper.click('span#paymentSave');
+  });
+})
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
