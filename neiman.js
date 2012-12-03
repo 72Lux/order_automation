@@ -191,14 +191,24 @@ casper.then(function () {
 casper.then(function () {
   casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
 
-  casper.click('span#shippingContinue_se');
-  casper.mouseEvent('click', 'span#shippingContinue_se');
+  casper.wait(2000, function () {
+    casper.click('span#shippingContinue_se');
+  });
+
+  // Need both to trigger event
+  //this.mouseEvent('mousedown','span#shippingContinue_se');
+  //casper.mouseEvent('mousedown', 'span#shippingContinue_se');
+  //this.mouseEvent('click','span#shippingContinue_se');
+  //casper.mouseEvent('click', 'span#shippingContinue_se');
+  //this.click('span#shippingContinue_se');
+  //casper.click('span#shippingContinue_se');
 
   //this.evaluate(function () {
-  //  document.querySelector('span#shippingContinue_se').click();
-  //  document.getElementById('shippingContinue_se').click()
   //  $('span#shippingContinue_se').click();
-  //  $('span#shippingContinue_se').trigger('click'); //.attr('sgid');
+  //  $('span#shippingContinue_se').trigger('click');
+  //  $('span#shippingContinue_se').trigger('mousedown');
+  //  document.getElementById('shippingContinue_se').click();
+  //  document.querySelector('span#shippingContinue_se').click();
   //});
 
 });
