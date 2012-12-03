@@ -33,10 +33,10 @@ casper.start(url, function () {
 });
 
 casper.then(function () {
-  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="8/9D"]', 'select option[value="8/9D"]');
+  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="7/8D"]', 'select option[value="7/8D"]');
   this.evaluate(function () {
     var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
-    var _option = '8/9D';
+    var _option = '7/8D';
     $select.val(_option);
     $select.change();
   });
