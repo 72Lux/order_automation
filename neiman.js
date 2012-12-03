@@ -271,6 +271,51 @@ casper.then(function () {
   casper.test.assertExists('input#cardExpYear', 'Card expiration year input exists');
   casper.test.assertExists('span#paymentSave', 'Save payment button exists');
 
+  this.evaluate(function () {
+    var $select = $('select#bilingAddrTitle');
+    var _option = 'F';
+    // select Dr
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#billingAddrCountry');
+    var _option = 'US';
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#billingAddrState');
+    var _option = 'NY';
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#billingAddrPhoneType');
+    var _option = 'O';
+    // select other
+    $select.val(_option);
+    $select.change();
+  });
+
+  var formValues = {
+    'input#emailAddress' : 'ed@bast.com',
+    'input#billingAddrFirstName' : 'Ed',
+    'input#billingAddrLastName' : 'Bast',
+    'input#billingAddrLine1' : '991 Lafayette Avenue',
+    'input#billingAddrLine2' : 'Apt 2',
+    'input#billingAddrCity' : 'Brooklyn',
+    'input#billingAddrZipCode' : '11221',
+    'input#billingAddrDayPhone' : '9137354378'
+  };
+
+  // This is for situations where form inputs have no name attribute
+  this.evaluate(function (fields) {
+    for (var selector in fields) {
+      document.querySelector(selector).value = fields[selector];
+    }
+  }, { fields : formValues });
+
 });
 
 // this is only takin a pic of page at initial rendering
