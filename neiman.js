@@ -24,10 +24,6 @@ casper = require('casper').create({
   }
 });
 
-casper.on('click', function (selector) {
-  this.echo('selector clicked:' + selector);
-});
-
 casper.start(url, function () {
   casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
 });
