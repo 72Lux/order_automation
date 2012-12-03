@@ -216,22 +216,22 @@ casper.then(function () {
 // test whether any error messages popped up
 // Currently isn't working .. as in errors
 // aren't popping up at all
-casper.then(function () {
-  casper.waitFor(function () {
-    return this.evaluate(function () {
-      return document.querySelectorAll('table.coErrorMessageClass').length;
-    });
-  },
-  function () {
-    casper.test.comment('Error present:');
-    casper.test.comment(this.evaluate(function () {
-      return $('table.coErrorMessageClass td.text').text();
-    }));
-  },
-  function () {
-    casper.test.comment('timed out - no error messages');
-  });
-});
+//casper.then(function () {
+//  casper.waitFor(function () {
+//    return this.evaluate(function () {
+//      return document.querySelectorAll('table.coErrorMessageClass').length;
+//    });
+//  },
+//  function () {
+//    casper.test.comment('Error present:');
+//    casper.test.comment(this.evaluate(function () {
+//      return $('table.coErrorMessageClass td.text').text();
+//    }));
+//  },
+//  function () {
+//    casper.test.comment('timed out - no error messages');
+//  });
+//});
 
 // check for billing form
 casper.then(function () {
