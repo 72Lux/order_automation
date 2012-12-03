@@ -9,6 +9,30 @@ function picit(arg) {
   });
 }
 
+// test whether any error messages popped up
+testForm = (function () {
+  return casper.then(function () {
+    casper.waitFor(function () {
+      return this.evaluate(function () {
+        return document.querySelectorAll('table.coErrorMessageClass').length;
+      });
+    },
+    function () {
+      casper.test.comment('Error present:');
+      casper.test.comment(this.evaluate(function () {
+        return $('table.coErrorMessageClass td.text').text();
+      }));
+      picit();
+      casper.test.comment('Exiting...');
+      casper.exit();
+    },
+    function () {
+      casper.test.comment('timed out - no error messages');
+    });
+  });
+});
+
+
 // product that contains multiple sizes and multiple colors for size select option[value="38.5B/8.5B"]
 //var url = 'http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Patent-Leather-Pointed-Toe-Pump-Pumps/prod146820188_cat39980735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat39980735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820188&cmCat=product';
 
@@ -213,27 +237,7 @@ casper.then(function () {
 
 });
 
-// test whether any error messages popped up
-// Currently isn't working .. as in errors
-// aren't popping up at all
-casper.then(function testForm() {
-  casper.waitFor(function () {
-    return this.evaluate(function () {
-      return document.querySelectorAll('table.coErrorMessageClass').length;
-    });
-  },
-  function () {
-    casper.test.comment('Error present:');
-    casper.test.comment(this.evaluate(function () {
-      return $('table.coErrorMessageClass td.text').text();
-    }));
-    casper.test.comment('Exiting...');
-    casper.exit();
-  },
-  function () {
-    casper.test.comment('timed out - no error messages');
-  });
-});
+testForm();
 
 // check for billing form
 casper.then(function () {
@@ -327,6 +331,9 @@ casper.then(function () {
     casper.click('span#paymentSave');
   });
 })
+
+// test to see if any errors popped
+testForm();
 
 // this is only takin a pic of page at initial rendering
 // javascript changes are not showing up, however serves
