@@ -163,8 +163,8 @@ casper.then(function () {
   });
 
   var formValues = {
-    '#saFirstName_se' : 'Ed',
-    '#saLastName_se' : 'Bast',
+    'input#saFirstName_se' : 'Ed',
+    'input#saLastName_se' : 'Bast',
     'input#saAddressLine1_se' : '991 Lafayette Avenue',
     'input#saAddressLine2_se' : 'Apt 2',
     'input#saCity_se' : 'Brooklyn',
@@ -194,18 +194,17 @@ casper.then(function () {
 // click NEXT step
 casper.then(function () {
   casper.test.assertExists('span#shippingContinue_se', 'Continue to next step button exists');
-  //casper.click('span#shippingContinue_se');
 
-  this.evaluate(function () {
-    return $('span#shippingContinue_se').trigger('click'); //.attr('sgid');
-  });
+  casper.click('span#shippingContinue_se');
+  casper.mouseEvent('click', 'span#shippingContinue_se');
 
   //this.evaluate(function () {
   //  document.querySelector('span#shippingContinue_se').click();
-  //});
-  //this.evaluate(function () {
+  //  document.getElementById('shippingContinue_se').click()
   //  $('span#shippingContinue_se').click();
+  //  $('span#shippingContinue_se').trigger('click'); //.attr('sgid');
   //});
+
 });
 
 // test whether any error messages popped up
