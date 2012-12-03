@@ -1,4 +1,4 @@
-function picit(arg) {
+picit = (function (arg) {
   arg = arg || 'results.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(arg, {
@@ -7,7 +7,7 @@ function picit(arg) {
     width: 1024,
     height: 1024
   });
-}
+});
 
 // test whether any error messages popped up
 testForm = (function () {
@@ -286,12 +286,14 @@ casper.then(function () {
   this.evaluate(function () {
     var $select = $('select#billingAddrCountry');
     var _option = 'US';
+    // select US
     $select.val(_option);
     $select.change();
   });
   this.evaluate(function () {
     var $select = $('select#billingAddrState');
     var _option = 'NY';
+    // select NY
     $select.val(_option);
     $select.change();
   });
@@ -299,6 +301,13 @@ casper.then(function () {
     var $select = $('select#billingAddrPhoneType');
     var _option = 'O';
     // select other
+    $select.val(_option);
+    $select.change();
+  });
+  this.evaluate(function () {
+    var $select = $('select#cardtype');
+    var _option = 'Visa';
+    // select Visa
     $select.val(_option);
     $select.change();
   });
@@ -311,7 +320,11 @@ casper.then(function () {
     'input#billingAddrLine2' : 'Apt 2',
     'input#billingAddrCity' : 'Brooklyn',
     'input#billingAddrZipCode' : '11221',
-    'input#billingAddrDayPhone' : '9137354378'
+    'input#billingAddrDayPhone' : '9137354378',
+    'input#cardnumber' : '4111111111111111',
+    'input#securitycode' : '123',
+    'input#cardExpMonth' : '12',
+    'input#cardExpYear' : '2013'
   };
 
   // This is for situations where form inputs have no name attribute
