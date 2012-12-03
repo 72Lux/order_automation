@@ -348,16 +348,28 @@ casper.then(function () {
 // test to see if any errors popped
 testForm();
 
-// this is only takin a pic of page at initial rendering
-// javascript changes are not showing up, however serves
-// as a method to confirm that a new page has been opened
+// confirm address
 casper.then(function () {
-  picit();
+  casper.waitFor(function (){
+    return this.evaluate(function () {
+      return document.querySelector('#avAddressList form').length;
+    });
+  },
+  function (){
+    casper.test.comment('Need to verify address');
+    casper.click('span#verificationButton');
+  },
+  function (){
+    casper.test.comment('No need to verify address');
+  });
 });
 
-// beginning to hang sometimes, see if this can force an exit
+
 casper.then(function () {
-  casper.exit();
+  casper.wait(2000, function () {
+    picit();  // take a snapshot right before exit to have visual
+    casper.exit();
+  })
 });
 
 casper.run(function () {
