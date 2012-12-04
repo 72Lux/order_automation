@@ -1,10 +1,10 @@
 // product that contains multiple sizes and multiple colors for size select option[value="36.5B/6.5B"]
-//var url = 'http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Tribtoo-Patent-Pump/prod139100403/?eVar4=You%20May%20Also%20Like%20RR';
-//var option_value = "36.5B/6.5B";
+var url = 'http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Tribtoo-Patent-Pump/prod139100403/?eVar4=You%20May%20Also%20Like%20RR';
+var option_value = "36.5B/6.5B";
 
 // product that contains multiple sizes and a single color option for size select option[value="7/8D"]
-var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
-var option_value = "7/8D";
+//var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
+//var option_value = "7/8D";
 
 // capture a snapshot
 picit = (function (filename) {
@@ -64,11 +64,7 @@ casper.then(function () {
 
 // check if item is in stock at particular size
 casper.then(function () {
-  casper.waitFor(function () {
-    return this.evaluate(function () {
-      return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
-    });
-  },
+  casper.waitForResource('prod_stock1.gif',
   function () {
     casper.test.comment('product is in stock!');
   },
@@ -83,11 +79,7 @@ casper.then(function () {
       $select.change();
     });
 
-    casper.waitFor(function () {
-      return this.evaluate(function () {
-        return document.querySelectorAll('.prodStatus img[src="/category/images/prod_stock1.gif"]').length;
-      });
-    },
+    casper.waitForResource('prod_stock1.gif',
     function () {
       casper.test.comment('product is in stock!');
     },
@@ -373,6 +365,4 @@ casper.then(function () {
   })
 });
 
-casper.run(function () {
-  this.test.renderResults(true);
-});
+casper.run();
