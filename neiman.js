@@ -1,6 +1,3 @@
-var customer = customer || {};
-console.log('customer:'+Object.keys(customer).length);
-
 // product that contains multiple sizes and a single color option for size select option[value="7/8D"]
 var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
 var option_value = "7/8D";
@@ -50,7 +47,6 @@ casper = require('casper').create({
 
 casper.start(url, function () {
   casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
-  phantom.injectJS('values.js');
 });
 
 // Select size option
@@ -202,16 +198,6 @@ casper.then(function () {
     'input#saZip_se' : '11221',
     'input#saDayTelephone_se' : '9137354378'
   };
-
-  //var formValues = {
-  //  'input#saFirstName_se' : customer.shipping_firstName,
-  //  'input#saLastName_se' : customer.shipping_lastName,
-  //  'input#saAddressLine1_se' : customer.shipping_addressLineOne,
-  //  'input#saAddressLine2_se' : customer.shipping_addressLineTwo,
-  //  'input#saCity_se' : customer.shipping_city,
-  //  'input#saZip_se' : customer.shipping_zip,
-  //  'input#saDayTelephone_se' : customer.shipping_phone
-  //};
 
   // This is for situations where form inputs have no name attribute
   this.evaluate(function (fields) {
