@@ -1,3 +1,4 @@
+require("utils");
 
 // product that contains multiple sizes and a single color option for size select option[value="7/8D"]
 var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
@@ -5,7 +6,7 @@ var option_value = "7/8D";
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = filename || 'results.png';
+  filename = 'screen_caps/' + filename + '.png' || 'screen_caps/results.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
@@ -45,28 +46,21 @@ casper = require('casper').create({
   }
 });
 
-//test comment to check args
-require("utils");
-
-casper.echo("Order info:");
-casper.test.comment(casper.cli.args);
-
-casper.start(url, function () {
+function verifyAddToCartButtonExists() {
   casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
-});
+}
 
-// Select size option
-casper.then(function () {
-  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + option_value + '"]', 'select option[value="' + option_value + '"] exists');
+function selectSize(size) {
+  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + size + '"]', 'select option[value="' + size + '"] exists');
   this.evaluate(function (_option) {
     var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
     $select.val(_option);
     $select.change();
   }, { _option : option_value });
-});
+}
 
-// check if item is in stock at particular size
-casper.then(function () {
+function checkIfInStock() {
+
   casper.waitForResource('prod_stock1.gif',
   function () {
     casper.test.comment('product is in stock!');
@@ -93,12 +87,74 @@ casper.then(function () {
     });
 
   });
-});
+}
 
-// add to cart
-casper.then(function () {
+function addToCart() {
   casper.click('#topAddToCartButton');
-});
+}
+
+// order from workflow
+var order = JSON.parse(casper.cli.args);
+casper.test.comment('Order received! Id: ' + order.id);
+//TODO: validate order or is the validation in the controller enough?
+
+for (var i = 0; i < order.line_items.length; i++) {
+
+  var item = order.line_items[i];
+  url = item.affiliate_url;
+
+  casper.start(url, function () {
+    casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
+  });
+
+  if(item.size) {
+    // Select size option
+    casper.then(function () {
+      casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + option_value + '"]', 'select option[value="' + option_value + '"] exists');
+      this.evaluate(function (_option) {
+        var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
+        $select.val(_option);
+        $select.change();
+      }, { _option : option_value });
+    });
+  }
+  // check if item is in stock at particular size
+  casper.then(function () {
+    casper.waitForResource('prod_stock1.gif',
+    function () {
+      casper.test.comment('product is in stock!');
+    },
+    function () {
+      casper.test.comment('timed out, product is either out of stock or a color needs to be selected');
+
+      casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(2) option[value="BLACK"]', 'select option[value="BLACK"] exists');
+      this.evaluate(function () {
+        var $select = $('.lineItemOptionSelect select:nth-of-type(2)');
+        var _option = 'BLACK';
+        $select.val(_option);
+        $select.change();
+      });
+
+      casper.waitForResource('prod_stock1.gif',
+      function () {
+        casper.test.comment('product is in stock!');
+      },
+      function () {
+        casper.test.comment('Timed out.  Exiting.');
+        picit();
+        casper.exit();
+      });
+
+    });
+  });
+
+  // add to cart
+  casper.then(function () {
+    casper.click('#topAddToCartButton');
+  });
+
+
+}
 
 // open cart and check for checkout button
 casper.then(function () {
@@ -161,6 +217,8 @@ casper.then(function () {
   //casper.test.assertExists('input#addr_po_false_se', 'Do not use as POBox radio exists');
   //casper.test.assertExists('input#useAsBillingFlag_se', 'Use As Billing checkbox exists');
 
+  var sa = order.shipping_address;
+
   this.evaluate(function () {
     var $select = $('select#saTitleCode_se');
     var _option = 'F';
@@ -176,13 +234,14 @@ casper.then(function () {
   });
   this.evaluate(function () {
     var $select = $('select#state_se');
-    var _option = 'NY';
+    // var _option = 'NY';
+    var _option = sa.short_state;
     $select.val(_option);
     $select.change();
   });
   this.evaluate(function () {
     var $select = $('select#saPhoneType_se');
-    var _option = 'O';
+    var _option = sa.phone;
     // select other
     $select.val(_option);
     $select.change();
@@ -196,13 +255,13 @@ casper.then(function () {
   });
 
   var formValues = {
-    'input#saFirstName_se' : 'Ed',
-    'input#saLastName_se' : 'Bast',
-    'input#saAddressLine1_se' : '991 Lafayette Avenue',
-    'input#saAddressLine2_se' : 'Apt 2',
-    'input#saCity_se' : 'Brooklyn',
-    'input#saZip_se' : '11221',
-    'input#saDayTelephone_se' : '9137354378'
+    'input#saFirstName_se' : sa.first_name,
+    'input#saLastName_se' : sa.last_name,
+    'input#saAddressLine1_se' : sa.street1,
+    'input#saAddressLine2_se' : sa.street2,
+    'input#saCity_se' : sa.city,
+    'input#saZip_se' : sa.postal_code,
+    'input#saDayTelephone_se' : sa.phone
   };
 
   // This is for situations where form inputs have no name attribute
@@ -273,6 +332,9 @@ casper.then(function () {
   //casper.test.assertExists('input#cardExpMonth', 'Card expiration month input exists');
   //casper.test.assertExists('input#cardExpYear', 'Card expiration year input exists');
 
+  var ba = order.billing_address;
+  var pi = order.payment;
+
   this.evaluate(function () {
     var $select = $('select#bilingAddrTitle');
     var _option = 'F';
@@ -289,39 +351,40 @@ casper.then(function () {
   });
   this.evaluate(function () {
     var $select = $('select#billingAddrState');
-    var _option = 'NY';
+    var _option = ba.state;
     // select NY
     $select.val(_option);
     $select.change();
   });
   this.evaluate(function () {
     var $select = $('select#billingAddrPhoneType');
-    var _option = 'O';
+    var _option = ba.phone;
     // select other
     $select.val(_option);
     $select.change();
   });
   this.evaluate(function () {
     var $select = $('select#cardtype');
-    var _option = 'Visa';
+    //TODO we need a cc helper, we don't store this info
+    var _option = pi.card_type;
     // select Visa
     $select.val(_option);
     $select.change();
   });
 
   var formValues = {
-    'input#emailAddress' : 'ed@bast.com',
-    'input#billingAddrFirstName' : 'Ed',
-    'input#billingAddrLastName' : 'Bast',
-    'input#billingAddrLine1' : '991 Lafayette Avenue',
-    'input#billingAddrLine2' : 'Apt 2',
-    'input#billingAddrCity' : 'Brooklyn',
-    'input#billingAddrZipCode' : '11221',
-    'input#billingAddrDayPhone' : '9137354378',
-    'input#cardnumber' : '4111111111111111',
-    'input#securitycode' : '123',
-    'input#cardExpMonth' : '12',
-    'input#cardExpYear' : '2013'
+    'input#emailAddress' : ba.email,
+    'input#billingAddrFirstName' : ba.first_name,
+    'input#billingAddrLastName' : ba.last_name,
+    'input#billingAddrLine1' : ba.street1,
+    'input#billingAddrLine2' : ba.street2,
+    'input#billingAddrCity' : ba.city,
+    'input#billingAddrZipCode' : ba.postal_code,
+    'input#billingAddrDayPhone' : ba.phone,
+    'input#cardnumber' : pi.card_number,
+    'input#securitycode' : pi.cvv,
+    'input#cardExpMonth' : pi.expiry_month,
+    'input#cardExpYear' : pi.expiry_year
   };
 
   // This is for situations where form inputs have no name attribute
@@ -340,7 +403,7 @@ casper.then(function () {
   casper.wait(2000, function () {
     casper.click('span#paymentSave');
   });
-})
+});
 
 // test to see if any errors popped
 testForm();
@@ -363,9 +426,9 @@ casper.then(function () {
 
 casper.then(function () {
   casper.wait(2000, function () {
-    picit();  // take a snapshot right before exit
+    picit(order.id);  // take a snapshot right before exit
     casper.exit();
-  })
+  });
 });
 
 casper.run();
