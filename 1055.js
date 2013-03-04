@@ -46,8 +46,10 @@ casper = require('casper').create({
 });
 
 //test comment to check args
-casper.echo("Casper CLI passed args:");
-require("utils").dump(casper.cli.args);
+require("utils");
+
+casper.echo("Order info:");
+casper.test.comment(casper.cli.args);
 
 casper.start(url, function () {
   casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
