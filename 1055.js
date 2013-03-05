@@ -304,7 +304,7 @@ casper.then(function () {
   });
   this.evaluate(function () {
     var $select = $('select#billingAddrState');
-    var _option = ba.state;
+    var _option = ba.short_state;
     // select NY
     $select.val(_option);
     $select.change();
