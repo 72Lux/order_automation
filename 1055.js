@@ -46,53 +46,6 @@ casper = require('casper').create({
   }
 });
 
-function verifyAddToCartButtonExists() {
-  casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
-}
-
-function selectSize(size) {
-  casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + size + '"]', 'select option[value="' + size + '"] exists');
-  this.evaluate(function (_option) {
-    var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
-    $select.val(_option);
-    $select.change();
-  }, { _option : option_value });
-}
-
-function checkIfInStock() {
-
-  casper.waitForResource('prod_stock1.gif',
-  function () {
-    casper.test.comment('product is in stock!');
-  },
-  function () {
-    casper.test.comment('timed out, product is either out of stock or a color needs to be selected');
-
-    casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(2) option[value="BLACK"]', 'select option[value="BLACK"] exists');
-    this.evaluate(function () {
-      var $select = $('.lineItemOptionSelect select:nth-of-type(2)');
-      var _option = 'BLACK';
-      $select.val(_option);
-      $select.change();
-    });
-
-    casper.waitForResource('prod_stock1.gif',
-    function () {
-      casper.test.comment('product is in stock!');
-    },
-    function () {
-      casper.test.comment('Timed out.  Exiting.');
-      picit();
-      casper.exit();
-    });
-
-  });
-}
-
-function addToCart() {
-  casper.click('#topAddToCartButton');
-}
-
 // order from workflow
 var order = JSON.parse(casper.cli.args);
 casper.test.comment('Order received! Id: ' + order.id);
