@@ -192,6 +192,7 @@ casper.then(function () {
     $select.val(_option);
     $select.change();
   });
+  picit('sa-short-state');
   this.evaluate(function () {
     var $select = $('select#saPhoneType_se');
     var _option = sa.phone;
@@ -309,6 +310,7 @@ casper.then(function () {
     $select.val(_option);
     $select.change();
   });
+  picit('ba-short-state');
   this.evaluate(function () {
     var $select = $('select#billingAddrPhoneType');
     var _option = ba.phone;
@@ -318,9 +320,7 @@ casper.then(function () {
   });
   this.evaluate(function () {
     var $select = $('select#cardtype');
-    //TODO we need a cc helper, we don't store this info
     var _option = pi.card_type;
-    // select Visa
     $select.val(_option);
     $select.change();
   });
