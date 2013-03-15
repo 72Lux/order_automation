@@ -31,7 +31,7 @@ testForm = (function () {
       }));
       picit();
       casper.test.comment('Exiting...');
-      casper.exit();
+      casper.exit(1);
     },
     function () {
       casper.test.comment('timed out - no error messages');
@@ -48,7 +48,7 @@ casper = require('casper').create({
 
 // order from workflow
 var order = JSON.parse(casper.cli.args);
-casper.test.comment('Order received! Id: ' + order.id);
+casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length);
 //TODO: validate order or is the validation in the controller enough?
 
 for (var i = 0; i < order.line_items.length; i++) {
@@ -56,19 +56,24 @@ for (var i = 0; i < order.line_items.length; i++) {
   var item = order.line_items[i];
   url = item.affiliate_url;
 
+  casper.test.comment('item url: ' + url);
+
   casper.start(url, function () {
     casper.test.assertExists('#topAddToCartButton', 'add to cart button exists');
   });
 
   if(item.size) {
+
+    casper.test.comment('item size: ' + item.size);
+
     // Select size option
     casper.then(function () {
-      casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + option_value + '"]', 'select option[value="' + option_value + '"] exists');
+      casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + item.size + '"]', 'select option[value="' + item.size + '"] exists');
       this.evaluate(function (_option) {
         var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
         $select.val(_option);
         $select.change();
-      }, { _option : option_value });
+      }, { _option : item.size });
     });
   }
   // check if item is in stock at particular size
@@ -95,7 +100,7 @@ for (var i = 0; i < order.line_items.length; i++) {
       function () {
         casper.test.comment('Timed out.  Exiting.');
         picit();
-        casper.exit();
+        casper.exit(1);
       });
 
     });
@@ -105,7 +110,6 @@ for (var i = 0; i < order.line_items.length; i++) {
   casper.then(function () {
     casper.click('#topAddToCartButton');
   });
-
 
 }
 
@@ -121,7 +125,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('timed out waiting for checkout link');
-    this.exit();
+    this.exit(1);
   });
 });
 
@@ -136,6 +140,14 @@ casper.then(function () {
   casper.click('#anonSignInBtn');
 });
 
+//check for samples pop-up
+casper.then(function () {
+  picit('samples-before');
+  casper.test.assertExists('#samplesNoButton', 'Samples pop up has appeared');
+  casper.click('#samplesNoButton');
+  picit('samples-after');
+});
+
 // check for shipping form
 casper.then(function () {
   casper.waitFor(function () {
@@ -148,7 +160,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('timed out waiting for shipping form');
-    this.exit();
+    this.exit(1);
   });
 });
 
@@ -262,7 +274,7 @@ casper.then(function () {
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit();
-    casper.exit();
+    casper.exit(1);
   });
 });
 
@@ -380,7 +392,7 @@ casper.then(function () {
 casper.then(function () {
   casper.wait(2000, function () {
     picit(order.id);  // take a snapshot right before exit
-    casper.exit();
+    casper.exit(0);
   });
 });
 
