@@ -1,8 +1,8 @@
 require("utils");
 
 // product that contains multiple sizes and a single color option for size select option[value="7/8D"]
-var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
-var option_value = "7/8D";
+// var url = 'http://www.neimanmarcus.com/p/Prada-Wing-Tip-Chelsea-Boot-Boots/prod146820012_cat6750735__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.jsp%253FitemId%253Dcat6750735%2526pageSize%253D30%2526No%253D0%2526refinements%253D&eItemId=prod146820012&cmCat=product';
+// var option_value = "7/8D";
 
 // capture a snapshot
 picit = (function (filename) {
@@ -48,13 +48,15 @@ casper = require('casper').create({
 
 // order from workflow
 var order = JSON.parse(casper.cli.args);
+
 casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length);
 //TODO: validate order or is the validation in the controller enough?
 
 for (var i = 0; i < order.line_items.length; i++) {
 
   var item = order.line_items[i];
-  url = item.affiliate_url;
+  var lineItemId = order.line_items[i].line_item_id;
+  var url = item.affiliate_url;
 
   casper.test.comment('item url: ' + url);
 
@@ -142,10 +144,15 @@ casper.then(function () {
 
 //check for samples pop-up
 casper.then(function () {
-  picit('samples-before');
-  casper.test.assertExists('#samplesNoButton', 'Samples pop up has appeared');
-  casper.click('#samplesNoButton');
-  picit('samples-after');
+
+  if(this.exists('#samplesNoButton')) {
+    picit(order.id + '-' + lineItemId + 'samples-before');
+    casper.click('#samplesNoButton');
+    casper.test.comment('Samples pop-up appeared');
+  } else {
+    casper.test.comment('No samples pop-up');
+  }
+    picit(order.id + '-' + lineItemId + 'samples-after');
 });
 
 // check for shipping form
@@ -174,7 +181,7 @@ casper.then(function () {
   //casper.test.assertExists('input#saAddressLine1_se', 'Address Line 1 input field exists');
   //casper.test.assertExists('input#saAddressLine2_se', 'Address Line 2 input field exists');
   //casper.test.assertExists('input#saCity_se', 'City input field exists');
-  //casper.test.assertExists('select#state_se', 'State select exists');
+  casper.test.assertExists('select#state_se', 'State select exists');
   //casper.test.assertExists('input#saZip_se', 'Zip input field exists');
   //casper.test.assertExists('select#saPhoneType_se', 'Phone Type select exists');
   //casper.test.assertExists('input#saDayTelephone_se', 'Phone input exists');
@@ -184,34 +191,44 @@ casper.then(function () {
 
   var sa = order.shipping_address;
 
+  this.evaluate(function(shipping_state) {
+      document.querySelector('#state_se').value = shipping_state;
+  }, sa.short_state);
+
+  // this.evaluate(function () {
+  //   var $select = $('select#saTitleCode_se');
+  //   var _option = 'F';
+  //   // select Dr
+  //   $select.val(_option);
+  //   $select.change();
+  // });
+  // this.evaluate(function () {
+  //   var $select = $('select#country_se');
+  //   var _option = 'US';
+  //   $select.val(_option);
+  //   $select.change();
+  // });
+  // this.evaluate(function () {
+  //   casper.test.comment('selecting shipping state...');
+
+  //   var $select = $('select#state_se');
+  //   // var _option = 'NY';
+  //   var _option = 'CA'; //sa.short_state;
+  //   $select.val(_option);
+  //   $select.change();
+  // });
+
+  picit(order.id + '-' + lineItemId + 'sa-short-state');
+
   this.evaluate(function () {
-    var $select = $('select#saTitleCode_se');
-    var _option = 'F';
-    // select Dr
-    $select.val(_option);
-    $select.change();
-  });
-  this.evaluate(function () {
-    var $select = $('select#country_se');
-    var _option = 'US';
-    $select.val(_option);
-    $select.change();
-  });
-  this.evaluate(function () {
-    var $select = $('select#state_se');
-    // var _option = 'NY';
-    var _option = sa.short_state;
-    $select.val(_option);
-    $select.change();
-  });
-  picit('sa-short-state');
-  this.evaluate(function () {
+
     var $select = $('select#saPhoneType_se');
     var _option = sa.phone;
     // select other
     $select.val(_option);
     $select.change();
   });
+
   this.evaluate(function () {
     var $select = $('select.shippingmethod');
     var _option = 'SL3';
@@ -236,6 +253,31 @@ casper.then(function () {
       document.querySelector(selector).value = fields[selector];
     }
   }, { fields : formValues });
+
+  casper.then(function () {
+
+    if(this.exists('#saDeliveryTelephone_se')) {
+
+      var optionalFormValues = {
+        'input#saDeliveryTelephone_se' : sa.phone
+      };
+
+      this.evaluate(function (fields) {
+        for (var selector in fields) {
+          document.querySelector(selector).value = fields[selector];
+        }
+      }, { fields : optionalFormValues });
+
+      picit(order.id + '-' + lineItemId + 'optional-delivery-phone');
+
+      casper.test.comment('Optional delivery telephone.');
+
+    } else {
+      casper.test.comment('Optional delivery telephone not needed.');
+    }
+  });
+
+
 
   // Fill in that one radio selection
   this.fill('form#shippingForm_se', {
@@ -273,7 +315,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
-    picit();
+    picit(order.id + '-' + lineItemId + 'no-billing-form');
     casper.exit(1);
   });
 });
@@ -322,7 +364,7 @@ casper.then(function () {
     $select.val(_option);
     $select.change();
   });
-  picit('ba-short-state');
+  picit(order.id + '-' + lineItemId + 'ba-short-state');
   this.evaluate(function () {
     var $select = $('select#billingAddrPhoneType');
     var _option = ba.phone;
