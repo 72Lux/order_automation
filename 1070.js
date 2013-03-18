@@ -46,6 +46,10 @@ casper = require('casper').create({
   }
 });
 
+casper.on('remote.message', function(msg) {
+    this.echo('from within remote page DOM' + msg);
+});
+
 // order from workflow
 var order = JSON.parse(casper.cli.args);
 
@@ -191,9 +195,9 @@ casper.then(function () {
 
   var sa = order.shipping_address;
 
-  this.evaluate(function(shipping_state) {
-      document.querySelector('#state_se').value = shipping_state;
-  }, sa.short_state);
+  // this.evaluate(function(shipping_state) {
+  //     document.querySelector('#state_se').value = shipping_state;
+  // }, sa.short_state);
 
   // this.evaluate(function () {
   //   var $select = $('select#saTitleCode_se');
@@ -202,21 +206,22 @@ casper.then(function () {
   //   $select.val(_option);
   //   $select.change();
   // });
-  // this.evaluate(function () {
-  //   var $select = $('select#country_se');
-  //   var _option = 'US';
-  //   $select.val(_option);
-  //   $select.change();
-  // });
-  // this.evaluate(function () {
-  //   casper.test.comment('selecting shipping state...');
 
-  //   var $select = $('select#state_se');
-  //   // var _option = 'NY';
-  //   var _option = 'CA'; //sa.short_state;
-  //   $select.val(_option);
-  //   $select.change();
-  // });
+  // casper.test.comment('SHIPPING STATE: ' + sa.short_state.toString());
+
+  this.evaluate(function () {
+    var $select = $('select#country_se');
+    var _option = 'US';
+    $select.val(_option);
+    $select.change();
+  });
+
+  this.evaluate(function () {
+    var $select = $('select#state_se');
+    var _option = sa.short_state;
+    $select.val(_option);
+    $select.change();
+  });
 
   picit(order.id + '-' + lineItemId + 'sa-short-state');
 
@@ -276,8 +281,6 @@ casper.then(function () {
       casper.test.comment('Optional delivery telephone not needed.');
     }
   });
-
-
 
   // Fill in that one radio selection
   this.fill('form#shippingForm_se', {

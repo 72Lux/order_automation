@@ -28,3 +28,4 @@ dash.dev/application/views/temp-results.php
 sample_order_response.json
 
 screen_caps/*
+*.png
