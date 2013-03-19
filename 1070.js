@@ -81,8 +81,6 @@ casper.each(lineItems, function(self, lineItem) {
         });
       }
 
-      // TODO test for in-stock
-      // TODO test for the no-dropdown color
 
       // casper.then(function () {
       //   casper.waitForResource('prod_stock1.gif',
@@ -112,6 +110,21 @@ casper.each(lineItems, function(self, lineItem) {
 
       //   });
       // });
+
+      // IF SIZE is available
+      // - check if dropdown (.variationDD) is visible and set (then check in-stock)
+      // - or div (#dd1NonSelect) contains lineItem.size text && (check in-stock)
+      // - else exit with error
+      // NO ELSE
+
+      // IF COLOR is available
+      // - check if dropdown (.variationDD) is visible and set (then check in-stock)
+      // - or div (#prod**NonSelect) contains lineItem.size text
+      // - else exit with error
+      // NO ELSE
+
+      // QTY is always required
+      // exit with error if not available
 
       if(lineItem.qty) {
         casper.test.comment('attempting size fill...');
