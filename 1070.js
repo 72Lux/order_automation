@@ -81,6 +81,38 @@ casper.each(lineItems, function(self, lineItem) {
         });
       }
 
+      // TODO test for in-stock
+      // TODO test for the no-dropdown color
+
+      // casper.then(function () {
+      //   casper.waitForResource('prod_stock1.gif',
+      //   function () {
+      //     casper.test.comment('product is in stock after size select!');
+      //   },
+      //   function () {
+      //     casper.test.comment('timed out, product is either out of stock or a color needs to be selected');
+
+      //     casper.test.assertExists('.lineItemOptionSelect select:nth-of-type(2) option[value="' + lineItem.color + '"]', 'select option[value="' + lineItem.color + '"] exists');
+      //     this.evaluate(function (color) {
+      //       var $select = $('.lineItemOptionSelect select:nth-of-type(2)');
+      //       var _option = color;
+      //       $select.val(_option);
+      //       $select.change();
+      //     }, lineItem.color);
+
+      //     casper.waitForResource('prod_stock1.gif',
+      //     function () {
+      //       casper.test.comment('product is in stock after color!');
+      //     },
+      //     function () {
+      //       casper.test.comment('Timed out.  Exiting.');
+      //       picit();
+      //       casper.exit(1);
+      //     });
+
+      //   });
+      // });
+
       if(lineItem.qty) {
         casper.test.comment('attempting size fill...');
         this.fill('form#lineItemsForm', {
