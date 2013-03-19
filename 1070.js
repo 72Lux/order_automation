@@ -39,7 +39,11 @@ var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js"],
   onAlert: function () {
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
-    picit('alert');
+
+    this.wait(5000, function() {
+      casper.test.comment("Waiting for five seconds...");
+      picit('alert');
+    });
   },
   // verbose: true,
   logLevel: "info"
@@ -54,22 +58,66 @@ casper.start();
 
 casper.each(lineItems, function(self, lineItem) {
   this.thenOpen(lineItem.affiliate_url, function() {
+
     this.echo(this.getTitle());
-    //TODO: add check
-    if (this.exists('#topAddToCartButton')) {
+    casper.waitForSelector('#topAddToCartButton', function() {
+
+      if(lineItem.size) {
+
+        casper.test.comment('item size: ' + lineItem.size);
+
+        // Select size option
+        casper.then(function () {
+          if(casper.exists('.lineItemOptionSelect select:nth-of-type(1) option[value="' + lineItem.size + '"]')) {
+            this.evaluate(function (_option) {
+              var $select = $('.lineItemOptionSelect select:nth-of-type(1)');
+              $select.val(_option);
+              $select.change();
+            }, { _option : lineItem.size });
+          } else {
+            casper.test.comment('size not found / not available');
+            casper.exit(1);
+          }
+        });
+      }
+
+      if(lineItem.qty) {
+        casper.test.comment('attempting size fill...');
+        this.fill('form#lineItemsForm', {
+          'qty0': lineItem.qty
+        }, false);
+      } else {
+        casper.test.comment('qty is required');
+        casper.exit(1);
+      }
+
       casper.test.comment('add button found');
       casper.click('#topAddToCartButton');
-    } else {
-      casper.test.comment('add button not found');
+
+    }, function() {
+
+      casper.test.comment('timed out waiting for add button');
       this.exit(1);
-    }
-    //
+
+    });
+
   });
 });
 
 casper.then(function () {
-  picit('end');
-  this.exit(0);
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
+    });
+  },
+  function () {
+    casper.test.comment('link to checkout visible');
+    picit('end');
+  },
+  function () {
+    casper.test.comment('timed out waiting for checkout link');
+    this.exit(1);
+  });
 });
 
 casper.run();
