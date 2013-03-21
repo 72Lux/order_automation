@@ -27,7 +27,7 @@ testForm = (function () {
       }));
       picit();
       casper.test.comment('Exiting...');
-      casper.exit(1);
+      this.exit(1);
     },
     function () {
       casper.test.comment('timed out - no error messages');
@@ -104,9 +104,9 @@ casper.each(lineItems, function(self, lineItem) {
           casper.test.comment('Set both color and size dropdowns to: ' + lineItem.color + ' & ' + lineItem.size);
 
           casper.then(function () {
-            if(this.exists('#adSize .variationDD option[value="' + lineItem.size + '"]') && this.exists('#adColor .variationDD option[value="' + lineItem.color + '"]')) {
+            if(this.exists('#adSize .variationDD option[value="' + lineItem.size + '"]')) {
 
-              casper.test.comment('Size and color available');
+              casper.test.comment('Size available');
 
               this.evaluate(function (_option) {
                 var $select = $('#adSize .variationDD');
@@ -114,11 +114,27 @@ casper.each(lineItems, function(self, lineItem) {
                 $select.change();
               }, { _option : lineItem.size });
 
-              this.evaluate(function (_option) {
-                var $select = $('#adColor .variationDD');
-                $select.val(_option);
-                $select.change();
-              }, { _option : lineItem.color });
+              // these need to be recalculated at this point since sometimes colors are limited
+              // by the size you select and the color dropdown dissappears on select
+
+              isColorDropdownVisible = this.evaluate(function() { return $('#adColor .variationDD').is(":visible"); });
+              colorText = this.evaluate(function() { return $('.nsStyle').text(); });
+
+              if(isColorDropdownVisible && this.exists('#adColor .variationDD option[value="' + lineItem.color + '"]')) {
+
+                casper.test.comment('Color available');
+
+                this.evaluate(function (_option) {
+                  var $select = $('#adColor .variationDD');
+                  $select.val(_option);
+                  $select.change();
+                }, { _option : lineItem.color });
+              } else if(colorText.toLowerCase().indexOf(lineItem.color.toLowerCase()) >= 0) {
+                casper.test.comment('Color text matched for: ' + lineItem.color);
+              } else {
+                casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + ' for size: ' + lineItem.size + '. Exiting...');
+                this.exit(1);
+              }
 
               // INSTOCK AND QTY REPEAT BEGIN
               casper.then(function () {
@@ -133,7 +149,7 @@ casper.each(lineItems, function(self, lineItem) {
                     }, false);
                   } else {
                     casper.test.comment('qty is required');
-                    casper.exit(1);
+                    this.exit(1);
                   }
 
                   casper.test.comment('add button found');
@@ -143,23 +159,24 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit();
-                });
+                }, 15000);
               });
               // INSTOCK AND QTY REPEAT END
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color or size unavailable: ' + lineItem.color + ' / ' + lineItem.size + '. Exiting...');
-              exit(1);
+              this.exit(1);
             }
           });
 
-        } else if(!isColorDropdownVisible && isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size') && (colorText.toLowerCase().indexOf(lineItem.color.toLowerCase()) >= 0 )) {
+        } else if(!isColorDropdownVisible && isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size') && (colorText.toLowerCase().indexOf(lineItem.color.toLowerCase()) >= 0)) {
           // set visible color dropdown
           // casper.test.comment('STEP2 : COLOR & SIZE');
           casper.test.comment('Set size dropdown to: ' + lineItem.size);
           casper.test.comment('Color text matched for: ' + lineItem.color);
 
           casper.then(function () {
+
             if(this.exists('#adSize .variationDD option[value="' + lineItem.size + '"]')) {
 
               casper.test.comment('Size available');
@@ -183,7 +200,7 @@ casper.each(lineItems, function(self, lineItem) {
                     }, false);
                   } else {
                     casper.test.comment('qty is required');
-                    casper.exit(1);
+                    this.exit(1);
                   }
 
                   casper.test.comment('add button found');
@@ -193,13 +210,13 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit();
-                });
+                }, 15000);
               });
               // INSTOCK AND QTY REPEAT END
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
-              exit(1);
+              this.exit(1);
             }
           });
 
@@ -221,7 +238,7 @@ casper.each(lineItems, function(self, lineItem) {
                 }, false);
               } else {
                 casper.test.comment('qty is required');
-                casper.exit(1);
+                this.exit(1);
               }
 
               casper.test.comment('add button found');
@@ -231,14 +248,14 @@ casper.each(lineItems, function(self, lineItem) {
             function () {
               casper.test.comment('Product is not in stock');
               picit();
-            });
+            }, 15000);
           });
           // INSTOCK AND QTY REPEAT END
 
         } else {
           // exit with error
           // casper.test.comment('ERROR : COLOR & SIZE');
-          casper.test.comment('BAD! No conditions matched for: ' + lineItem.color + ' & ' + lineItem.size);
+          casper.test.comment('ERROR: BAD! No conditions matched for: ' + lineItem.color + ' & ' + lineItem.size);
           this.exit(1);
 
         }
@@ -277,7 +294,7 @@ casper.each(lineItems, function(self, lineItem) {
                     }, false);
                   } else {
                     casper.test.comment('qty is required');
-                    casper.exit(1);
+                    this.exit(1);
                   }
 
                   casper.test.comment('add button found');
@@ -287,20 +304,20 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit();
-                });
+                }, 15000);
               });
               // INSTOCK AND QTY REPEAT END
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
-              exit(1);
+              this.exit(1);
             }
           });
 
         } else {
           // exit with error
           // casper.test.comment('ERROR : COLOR ONLY');
-          casper.test.coment('BAD ERROR! Color dropdown not found');
+          casper.test.coment('ERROR: BAD! Color dropdown not found');
           this.exit(1);
 
         }
@@ -308,7 +325,7 @@ casper.each(lineItems, function(self, lineItem) {
       } else {
         // exit with error
         // casper.test.comment('ERROR : NO SIZE OR COLOR');
-        casper.test.comment('SUPER BAD ERROR: No size or color on lineItem. How did *that* happen for orderId: ' + order.id);
+        casper.test.comment('ERROR: SUPER BAD! No size or color on lineItem. How did *that* happen for orderId: ' + order.id);
         this.exit(1);
       }
 
