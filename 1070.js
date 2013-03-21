@@ -32,7 +32,7 @@ picit = (function (filename) {
 });
 
 // test whether any error messages popped up
-testForm = (function (orderId) {
+testForm = (function (orderId, formType) {
   return casper.then(function () {
     casper.waitFor(function () {
       return this.evaluate(function () {
@@ -40,13 +40,17 @@ testForm = (function (orderId) {
       });
     },
     function () {
-      casper.test.comment('Error present:');
+      casper.test.comment('Error present in ' + formType + ' form.');
       casper.test.comment(this.evaluate(function () {
         return $('table.coErrorMessageClass td.text').text();
       }));
-      picit(orderId + '-form-error');
+      picit(orderId + '-' + formType + '-form-error');
       casper.test.comment('Exiting...');
-      this.exit(1);
+      if(formType && (formType === 'shipping')) {
+        this.exit(34);
+      } else {
+        this.exit(35);
+      }
     },
     function () {
       casper.test.comment('No errors found on form');
@@ -97,8 +101,7 @@ casper.each(lineItems, function(self, lineItem) {
 
       if(!adLength) {
         casper.test.comment('ERROR: dropdowns not available yet. Exiting...');
-        this.echo('test error msg', 'ERROR');
-        this.exit(1);
+        this.exit(10);
       }
 
       casper.test.comment("Dropdowns available!!! Run!");
@@ -152,7 +155,7 @@ casper.each(lineItems, function(self, lineItem) {
                 casper.test.comment('Color text matched for: ' + lineItem.color);
               } else {
                 casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + ' for size: ' + lineItem.size + '. Exiting...');
-                this.exit(1);
+                this.exit(32);
               }
 
               // INSTOCK AND QTY REPEAT BEGIN
@@ -168,7 +171,7 @@ casper.each(lineItems, function(self, lineItem) {
                     }, false);
                   } else {
                     casper.test.comment('qty is required');
-                    this.exit(1);
+                    this.exit(22);
                   }
 
                   casper.test.comment('add button found');
@@ -178,14 +181,14 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
-                  this.exit(1);
+                  this.exit(31);
                 });
               });
               // INSTOCK AND QTY REPEAT END
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color or size unavailable: ' + lineItem.color + ' / ' + lineItem.size + '. Exiting...');
-              this.exit(1);
+              this.exit(32);
             }
           });
 
@@ -220,7 +223,7 @@ casper.each(lineItems, function(self, lineItem) {
                     }, false);
                   } else {
                     casper.test.comment('qty is required');
-                    this.exit(1);
+                    this.exit(22);
                   }
 
                   casper.test.comment('add button found');
@@ -230,14 +233,14 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
-                  this.exit(1);
+                  this.exit(31);
                 });
               });
               // INSTOCK AND QTY REPEAT END
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
-              this.exit(1);
+              this.exit(33);
             }
           });
 
@@ -259,7 +262,7 @@ casper.each(lineItems, function(self, lineItem) {
                 }, false);
               } else {
                 casper.test.comment('qty is required');
-                this.exit(1);
+                this.exit(22);
               }
 
               casper.test.comment('add button found');
@@ -269,7 +272,7 @@ casper.each(lineItems, function(self, lineItem) {
             function () {
               casper.test.comment('Product is not in stock');
               picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
-              this.exit(1);
+              this.exit(31);
             });
           });
           // INSTOCK AND QTY REPEAT END
@@ -278,7 +281,7 @@ casper.each(lineItems, function(self, lineItem) {
           // exit with error
           // casper.test.comment('ERROR : COLOR & SIZE');
           casper.test.comment('ERROR: BAD! No conditions matched for: ' + lineItem.color + ' & ' + lineItem.size);
-          this.exit(1);
+          this.exit(21);
 
         }
 
@@ -316,7 +319,7 @@ casper.each(lineItems, function(self, lineItem) {
                     }, false);
                   } else {
                     casper.test.comment('qty is required');
-                    this.exit(1);
+                    this.exit(22);
                   }
 
                   casper.test.comment('add button found');
@@ -326,14 +329,14 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
-                  this.exit(1);
+                  this.exit(31);
                 });
               });
               // INSTOCK AND QTY REPEAT END
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
-              this.exit(1);
+              this.exit(33);
             }
           });
 
@@ -341,7 +344,7 @@ casper.each(lineItems, function(self, lineItem) {
           // exit with error
           // casper.test.comment('ERROR : COLOR ONLY');
           casper.test.coment('ERROR: BAD! Color dropdown not found');
-          this.exit(1);
+          this.exit(11);
 
         }
 
@@ -349,13 +352,13 @@ casper.each(lineItems, function(self, lineItem) {
         // exit with error
         // casper.test.comment('ERROR : NO SIZE OR COLOR');
         casper.test.comment('ERROR: SUPER BAD! No size or color on lineItem. How did *that* happen for orderId: ' + order.id);
-        this.exit(1);
+        this.exit(10);
       }
 
     }, function() {
 
       casper.test.comment('timed out waiting for add button');
-      this.exit(1);
+      this.exit(12);
 
     });
 
@@ -378,7 +381,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('Timed out waiting for checkout link');
-    this.exit(1);
+    this.exit(13);
   });
 });
 
@@ -393,7 +396,7 @@ casper.then(function () {
     casper.click('#anonSignInBtn');
   } else {
     casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
-    this.exit(1);
+    this.exit(14);
   }
 });
 
@@ -433,7 +436,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('timed out waiting for shipping form');
-    this.exit(1);
+    this.exit(15);
   });
 });
 
@@ -550,11 +553,11 @@ casper.then(function () {
       });
     } else {
       casper.test.comment('ERROR: Next button not found on shipping form');
-      this.exit(1);
+      this.exit(16);
     }
   });
 
-  testForm(order.id + '-shipping-');
+  testForm(order.id, 'shipping');
 
 });
 
@@ -575,7 +578,7 @@ casper.then(function () {
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-' + lineItem.line_item_id + 'no-billing-form');
-    casper.exit(1);
+    casper.exit(17);
   });
 });
 
@@ -667,12 +670,12 @@ casper.then(function () {
     });
   } else {
     casper.test.comment('ERROR: Save payment button not available');
-    this.exit(1);
+    this.exit(18);
   }
 });
 
 // test to see if any errors popped
-testForm(order.id + '-shipping-');
+testForm(order.id, 'billing');
 
 // BILLING FORM END
 
