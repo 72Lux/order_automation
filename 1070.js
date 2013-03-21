@@ -72,6 +72,12 @@ var casper = require("casper").create({
 //     this.echo('### DOM Msg ###: ' + msg);
 // });
 
+casper.on('page.initialized', function setPageOnInit () {
+  page.customHeaders = {
+    'Cache-Control': 'no-cache, must-revalidate'
+  };
+});
+
 var order = JSON.parse(casper.cli.args);
 casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length);
 
@@ -89,18 +95,9 @@ casper.each(lineItems, function(self, lineItem) {
 
       var adLength = this.evaluate(function() { return $('#adColor').length; });
 
-      // casper.then(function () {
-
-      //   while(!adLength) {
-      //     casper.wait(2000, function () {
-      //       adLength = this.evaluate(function() { return $('#adColor').length; });
-      //     });
-      //   }
-
-      // });
-
       if(!adLength) {
         casper.test.comment('ERROR: dropdowns not available yet. Exiting...');
+        this.echo('test error msg', 'ERROR');
         this.exit(1);
       }
 
@@ -181,6 +178,7 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
+                  this.exit(1);
                 });
               });
               // INSTOCK AND QTY REPEAT END
@@ -232,6 +230,7 @@ casper.each(lineItems, function(self, lineItem) {
                 function () {
                   casper.test.comment('Product is not in stock');
                   picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
+                  this.exit(1);
                 });
               });
               // INSTOCK AND QTY REPEAT END
@@ -270,6 +269,7 @@ casper.each(lineItems, function(self, lineItem) {
             function () {
               casper.test.comment('Product is not in stock');
               picit('unavailable-'+order.id+'-'+lineItem.line_item_id);
+              this.exit(1);
             });
           });
           // INSTOCK AND QTY REPEAT END
