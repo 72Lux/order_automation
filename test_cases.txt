@@ -1,0 +1,2 @@
+Out-of-stock / backordered lipstick tested. Errors out as expected.
+Mismatched zipcode tested. Errors out as expected.
