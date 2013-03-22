@@ -75,7 +75,7 @@ var casper = require("casper").create({
 // SELECTORS END
 
 var order = JSON.parse(casper.cli.args);
-casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length);
+casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length + ' submitOrder: ' + order.submitOrder);
 
 var lineItems = order.line_items;
 
@@ -723,9 +723,17 @@ casper.then(function () {
 
   casper.wait(5000, function () {
     if(casper.exists('#submitOrder')) {
-      // TODO: OMG PART2, ARE YOU READY FOR THIS?
-      // casper.test.comment('That submit button would have been CLICKED!');
-      casper.click('#submitOrder');
+
+      casper.test.comment('order.submitOrder set to: ' + order.submitOrder);
+
+      if(order.submitOrder) {
+        // TODO: OMG! ARE YOU READY FOR THIS?
+        // casper.click('#submitOrder');
+        casper.test.comment('TOBEREMOVED: That submit button would have been CLICKED!');
+      } else {
+        casper.test.comment('Submit button visible!');
+      }
+
     } else {
       casper.test.comment('ERROR: Submit order button not available');
       this.exit(18);
@@ -737,12 +745,19 @@ casper.then(function () {
 // check for success or errors
 casper.then(function () {
   casper.wait(20000, function () {
-    if(casper.exists('#confirmSummary')) {
-      picit(order.id+'-confirmation');  // take a snapshot right before exit
-      casper.exit(0);
+
+    if(order.submitOrder) {
+      if(casper.exists('#confirmSummary')) {
+        picit(order.id+'-confirmation');  // take a snapshot right before exit
+        casper.exit(0);
+      } else {
+        casper.test.comment('ERROR: Could not find order confirmation text.');
+        casper.exit(20);
+      }
     } else {
-      casper.test.comment('ERROR: Could not find order confirmation text.');
-      casper.exit(20);
+      casper.test.comment('Submit is set to ' + order.submitOrder + ', so you will not see the confirmation page.');
+      picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
+      casper.exit(0);
     }
   });
 });
