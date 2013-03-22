@@ -98,9 +98,9 @@ casper.each(lineItems, function(self, lineItem) {
 
     casper.waitForSelector('#topAddToCartButton', function() {
 
-      var form_length = this.evaluate(function() {return $('#lineItemsForm').length; });
+      // var form_length = this.evaluate(function() {return $('#lineItemsForm').length; });
 
-      casper.test.comment('form length: ' + form_length);
+      // casper.test.comment('form length: ' + form_length);
 
       // casper.waitFor( function check() {
       //   return this.evaluate(function() {
@@ -110,12 +110,7 @@ casper.each(lineItems, function(self, lineItem) {
 
         var size_dropdown_length = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').length; });
         var color_dropdown_length = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').length; });
-        var color_id = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').attr('id'); });
-
-        casper.test.comment('color dd id: ' + color_id);
-
-        casper.test.comment('size length: ' + size_dropdown_length);
-        casper.test.comment('color length: ' + color_dropdown_length);
+        // var color_id = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').attr('id'); });
 
         if(!size_dropdown_length && !color_dropdown_length) {
           casper.test.comment('ERROR: dropdowns not available yet. Exiting...');
