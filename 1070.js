@@ -718,7 +718,7 @@ casper.then(function () {
 
 // DISMISS ANY ORDER CONFIRMATION POP-UP END
 
-// OMG, CLICK ON SUBMIT
+//CLICK ON SUBMIT
 casper.then(function () {
 
   casper.wait(5000, function () {
@@ -728,7 +728,7 @@ casper.then(function () {
 
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
-        // casper.click('#submitOrder');
+        casper.click('#submitOrder');
         casper.test.comment('TOBEREMOVED: That submit button would have been CLICKED!');
       } else {
         casper.test.comment('Submit button visible!');
