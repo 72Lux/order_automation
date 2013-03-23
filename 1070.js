@@ -748,7 +748,8 @@ casper.then(function () {
 
     if(order.submitOrder) {
       if(casper.exists('#confirmSummary')) {
-        picit(order.id+'-confirmation');  // take a snapshot right before exit
+        var confirmationNumber = this.evaluate(function parseConfirmationNumber() { return $('#confirmSummary b').text();});
+        picit(order.id + '-confirmation-' + confirmationNumber);  // take a snapshot right before exit
         casper.exit(0);
       } else {
         casper.test.comment('ERROR: Could not find order confirmation text.');
