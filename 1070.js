@@ -486,7 +486,7 @@ casper.then(function () {
   function () {
     casper.test.comment('timed out waiting for shipping form');
     this.exit(15);
-  });
+  }, 20000);
 });
 
 // start filling out the shipping form
@@ -616,7 +616,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-' + lineItem.line_item_id + 'no-billing-form');
     casper.exit(17);
-  });
+  }, 20000);
 });
 
 casper.then(function () {
