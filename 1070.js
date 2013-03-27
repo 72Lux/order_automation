@@ -484,8 +484,9 @@ casper.then(function () {
     casper.test.comment('Begin filling out shipping form');
   },
   function () {
-    casper.test.comment('timed out waiting for shipping form');
-    this.exit(15);
+    casper.test.comment('Timed out, no shipping form present, exiting...');
+    picit(order.id + '-no-shipping-form');
+    casper.exit(15);
   }, 45000);
 });
 
