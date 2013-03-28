@@ -64,7 +64,7 @@ var casper = require("casper").create({
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
   },
-  verbose: true,
+  verbose: false,
   logLevel: "debug"
 });
 
@@ -76,8 +76,7 @@ var casper = require("casper").create({
 
 var order = JSON.parse(casper.cli.args);
 var auth = casper.cli.get('auth');
-
-casper.test.comment('AUTH: ' + auth);
+var commentUrl = casper.cli.get('comment-url');
 
 casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length + ' submitOrder: ' + order.submitOrder);
 
@@ -752,36 +751,84 @@ casper.then(function () {
 
     if(order.submitOrder) {
       if(casper.exists('#confirmSummary')) {
-        var confirmationNumber = this.evaluate(function parseConfirmationNumber() { return $('#confirmSummary').html();});
-        picit(order.id + '-confirmation-' + confirmationNumber);  // take a snapshot right before exit
-        casper.exit(0);
+
+        casper.then(function() {
+          var confirmationMsg = this.evaluate(function parseConfirmationMsg() { return $('#confirmSummary').html();});
+        });
+
+        if(auth && commentUrl) {
+
+          casper.then(function() {
+            casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+          });
+
+          casper.open(commentUrl, {
+              method: 'post',
+              data:   {
+                'comment': 'CONFIRMATION #: ' + confirmationMsg
+              },
+              headers: {
+                'Authorization' : auth
+              }
+          });
+
+          casper.then(function() {
+            casper.test.comment('Confirmation # posted!');
+          });
+
+        } else {
+          casper.then(function() {
+            casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+          });
+       }
+
+        casper.then(function() {
+          picit(order.id + '-confirmation');  // take a snapshot right before exit
+          casper.exit(0);
+        });
+
       } else {
-        casper.test.comment('ERROR: Could not find order confirmation text.');
-        casper.exit(20);
+        casper.then(function() {
+          casper.test.comment('ERROR: Could not find order confirmation text.');
+          casper.exit(20);
+        });
       }
+
     } else {
-      casper.test.comment('Submit is set to ' + order.submitOrder + ', so you will not see the confirmation page.');
-      casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
 
-      var r = casper.open('http://platform.lux:8888' + '/api/v1/admin/orders/comment/id/' + order.id, {
-          method: 'post',
-          data:   {
-            'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
-          },
-          headers: {
-            'Authorization' : auth
-          }
+      casper.then(function() {
+        casper.test.comment('Submit is set to ' + order.submitOrder + ', so you will not see the confirmation page.');
       });
 
-      casper.test.comment('RESPONSE: ' + r);
+      if(auth && commentUrl) {
 
-      casper.wait(5000, function () {
-        casper.test.comment('Confirmation # posted!');
+        casper.then(function() {
+          casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+        });
+
+        casper.open(commentUrl, {
+            method: 'post',
+            data:   {
+              'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
+            },
+            headers: {
+              'Authorization' : auth
+            }
+        });
+
+        casper.then(function() {
+          casper.test.comment('Confirmation # posted!');
+        });
+      } else {
+        casper.then(function() {
+          casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+        });
+      }
+
+      casper.then(function() {
+        picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
+        casper.exit(0);
       });
-
-      picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
-
-      casper.exit(0);
     }
   });
 });
