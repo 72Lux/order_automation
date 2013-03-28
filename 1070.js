@@ -64,7 +64,7 @@ var casper = require("casper").create({
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
   },
-  verbose: false,
+  verbose: true,
   logLevel: "debug"
 });
 
@@ -75,6 +75,10 @@ var casper = require("casper").create({
 // SELECTORS END
 
 var order = JSON.parse(casper.cli.args);
+var auth = casper.cli.get('auth');
+
+casper.test.comment('AUTH: ' + auth);
+
 casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length + ' submitOrder: ' + order.submitOrder);
 
 var lineItems = order.line_items;
@@ -592,7 +596,6 @@ casper.then(function () {
     }
   });
 
-  casper.test.comment('shipping zip: ' + sa.postal_code);
   casper.test.comment('shipping zip length: ' + sa.postal_code.length);
 
   testForm(order.id, 'shipping');
@@ -730,7 +733,7 @@ casper.then(function () {
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
         casper.click('#submitOrder');
-        casper.test.comment('TOBEREMOVED: That submit button would have been CLICKED!');
+        casper.test.comment('Submit button CLICKED!');
       } else {
         casper.test.comment('Submit button visible!');
       }
@@ -749,7 +752,7 @@ casper.then(function () {
 
     if(order.submitOrder) {
       if(casper.exists('#confirmSummary')) {
-        var confirmationNumber = this.evaluate(function parseConfirmationNumber() { return $('#confirmSummary b').text();});
+        var confirmationNumber = this.evaluate(function parseConfirmationNumber() { return $('#confirmSummary').html();});
         picit(order.id + '-confirmation-' + confirmationNumber);  // take a snapshot right before exit
         casper.exit(0);
       } else {
@@ -758,7 +761,26 @@ casper.then(function () {
       }
     } else {
       casper.test.comment('Submit is set to ' + order.submitOrder + ', so you will not see the confirmation page.');
+      casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+
+      var r = casper.open('http://platform.lux:8888' + '/api/v1/admin/orders/comment/id/' + order.id, {
+          method: 'post',
+          data:   {
+            'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
+          },
+          headers: {
+            'Authorization' : auth
+          }
+      });
+
+      casper.test.comment('RESPONSE: ' + r);
+
+      casper.wait(5000, function () {
+        casper.test.comment('Confirmation # posted!');
+      });
+
       picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
+
       casper.exit(0);
     }
   });
