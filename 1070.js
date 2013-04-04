@@ -75,6 +75,9 @@ var casper = require("casper").create({
 // SELECTORS END
 
 var order = JSON.parse(casper.cli.args);
+var auth = casper.cli.get('auth');
+var commentUrl = casper.cli.get('comment-url');
+
 casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length + ' submitOrder: ' + order.submitOrder);
 
 var lineItems = order.line_items;
@@ -484,9 +487,10 @@ casper.then(function () {
     casper.test.comment('Begin filling out shipping form');
   },
   function () {
-    casper.test.comment('timed out waiting for shipping form');
-    this.exit(15);
-  });
+    casper.test.comment('Timed out, no shipping form present, exiting...');
+    picit(order.id + '-no-shipping-form');
+    casper.exit(15);
+  }, 45000);
 });
 
 // start filling out the shipping form
@@ -591,7 +595,6 @@ casper.then(function () {
     }
   });
 
-  casper.test.comment('shipping zip: ' + sa.postal_code);
   casper.test.comment('shipping zip length: ' + sa.postal_code.length);
 
   testForm(order.id, 'shipping');
@@ -614,9 +617,9 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
-    picit(order.id + '-' + lineItem.line_item_id + 'no-billing-form');
+    picit(order.id + '-no-billing-form');
     casper.exit(17);
-  });
+  }, 45000);
 });
 
 casper.then(function () {
@@ -729,7 +732,7 @@ casper.then(function () {
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
         casper.click('#submitOrder');
-        casper.test.comment('TOBEREMOVED: That submit button would have been CLICKED!');
+        casper.test.comment('Submit button CLICKED!');
       } else {
         casper.test.comment('Submit button visible!');
       }
@@ -748,17 +751,84 @@ casper.then(function () {
 
     if(order.submitOrder) {
       if(casper.exists('#confirmSummary')) {
-        var confirmationNumber = this.evaluate(function parseConfirmationNumber() { return $('#confirmSummary b').text();});
-        picit(order.id + '-confirmation-' + confirmationNumber);  // take a snapshot right before exit
-        casper.exit(0);
+
+        casper.then(function() {
+          var confirmationMsg = this.evaluate(function parseConfirmationMsg() { return $('#confirmSummary').html();});
+        });
+
+        if(auth && commentUrl) {
+
+          casper.then(function() {
+            casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+          });
+
+          casper.open(commentUrl, {
+              method: 'post',
+              data:   {
+                'comment': 'CONFIRMATION #: ' + confirmationMsg
+              },
+              headers: {
+                'Authorization' : auth
+              }
+          });
+
+          casper.then(function() {
+            casper.test.comment('Confirmation # posted!');
+          });
+
+        } else {
+          casper.then(function() {
+            casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+          });
+       }
+
+        casper.then(function() {
+          picit(order.id + '-confirmation');  // take a snapshot right before exit
+          casper.exit(0);
+        });
+
       } else {
-        casper.test.comment('ERROR: Could not find order confirmation text.');
-        casper.exit(20);
+        casper.then(function() {
+          casper.test.comment('ERROR: Could not find order confirmation text.');
+          casper.exit(20);
+        });
       }
+
     } else {
-      casper.test.comment('Submit is set to ' + order.submitOrder + ', so you will not see the confirmation page.');
-      picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
-      casper.exit(0);
+
+      casper.then(function() {
+        casper.test.comment('Submit is set to ' + order.submitOrder + ', so you will not see the confirmation page.');
+      });
+
+      if(auth && commentUrl) {
+
+        casper.then(function() {
+          casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+        });
+
+        casper.open(commentUrl, {
+            method: 'post',
+            data:   {
+              'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
+            },
+            headers: {
+              'Authorization' : auth
+            }
+        });
+
+        casper.then(function() {
+          casper.test.comment('Confirmation # posted!');
+        });
+      } else {
+        casper.then(function() {
+          casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+        });
+      }
+
+      casper.then(function() {
+        picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
+        casper.exit(0);
+      });
     }
   });
 });
