@@ -460,6 +460,7 @@ casper.then(function () {
 casper.then(function () {
   if(this.exists('#anonSignInBtn')) {
     casper.click('#anonSignInBtn');
+    casper.test.comment('anonSignInBtn clicked!');
   } else {
     casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
     picit(order.id + '-14');
