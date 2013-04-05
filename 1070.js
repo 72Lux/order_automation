@@ -505,7 +505,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
     picit(order.id + '-15');
     casper.exit(15);
-  }, 80000);
+  }, 100000);
 });
 
 // start filling out the shipping form
@@ -635,7 +635,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-17');
     casper.exit(17);
-  }, 80000);
+  }, 100000);
 });
 
 casper.then(function () {
