@@ -44,11 +44,11 @@ testForm = (function (orderId, formType) {
       casper.test.comment(this.evaluate(function () {
         return $('table.coErrorMessageClass td.text').text();
       }));
-      picit(orderId + '-' + formType + '-form-error');
-      casper.test.comment('Exiting...');
       if(formType && (formType === 'shipping')) {
+        picit(orderId + '-34');
         this.exit(34);
       } else {
+        picit(orderId + '-35');
         this.exit(35);
       }
     },
@@ -91,7 +91,7 @@ casper.each(lineItems, function(self, lineItem) {
 
     casper.test.comment(this.getTitle());
 
-    picit(order.id + '-before-anything');
+    // picit(order.id + '-before-anything');
 
     casper.waitForSelector('#topAddToCartButton', function() {
 
@@ -145,6 +145,7 @@ casper.each(lineItems, function(self, lineItem) {
                 casper.test.comment('Color text matched for: ' + lineItem.color);
               } else {
                 casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + ' for size: ' + lineItem.size + '. Exiting...');
+                picit(order.id + '-32');
                 this.exit(32);
               }
 
@@ -165,6 +166,7 @@ casper.each(lineItems, function(self, lineItem) {
                       }, false);
                     } else {
                       casper.test.comment('qty is required');
+                      picit(order.id + '-42');
                       this.exit(42);
                     }
 
@@ -174,7 +176,7 @@ casper.each(lineItems, function(self, lineItem) {
                   } else {
 
                     casper.test.comment('Product is not in stock');
-                    picit(order.id + '-' + lineItem.line_item_id + '-unavailable');
+                    picit(order.id + '-31');
                     this.exit(31);
 
                   }
@@ -185,6 +187,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color or size unavailable: ' + lineItem.color + ' / ' + lineItem.size + '. Exiting...');
+              picit(order.id + '-32');
               this.exit(32);
             }
           });
@@ -225,6 +228,7 @@ casper.each(lineItems, function(self, lineItem) {
                       }, false);
                     } else {
                       casper.test.comment('qty is required');
+                      picit(order.id + '-42');
                       this.exit(42);
                     }
 
@@ -234,7 +238,7 @@ casper.each(lineItems, function(self, lineItem) {
                   } else {
 
                     casper.test.comment('Product is not in stock');
-                    picit(order.id + '-' + lineItem.line_item_id + '-unavailable');
+                    picit(order.id + '-31');
                     this.exit(31);
 
                   }
@@ -245,6 +249,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
+              picit(order.id + '-33');
               this.exit(33);
             }
           });
@@ -271,6 +276,7 @@ casper.each(lineItems, function(self, lineItem) {
                   }, false);
                 } else {
                   casper.test.comment('qty is required');
+                  picit(order.id + '-42');
                   this.exit(42);
                 }
 
@@ -280,7 +286,7 @@ casper.each(lineItems, function(self, lineItem) {
               } else {
 
                 casper.test.comment('Product is not in stock');
-                picit(order.id + '-' + lineItem.line_item_id + '-unavailable');
+                picit(order.id + '-31');
                 this.exit(31);
 
               }
@@ -293,6 +299,7 @@ casper.each(lineItems, function(self, lineItem) {
           // exit with error
           // casper.test.comment('ERROR : COLOR & SIZE');
           casper.test.comment('ERROR: BAD! No conditions matched for: ' + lineItem.color + ' & ' + lineItem.size);
+          picit(order.id + '-41');
           this.exit(41);
 
         }
@@ -336,6 +343,7 @@ casper.each(lineItems, function(self, lineItem) {
                       }, false);
                     } else {
                       casper.test.comment('qty is required');
+                      picit(order.id + '-42');
                       this.exit(42);
                     }
 
@@ -345,7 +353,7 @@ casper.each(lineItems, function(self, lineItem) {
                   } else {
 
                     casper.test.comment('Product is not in stock');
-                    picit(order.id + '-' + lineItem.line_item_id + '-unavailable');
+                    picit(order.id + '-31');
                     this.exit(31);
 
                   }
@@ -356,6 +364,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             } else {
               casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
+              picit(order.id + '-33');
               this.exit(33);
             }
           });
@@ -364,6 +373,7 @@ casper.each(lineItems, function(self, lineItem) {
           // exit with error
           // casper.test.comment('ERROR : COLOR ONLY');
           casper.test.coment('ERROR: BAD! Color dropdown not found');
+          picit(order.id + '-11');
           this.exit(11);
 
         }
@@ -389,6 +399,7 @@ casper.each(lineItems, function(self, lineItem) {
                 }, false);
               } else {
                 casper.test.comment('qty is required');
+                picit(order.id + '-42');
                 this.exit(42);
               }
 
@@ -398,7 +409,7 @@ casper.each(lineItems, function(self, lineItem) {
             } else {
 
               casper.test.comment('Product is not in stock');
-              picit(order.id + '-' + lineItem.line_item_id + '-unavailable');
+              picit(order.id + '-31');
               this.exit(31);
 
             }
@@ -410,6 +421,7 @@ casper.each(lineItems, function(self, lineItem) {
     }, function() {
 
       casper.test.comment('Timed out waiting for add to bag button');
+      picit(order.id + '-12');
       this.exit(12);
 
     });
@@ -433,6 +445,7 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('Timed out waiting for checkout link');
+    picit(order.id + '-13');
     this.exit(13);
   });
 });
@@ -448,6 +461,7 @@ casper.then(function () {
     casper.click('#anonSignInBtn');
   } else {
     casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
+    picit(order.id + '-14');
     this.exit(14);
   }
 });
@@ -488,9 +502,9 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
-    picit(order.id + '-no-shipping-form');
+    picit(order.id + '-15');
     casper.exit(15);
-  }, 45000);
+  }, 50000);
 });
 
 // start filling out the shipping form
@@ -579,9 +593,9 @@ casper.then(function () {
     document.querySelector('#useAsBillingFlag_se').checked = false;
   });
 
-  casper.then( function () {
-    picit(order.id + '-shipping-form-before-submit');
-  });
+  // casper.then( function () {
+  //   picit(order.id + '-shipping-form-before-submit');
+  // });
 
   // click NEXT step
   casper.then(function () {
@@ -591,6 +605,7 @@ casper.then(function () {
       });
     } else {
       casper.test.comment('ERROR: Next button not found on shipping form');
+      picit(order.id + '-16');
       this.exit(16);
     }
   });
@@ -617,9 +632,9 @@ casper.then(function () {
   },
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
-    picit(order.id + '-no-billing-form');
+    picit(order.id + '-17');
     casper.exit(17);
-  }, 45000);
+  }, 50000);
 });
 
 casper.then(function () {
@@ -680,9 +695,9 @@ casper.then(function () {
 
 });
 
-casper.then( function () {
-  picit(order.id + '-billing-form-before-submit');
-});
+// casper.then( function () {
+//   picit(order.id + '-billing-form-before-submit');
+// });
 
 // click next to review
 casper.then(function () {
@@ -692,6 +707,7 @@ casper.then(function () {
     });
   } else {
     casper.test.comment('ERROR: Save payment button not available');
+    picit(order.id + '-18');
     this.exit(18);
   }
 });
@@ -739,6 +755,7 @@ casper.then(function () {
 
     } else {
       casper.test.comment('ERROR: Submit order button not available');
+      picit(order.id + '-18');
       this.exit(18);
     }
   });
@@ -783,13 +800,14 @@ casper.then(function () {
        }
 
         casper.then(function() {
-          picit(order.id + '-confirmation');  // take a snapshot right before exit
+          picit(order.id + '-0');
           casper.exit(0);
         });
 
       } else {
         casper.then(function() {
           casper.test.comment('ERROR: Could not find order confirmation text.');
+          picit(order.id + '-20');
           casper.exit(20);
         });
       }
@@ -826,7 +844,7 @@ casper.then(function () {
       }
 
       casper.then(function() {
-        picit(order.id+'-mock-confirmation');  // take a snapshot right before exit
+        picit(order.id + '-0');
         casper.exit(0);
       });
     }
