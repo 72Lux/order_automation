@@ -21,7 +21,7 @@ require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = 'screen_caps/' + filename + '.png' || 'screen_caps/results.png';
+  filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
@@ -77,6 +77,7 @@ var casper = require("casper").create({
 var order = JSON.parse(casper.cli.args);
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
+var imageHome = casper.cli.get('image-home');
 
 casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length + ' submitOrder: ' + order.submitOrder);
 
