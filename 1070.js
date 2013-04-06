@@ -458,14 +458,17 @@ casper.then(function () {
 
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
-  if(this.exists('#anonSignInBtn')) {
-    casper.click('#anonSignInBtn');
-    casper.test.comment('anonSignInBtn clicked!');
-  } else {
-    casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
-    picit(order.id + '-14');
-    this.exit(14);
-  }
+
+  casper.wait(5000, function () {
+    if(this.exists('#anonSignInBtn')) {
+      casper.click('#anonSignInBtn');
+      casper.test.comment('anonSignInBtn clicked!');
+    } else {
+      casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
+      picit(order.id + '-14');
+      this.exit(14);
+    }
+  });
 });
 
 // HEAD TO CHECKOUT END
