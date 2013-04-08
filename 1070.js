@@ -458,7 +458,7 @@ casper.then(function () {
   casper.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]');
 });
 
-casper.waitForResource("general.js", function() {
+casper.waitForResource("checkout.js", function() {
     this.echo('general.js has been loaded.');
 }, function() {
   casper.test.comment('Js required for anon-click did not load, exiting...');
