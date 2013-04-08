@@ -481,7 +481,7 @@ casper.then(function () {
 //check for samples pop-up
 casper.then(function () {
 
-  casper.waitFor(5000, function () {
+  casper.wait(5000, function () {
     if(this.exists('#samplesNoButton')) {
       casper.click('#samplesNoButton');
       casper.test.comment('Samples pop-up appeared');
