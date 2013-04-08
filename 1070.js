@@ -87,6 +87,8 @@ casper.start();
 
 // ADD ITEMS BEGIN
 
+casper.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31');
+
 casper.each(lineItems, function(self, lineItem) {
   this.thenOpen(lineItem.affiliate_url, function() {
 
