@@ -502,16 +502,11 @@ casper.then(function () {
 
 // SHIPPING FORM BEGIN
 
-casper.waitForResource("general.js", function() {
-    this.echo('general.js has been loaded #2.');
-}, function() {
-  casper.test.comment('Js required for shipping form did not load, exiting...');
-  picit(order.id + '-15');
-  casper.exit(15);
-}, 120000);
-
 // check for shipping form
 casper.then(function () {
+
+  casper.test.comment('Starting to wait for shipping form...');
+
   casper.waitFor(function () {
     return this.evaluate(function () {
       return document.querySelectorAll('#shippingForm_se').length;
