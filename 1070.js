@@ -459,7 +459,7 @@ casper.then(function () {
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
 
-  casper.wait(30000, function () {
+  casper.waitForResource('general.js', function () {
     if(this.exists('#anonSignInBtn')) {
       casper.click('#anonSignInBtn');
       casper.test.comment('anonSignInBtn clicked!');
@@ -468,7 +468,7 @@ casper.then(function () {
       picit(order.id + '-14');
       this.exit(14);
     }
-  });
+  }, 120000);
 });
 
 // HEAD TO CHECKOUT END
@@ -481,7 +481,7 @@ casper.then(function () {
 //check for samples pop-up
 casper.then(function () {
 
-  casper.wait(2000, function () {
+  casper.waitFor(5000, function () {
     if(this.exists('#samplesNoButton')) {
       casper.click('#samplesNoButton');
       casper.test.comment('Samples pop-up appeared');
@@ -497,7 +497,7 @@ casper.then(function () {
 
 // check for shipping form
 casper.then(function () {
-  casper.waitFor(function () {
+  casper.waitForResource('general.js',function () {
     return this.evaluate(function () {
       return document.querySelectorAll('#shippingForm_se').length;
     });
@@ -509,7 +509,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
     picit(order.id + '-15');
     casper.exit(15);
-  }, 100000);
+  }, 120000);
 });
 
 // start filling out the shipping form
@@ -627,7 +627,7 @@ casper.then(function () {
 
 // check for billing form
 casper.then(function () {
-  casper.waitFor(function () {
+  casper.waitForResource('general.js', function () {
     return this.evaluate(function () {
       return document.querySelectorAll('form#billingForm').length;
     });
@@ -639,7 +639,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-17');
     casper.exit(17);
-  }, 100000);
+  }, 120000);
 });
 
 casper.then(function () {
