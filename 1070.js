@@ -459,7 +459,7 @@ casper.then(function () {
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
 
-  casper.wait(5000, function () {
+  casper.wait(30000, function () {
     if(this.exists('#anonSignInBtn')) {
       casper.click('#anonSignInBtn');
       casper.test.comment('anonSignInBtn clicked!');
