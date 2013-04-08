@@ -456,6 +456,14 @@ casper.then(function () {
   casper.click('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]');
 });
 
+casper.waitForResource("general.js", function() {
+    this.echo('general.js has been loaded #1.');
+}, function() {
+  casper.test.comment('Js required for shipping form did not load, exiting...');
+  picit(order.id + '-15');
+  casper.exit(15);
+}, 120000);
+
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
   casper.wait(120000, function () {
@@ -495,7 +503,7 @@ casper.then(function () {
 // SHIPPING FORM BEGIN
 
 casper.waitForResource("general.js", function() {
-    this.echo('general.js has been loaded.');
+    this.echo('general.js has been loaded #2.');
 }, function() {
   casper.test.comment('Js required for shipping form did not load, exiting...');
   picit(order.id + '-15');
