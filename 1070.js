@@ -459,7 +459,7 @@ casper.then(function () {
 });
 
 casper.waitForResource("general.js", function() {
-    this.echo('general.js has been loaded #1.');
+    this.echo('general.js has been loaded.');
 }, function() {
   casper.test.comment('Js required for anon-click did not load, exiting...');
   picit(order.id + '-15');
@@ -505,24 +505,38 @@ casper.then(function () {
 // SHIPPING FORM BEGIN
 
 // check for shipping form
+// casper.then(function () {
+
+//   casper.test.comment('Starting to wait for shipping form...');
+
+//   casper.waitFor(function () {
+
+//     // return this.evaluate(function () {
+//     //   // return document.querySelectorAll('#shippingForm_se').length;
+//     // });
+
+//     var shippingAvailable = this.evaluate(function checkForShipping() {
+//                               return $('#shippingForm_se').length ;
+//                             });
+//     casper.test.comment('shippingAvailable: ' + shippingAvailable);
+//     return shippingAvailable;
+
+//   },
+//   function () {
+//     casper.test.comment('Begin filling out shipping form');
+//   },
+//   function () {
+//     casper.test.comment('Timed out, no shipping form present, exiting...');
+//     picit(order.id + '-15');
+//     casper.exit(15);
+//   }, 120000);
+// });
+
 casper.then(function () {
 
   casper.test.comment('Starting to wait for shipping form...');
 
-  casper.waitFor(function () {
-
-    // return this.evaluate(function () {
-    //   // return document.querySelectorAll('#shippingForm_se').length;
-    // });
-
-    var shippingAvailable = this.evaluate(function checkForShipping() {
-                              return $('#shippingForm_se').length ;
-                            });
-    casper.test.comment('shippingAvailable: ' + shippingAvailable);
-    return shippingAvailable;
-
-  },
-  function () {
+  casper.waitForSelector('#shippingForm_se', function() {
     casper.test.comment('Begin filling out shipping form');
   },
   function () {
@@ -530,6 +544,7 @@ casper.then(function () {
     picit(order.id + '-15');
     casper.exit(15);
   }, 120000);
+
 });
 
 // start filling out the shipping form
