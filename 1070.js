@@ -494,6 +494,14 @@ casper.then(function () {
 
 // SHIPPING FORM BEGIN
 
+casper.waitForResource("general.js", function() {
+    this.echo('general.js has been loaded.');
+}, function() {
+  casper.test.comment('Js required for shipping form did not load, exiting...');
+  picit(order.id + '-15');
+  casper.exit(15);
+}, 120000);
+
 // check for shipping form
 casper.then(function () {
   casper.waitFor(function () {
