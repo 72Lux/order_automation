@@ -459,7 +459,7 @@ casper.then(function () {
 casper.waitForResource("general.js", function() {
     this.echo('general.js has been loaded #1.');
 }, function() {
-  casper.test.comment('Js required for shipping form did not load, exiting...');
+  casper.test.comment('Js required for anon-click did not load, exiting...');
   picit(order.id + '-15');
   casper.exit(15);
 }, 120000);
