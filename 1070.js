@@ -510,9 +510,17 @@ casper.then(function () {
   casper.test.comment('Starting to wait for shipping form...');
 
   casper.waitFor(function () {
-    return this.evaluate(function () {
-      return document.querySelectorAll('#shippingForm_se').length;
-    });
+
+    // return this.evaluate(function () {
+    //   // return document.querySelectorAll('#shippingForm_se').length;
+    // });
+
+    var shippingAvailable = this.evaluate(function checkForShipping() {
+                              return $('#shippingForm_se').length ;
+                            });
+    casper.test.comment('shippingAvailable: ' + shippingAvailable);
+    return shippingAvailable;
+
   },
   function () {
     casper.test.comment('Begin filling out shipping form');
