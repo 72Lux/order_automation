@@ -459,7 +459,7 @@ casper.then(function () {
 });
 
 casper.waitForResource("checkout.js", function() {
-    this.echo('general.js has been loaded.');
+    this.echo('checkout.js has been loaded.');
 }, function() {
   casper.test.comment('Js required for anon-click did not load, exiting...');
   picit(order.id + '-15');
@@ -470,7 +470,14 @@ casper.waitForResource("checkout.js", function() {
 casper.then(function () {
   casper.wait(120000, function () {
     if(this.exists('#anonSignInBtn')) {
-      casper.click('#anonSignInBtn');
+      // casper.click('#anonSignInBtn');
+
+      this.evaluate(function(){
+        var evt = document.createEvent("MouseEvents");
+        evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        document.querySelector("#anonSignInBtn").dispatchEvent(evt);
+      });
+
       casper.test.comment('anonSignInBtn clicked!');
     } else {
       casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
