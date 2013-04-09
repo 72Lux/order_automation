@@ -617,7 +617,20 @@ casper.then(function () {
 
  // TEMP!
   casper.then(function () {
-    casper.click('#shippingSave');
+    var _c = this.evaluate(function() {
+      var click = $('#shippingSave').attr('onclick');
+      return click;
+    });
+
+    var _re = _c.match("submitShipping\\(\\'(.*)\\'\\)");
+
+    casper.test.comment('_re[0]: ' + _re[0]);
+    casper.test.comment('_re[1]: ' + _re[1]);
+
+    this.evaluate(function (identifier) {
+      shipping.submitShipping(identifier.toString());
+    }, _re[1]);
+
   });
 
   casper.then(function () {
