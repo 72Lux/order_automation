@@ -495,25 +495,10 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 
 });
 
-
-// make sure the anonCheckout button is there and click it
-// casper.then(function () {
-//   casper.wait(120000, function () {
-//     if(this.exists('#anonSignInBtn')) {
-//       // casper.click('#anonSignInBtn');
-
-//       casper.test.comment('anonSignInBtn clicked!');
-//     } else {
-//       casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
-//       picit(order.id + '-14');
-//       this.exit(14);
-//     }
-//   });
-// });
-
 // HEAD TO CHECKOUT END
 
 // SAMPLES POP-UP BEGIN
+// TODO: don't know if we need this in the mobile checkout
 
 // sometimes a 'sample' pop-up appears at this stage
 // check for it, and if it has appeared, dismiss it!
@@ -536,32 +521,6 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 // SHIPPING FORM BEGIN
 
 // check for shipping form
-// casper.then(function () {
-
-//   casper.test.comment('Starting to wait for shipping form...');
-
-//   casper.waitFor(function () {
-
-//     // return this.evaluate(function () {
-//     //   // return document.querySelectorAll('#shippingForm_se').length;
-//     // });
-
-//     var shippingAvailable = this.evaluate(function checkForShipping() {
-//                               return $('#shippingForm_se').length ;
-//                             });
-//     casper.test.comment('shippingAvailable: ' + shippingAvailable);
-//     return shippingAvailable;
-
-//   },
-//   function () {
-//     casper.test.comment('Begin filling out shipping form');
-//   },
-//   function () {
-//     casper.test.comment('Timed out, no shipping form present, exiting...');
-//     picit(order.id + '-15');
-//     casper.exit(15);
-//   }, 120000);
-// });
 
 casper.then(function () {
 
@@ -598,23 +557,6 @@ casper.then(function () {
     $select.val(_option);
     $select.change();
   }, sa.short_state);
-
-  // this.evaluate(function () {
-
-  //   var $select = $('select#saPhoneType');
-  //   var _option = sa.phone;
-  //   // select other
-  //   $select.val(_option);
-  //   $select.change();
-  // });
-
-  // this.evaluate(function () {
-  //   var $select = $('select.shippingmethod');
-  //   var _option = 'SL3';
-  //   // ship via standard
-  //   $select.val(_option);
-  //   $select.change();
-  // });
 
   var formValues = {
     'input#saFirstName' : sa.first_name,
@@ -673,12 +615,14 @@ casper.then(function () {
   //   picit(order.id + '-shipping-form-before-submit');
   // });
 
-  casper.click('#shippingSave');
-
  // TEMP!
   casper.then(function () {
+    casper.click('#shippingSave');
+  });
+
+  casper.then(function () {
     casper.wait(5000, function () {
-      picit(order.id + '-0');
+      picit(order.id + '-shippingSaveClick');
       this.exit(0);
     });
   });
