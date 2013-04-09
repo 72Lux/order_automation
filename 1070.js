@@ -36,7 +36,7 @@ testForm = (function (orderId, formType) {
   return casper.then(function () {
     casper.waitFor(function () {
       return this.evaluate(function () {
-        return document.querySelectorAll('table.coErrorMessageClass').length;
+        return document.querySelectorAll('#errmsg').length;
       });
     },
     function () {
