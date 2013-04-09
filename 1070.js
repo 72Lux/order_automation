@@ -31,41 +31,44 @@ picit = (function (filename) {
   });
 });
 
-// test whether any error messages popped up
-testForm = (function (orderId, formType) {
-  return casper.then(function () {
-    casper.waitFor(function () {
-      return this.evaluate(function () {
-        return document.querySelectorAll('#errmsg').length;
-      });
-    },
-    function () {
-      casper.test.comment('Error present in ' + formType + ' form.');
-      casper.test.comment(this.evaluate(function () {
-        return $('table.coErrorMessageClass td.text').text();
-      }));
-      if(formType && (formType === 'shipping')) {
-        picit(orderId + '-34');
-        this.exit(34);
-      } else {
-        picit(orderId + '-35');
-        this.exit(35);
-      }
-    },
-    function () {
-      casper.test.comment('No errors found on form');
-    });
-  });
-});
-
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js"],
   onAlert: function () {
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
+    exit(1);
   },
   verbose: false,
   logLevel: "debug"
+});
+
+// test whether any error messages popped up
+testForm = (function (orderId, formType) {
+
+  return true;
+
+  // var errorLength = casper.evaluate(function() {
+  //   return $('#errmsg').length;
+  // });
+
+  // if(errorLength) {
+
+  //   casper.test.comment('Error present in ' + formType + ' form.');
+  //   casper.test.comment(casper.evaluate(function () {
+  //     return $('#errmsg').text();
+  //   }));
+  //   if(formType && (formType === 'shipping')) {
+  //     picit(orderId + '-34');
+  //     casper.exit(34);
+  //   } else {
+  //     picit(orderId + '-35');
+  //     casper.exit(35);
+  //   }
+
+  // } else {
+  //   casper.test.comment('No errors found on ' +  formType + ' form');
+  // }
+
 });
 
 // casper.on('remote.message', function(msg) {
@@ -615,7 +618,9 @@ casper.then(function () {
   //   picit(order.id + '-shipping-form-before-submit');
   // });
 
- // TEMP!
+  // the onclick on the shipping function doesn't work
+  // so extract the id from that code and evaluate a direct call to that function
+
   casper.then(function () {
     var _c = this.evaluate(function() {
       var click = $('#shippingSave').attr('onclick');
@@ -624,8 +629,7 @@ casper.then(function () {
 
     var _re = _c.match("submitShipping\\(\\'(.*)\\'\\)");
 
-    casper.test.comment('_re[0]: ' + _re[0]);
-    casper.test.comment('_re[1]: ' + _re[1]);
+    casper.test.comment('shipping id: ' + _re[1]);
 
     this.evaluate(function (identifier) {
       shipping.submitShipping(identifier.toString());
@@ -635,8 +639,7 @@ casper.then(function () {
 
   casper.then(function () {
     casper.wait(5000, function () {
-      picit(order.id + '-shippingSaveClick');
-      this.exit(0);
+      picit(order.id + '-debug-after-shipping-click');
     });
   });
 
@@ -666,19 +669,16 @@ casper.then(function () {
 
 // check for billing form
 casper.then(function () {
-  casper.waitFor(function () {
-    return this.evaluate(function () {
-      return document.querySelectorAll('form#billingForm').length;
-    });
-  },
-  function () {
-    casper.test.comment('Billing form present, begin filling it out!');
+
+  casper.waitForSelector('#payment', function() {
+    casper.test.comment('Begin filling out billing form');
   },
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-17');
     casper.exit(17);
   }, 120000);
+
 });
 
 casper.then(function () {
@@ -700,13 +700,13 @@ casper.then(function () {
     $select.change();
   }, ba.short_state);
 
-  this.evaluate(function () {
-    var $select = $('select#billingAddrPhoneType');
-    var _option = ba.phone;
-    // select other
-    $select.val(_option);
-    $select.change();
-  });
+  // this.evaluate(function () {
+  //   var $select = $('select#billingAddrPhoneType');
+  //   var _option = ba.phone;
+  //   // select other
+  //   $select.val(_option);
+  //   $select.change();
+  // });
 
   this.evaluate(function (card_type) {
     var $select = $('select#cardtype');
@@ -744,20 +744,43 @@ casper.then(function () {
 // });
 
 // click next to review
+// casper.then(function () {
+//   if(casper.exists('span#paymentSave')) {
+//     casper.wait(2000, function () {
+//       casper.click('span#paymentSave');
+//     });
+//   } else {
+//     casper.test.comment('ERROR: Save payment button not available');
+//     picit(order.id + '-18');
+//     this.exit(18);
+//   }
+// });
+
 casper.then(function () {
-  if(casper.exists('span#paymentSave')) {
-    casper.wait(2000, function () {
-      casper.click('span#paymentSave');
-    });
-  } else {
-    casper.test.comment('ERROR: Save payment button not available');
-    picit(order.id + '-18');
-    this.exit(18);
-  }
+  var _c = this.evaluate(function() {
+    var click = $('#paymentSave').attr('onclick');
+    return click;
+  });
+
+  var _re = _c.match("submit\\(\\'(.*)\\'\\)");
+
+  casper.test.comment('payment id: ' + _re[1]);
+
+  this.evaluate(function (identifier) {
+    payment.submit(identifier.toString());
+  }, _re[1]);
+
+});
+
+casper.then(function () {
+  casper.wait(5000, function () {
+    picit(order.id + '-debug-after-billing-click');
+    this.exit(0);
+  });
 });
 
 // test to see if any errors popped
-testForm(order.id, 'billing');
+// testForm(order.id, 'billing');
 
 // BILLING FORM END
 
@@ -785,13 +808,17 @@ casper.then(function () {
 casper.then(function () {
 
   casper.wait(5000, function () {
-    if(casper.exists('#submitOrder')) {
+    if(casper.exists('.placeOrder')) {
 
       casper.test.comment('order.submitOrder set to: ' + order.submitOrder);
 
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
-        casper.click('#submitOrder');
+
+        this.evaluate(function() {
+          payment.placeOrder();
+        });
+
         casper.test.comment('Submit button CLICKED!');
       } else {
         casper.test.comment('Submit button visible!');
