@@ -464,7 +464,9 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 
     casper.test.comment('cartContinue visible!');
 
-    casper.click('#cartContinue');
+    this.evaluate(function() { mobileCart.shoppingCartTrans(); });
+
+    // casper.click('#cartContinue');
     casper.test.comment('cartContinue clicked.');
 
   }, function() {
