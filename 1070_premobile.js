@@ -85,9 +85,9 @@ var lineItems = order.line_items;
 
 casper.start();
 
-casper.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31');
-
 // ADD ITEMS BEGIN
+
+casper.userAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25');
 
 casper.each(lineItems, function(self, lineItem) {
   this.thenOpen(lineItem.affiliate_url, function() {
@@ -437,77 +437,56 @@ casper.each(lineItems, function(self, lineItem) {
 // HEAD TO CHECKOUT BEGIN
 
 // verify link is available
-// casper.then(function () {
-//   casper.waitFor(function () {
-//     return this.evaluate(function () {
-//       return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
-//     });
-//   },
-//   function () {
-//     casper.test.comment('Link to checkout visible');
-//   },
-//   function () {
-//     casper.test.comment('Timed out waiting for checkout link');
-//     picit(order.id + '-13');
-//     this.exit(13);
-//   });
-// });
-
-
-casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
+casper.then(function () {
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
+    });
+  },
+  function () {
+    casper.test.comment('Link to checkout visible');
+  },
+  function () {
+    casper.test.comment('Timed out waiting for checkout link');
+    picit(order.id + '-13');
+    this.exit(13);
+  });
+});
 
 // click checkout link
-casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true', function () {
-
-  // wait for cartContinue
-  casper.waitForSelector('#cartContinue', function() {
-
-    casper.test.comment('cartContinue visible!');
-
-    casper.click('#cartContinue');
-    casper.test.comment('cartContinue clicked.');
-
-  }, function() {
-
-    casper.test.comment('Timed out waiting for cartContinue...');
-    picit(order.id + '-1');
-    this.exit(1);
-
-  }, 60000);
-
-  casper.waitForSelector('#mAnonSignInBtn', function() {
-
-    casper.test.comment('mAnonSignInBtn visible!');
-
-    casper.click('#mAnonSignInBtn');
-    casper.test.comment('mAnonSignInBtn clicked.');
-
-  }, function() {
-
-    casper.test.comment('Timed out waiting for mAnonSignInBtn...');
-    picit(order.id + '-1');
-    this.exit(1);
-
-  }, 60000);
-
+casper.then(function () {
+  casper.click('a[href="https://www.neimanmarcus.com/mcheckout.jsp?perCatId=&catqo=&co=true"]');
 
 });
 
+casper.waitForResource("checkout.js", function() {
+    this.echo('checkout.js has been loaded.');
+}, function() {
+  casper.test.comment('Js required for anon-click did not load, exiting...');
+  picit(order.id + '-15');
+  casper.exit(15);
+}, 120000);
 
 // make sure the anonCheckout button is there and click it
-// casper.then(function () {
-//   casper.wait(120000, function () {
-//     if(this.exists('#anonSignInBtn')) {
-//       // casper.click('#anonSignInBtn');
+casper.then(function () {
+  casper.wait(120000, function () {
+    if(this.exists('#anonSignInBtn')) {
+      // casper.click('#anonSignInBtn');
 
-//       casper.test.comment('anonSignInBtn clicked!');
-//     } else {
-//       casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
-//       picit(order.id + '-14');
-//       this.exit(14);
-//     }
-//   });
-// });
+      this.evaluate(function(){
+        var evt = document.createEvent("MouseEvents");
+        evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        document.querySelector("#anonSignInBtn").dispatchEvent(evt);
+      });
+
+      casper.test.comment('anonSignInBtn clicked!');
+    } else {
+      casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
+      picit(order.id + '-14');
+      this.exit(14);
+    }
+  });
+});
 
 // HEAD TO CHECKOUT END
 
@@ -517,17 +496,17 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 // check for it, and if it has appeared, dismiss it!
 
 //check for samples pop-up
-// casper.then(function () {
+casper.then(function () {
 
-//   casper.wait(2000, function () {
-//     if(this.exists('#samplesNoButton')) {
-//       casper.click('#samplesNoButton');
-//       casper.test.comment('Samples pop-up appeared');
-//     } else {
-//       casper.test.comment('No samples pop-up');
-//     }
-//   });
-// });
+  casper.wait(2000, function () {
+    if(this.exists('#samplesNoButton')) {
+      casper.click('#samplesNoButton');
+      casper.test.comment('Samples pop-up appeared');
+    } else {
+      casper.test.comment('No samples pop-up');
+    }
+  });
+});
 
 // SAMPLES POP-UP END
 
@@ -565,10 +544,8 @@ casper.then(function () {
 
   casper.test.comment('Starting to wait for shipping form...');
 
-  casper.waitForSelector('#addressEdit', function() {
+  casper.waitForSelector('#shippingForm_se', function() {
     casper.test.comment('Begin filling out shipping form');
-    picit(order.id + '-before-starting');
-
   },
   function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
@@ -584,44 +561,44 @@ casper.then(function () {
   var sa = order.shipping_address;
 
   this.evaluate(function () {
-    var $select = $('select#country');
+    var $select = $('select#country_se');
     var _option = 'US';
     $select.val(_option);
     $select.change();
   });
 
   this.evaluate(function (state) {
-    var $select = $('select#state');
+    var $select = $('select#state_se');
     var _option = state;
     $select.val(_option);
     $select.change();
   }, sa.short_state);
 
-  // this.evaluate(function () {
+  this.evaluate(function () {
 
-  //   var $select = $('select#saPhoneType');
-  //   var _option = sa.phone;
-  //   // select other
-  //   $select.val(_option);
-  //   $select.change();
-  // });
+    var $select = $('select#saPhoneType_se');
+    var _option = sa.phone;
+    // select other
+    $select.val(_option);
+    $select.change();
+  });
 
-  // this.evaluate(function () {
-  //   var $select = $('select.shippingmethod');
-  //   var _option = 'SL3';
-  //   // ship via standard
-  //   $select.val(_option);
-  //   $select.change();
-  // });
+  this.evaluate(function () {
+    var $select = $('select.shippingmethod');
+    var _option = 'SL3';
+    // ship via standard
+    $select.val(_option);
+    $select.change();
+  });
 
   var formValues = {
-    'input#saFirstName' : sa.first_name,
-    'input#saLastName' : sa.last_name,
-    'input#saAddressLine1' : sa.street1,
-    'input#saAddressLine2' : sa.street2,
-    'input#saCity' : sa.city,
-    'input#saZip' : sa.postal_code,
-    'input#saDayTelephone' : sa.phone
+    'input#saFirstName_se' : sa.first_name,
+    'input#saLastName_se' : sa.last_name,
+    'input#saAddressLine1_se' : sa.street1,
+    'input#saAddressLine2_se' : sa.street2,
+    'input#saCity_se' : sa.city,
+    'input#saZip_se' : sa.postal_code,
+    'input#saDayTelephone_se' : sa.phone
   };
 
   // This is for situations where form inputs have no name attribute
@@ -635,10 +612,10 @@ casper.then(function () {
   // eg: cole haan
   casper.then(function () {
 
-    if(this.exists('#saDeliveryTelephone')) {
+    if(this.exists('#saDeliveryTelephone_se')) {
 
       var optionalFormValues = {
-        'input#saDeliveryTelephone' : sa.phone
+        'input#saDeliveryTelephone_se' : sa.phone
       };
 
       this.evaluate(function (fields) {
@@ -655,49 +632,35 @@ casper.then(function () {
   });
 
   // Fill in that one radio selection
-  // this.fill('form#shippingForm', {
-  //   'poBox' : 'false'
-  // }, false);
-  this.evaluate(function () {
-    document.querySelector('#addr_po_false').checked = true;
-  });
+  this.fill('form#shippingForm_se', {
+    'poBox' : 'false'
+  }, false);
 
   // Check/uncheck useAsBillingFlag_se
   this.evaluate(function () {
-    document.querySelector('#useAsBillingFlag').checked = false;
+    document.querySelector('#useAsBillingFlag_se').checked = false;
   });
 
   // casper.then( function () {
   //   picit(order.id + '-shipping-form-before-submit');
   // });
 
-  casper.click('#shippingSave');
-
- // TEMP!
+  // click NEXT step
   casper.then(function () {
-    casper.wait(5000, function () {
-      picit(order.id + '-0');
-      this.exit(0);
-    });
+    if(casper.exists('span#shippingContinue_se')) {
+      casper.wait(2000, function () {
+        casper.click('span#shippingContinue_se');
+      });
+    } else {
+      casper.test.comment('ERROR: Next button not found on shipping form');
+      picit(order.id + '-16');
+      this.exit(16);
+    }
   });
 
+  casper.test.comment('shipping zip length: ' + sa.postal_code.length);
 
-  // click NEXT step
-  // casper.then(function () {
-  //   if(casper.exists('span#shippingContinue_se')) {
-  //     casper.wait(2000, function () {
-  //       casper.click('span#shippingContinue_se');
-  //     });
-  //   } else {
-  //     casper.test.comment('ERROR: Next button not found on shipping form');
-  //     picit(order.id + '-16');
-  //     this.exit(16);
-  //   }
-  // });
-
-  // casper.test.comment('shipping zip length: ' + sa.postal_code.length);
-
-  // testForm(order.id, 'shipping');
+  testForm(order.id, 'shipping');
 
 });
 
