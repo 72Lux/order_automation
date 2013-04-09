@@ -661,6 +661,23 @@ casper.then(function () {
 
   // testForm(order.id, 'shipping');
 
+  casper.then(function() {
+    var errorLength = this.evaluate(function() {
+      return $('#errmsg').length && $('#errmsg').is(':visible');
+    });
+
+    if(errorLength) {
+      casper.test.comment('Error present in shipping form.');
+      casper.test.comment(this.evaluate(function () {
+        return $('#errmsg').text();
+      }));
+      picit(order.id + '-34');
+      casper.exit(34);
+    } else {
+      casper.test.comment('No errors on shipping form.');
+    }
+  });
+
 });
 
 // SHIPPING FORM END
@@ -780,27 +797,42 @@ casper.then(function () {
 });
 
 // test to see if any errors popped
-// testForm(order.id, 'billing');
+  casper.then(function() {
+    var errorLength = this.evaluate(function() {
+      return $('#errmsg').length && $('#errmsg').is(':visible');
+    });
+
+    if(errorLength) {
+      casper.test.comment('Error present in billing form.');
+      casper.test.comment(this.evaluate(function () {
+        return $('#errmsg').text();
+      }));
+      picit(order.id + '-35');
+      casper.exit(35);
+    } else {
+      casper.test.comment('No errors on billing form.');
+    }
+  });
 
 // BILLING FORM END
 
 // DISMISS ANY ORDER CONFIRMATION POP-UP BEGIN
 
 // confirm address
-casper.then(function () {
-  casper.waitFor(function (){
-    return this.evaluate(function () {
-      return document.querySelector('#avAddressList form').length;
-    });
-  },
-  function (){
-    casper.test.comment('Need to verify address');
-    casper.click('span#verificationButton');
-  },
-  function (){
-    casper.test.comment('No need to verify address');
-  });
-});
+// casper.then(function () {
+//   casper.waitFor(function (){
+//     return this.evaluate(function () {
+//       return document.querySelector('#avAddressList form').length;
+//     });
+//   },
+//   function (){
+//     casper.test.comment('Need to verify address');
+//     casper.click('span#verificationButton');
+//   },
+//   function (){
+//     casper.test.comment('No need to verify address');
+//   });
+// });
 
 // DISMISS ANY ORDER CONFIRMATION POP-UP END
 
