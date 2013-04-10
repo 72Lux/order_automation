@@ -792,7 +792,6 @@ casper.then(function () {
 casper.then(function () {
   casper.wait(5000, function () {
     picit(order.id + '-debug-after-billing-click');
-    this.exit(0);
   });
 });
 
