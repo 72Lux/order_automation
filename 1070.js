@@ -1,3 +1,11 @@
+// NOTE:
+// This version of the code uses the default user agent and works just fine locally.
+// The pending issue is with the process getting stuck after the click on the
+// anonymous sign in button on Dev.
+// Given the issues with the other two (see 1070_mobile & 1070_mixed) this might be the best hope of getting it done.
+// Figure out what is causing the environment specific timeout on the click.
+// The timeout NEVER happens locally.
+
 // PRODUCTS USED FOR TESTING
 // These products are examples of the different ways size and color is rendered on neimanmarcus.com
 
@@ -31,44 +39,41 @@ picit = (function (filename) {
   });
 });
 
+// test whether any error messages popped up
+testForm = (function (orderId, formType) {
+  return casper.then(function () {
+    casper.waitFor(function () {
+      return this.evaluate(function () {
+        return document.querySelectorAll('table.coErrorMessageClass').length;
+      });
+    },
+    function () {
+      casper.test.comment('Error present in ' + formType + ' form.');
+      casper.test.comment(this.evaluate(function () {
+        return $('table.coErrorMessageClass td.text').text();
+      }));
+      if(formType && (formType === 'shipping')) {
+        picit(orderId + '-34');
+        this.exit(34);
+      } else {
+        picit(orderId + '-35');
+        this.exit(35);
+      }
+    },
+    function () {
+      casper.test.comment('No errors found on form');
+    });
+  });
+});
+
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js"],
   onAlert: function () {
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
-    exit(1);
   },
   verbose: false,
   logLevel: "debug"
-});
-
-// test whether any error messages popped up
-testForm = (function (orderId, formType) {
-
-  return true;
-
-  // var errorLength = casper.evaluate(function() {
-  //   return $('#errmsg').length;
-  // });
-
-  // if(errorLength) {
-
-  //   casper.test.comment('Error present in ' + formType + ' form.');
-  //   casper.test.comment(casper.evaluate(function () {
-  //     return $('#errmsg').text();
-  //   }));
-  //   if(formType && (formType === 'shipping')) {
-  //     picit(orderId + '-34');
-  //     casper.exit(34);
-  //   } else {
-  //     picit(orderId + '-35');
-  //     casper.exit(35);
-  //   }
-
-  // } else {
-  //   casper.test.comment('No errors found on ' +  formType + ' form');
-  // }
-
 });
 
 // casper.on('remote.message', function(msg) {
@@ -88,9 +93,9 @@ var lineItems = order.line_items;
 
 casper.start();
 
-casper.userAgent('Default UA');
-
 // ADD ITEMS BEGIN
+
+casper.userAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25');
 
 casper.each(lineItems, function(self, lineItem) {
   this.thenOpen(lineItem.affiliate_url, function() {
@@ -440,99 +445,115 @@ casper.each(lineItems, function(self, lineItem) {
 // HEAD TO CHECKOUT BEGIN
 
 // verify link is available
-// casper.then(function () {
-//   casper.waitFor(function () {
-//     return this.evaluate(function () {
-//       return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
-//     });
-//   },
-//   function () {
-//     casper.test.comment('Link to checkout visible');
-//   },
-//   function () {
-//     casper.test.comment('Timed out waiting for checkout link');
-//     picit(order.id + '-13');
-//     this.exit(13);
-//   });
-// });
-
-
-casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
+casper.then(function () {
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
+    });
+  },
+  function () {
+    casper.test.comment('Link to checkout visible');
+  },
+  function () {
+    casper.test.comment('Timed out waiting for checkout link');
+    picit(order.id + '-13');
+    this.exit(13);
+  });
+});
 
 // click checkout link
-casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true', function () {
+casper.then(function () {
+  casper.click('a[href="https://www.neimanmarcus.com/mcheckout.jsp?perCatId=&catqo=&co=true"]');
 
-  // wait for cartContinue
-  casper.waitForSelector('#cartContinue', function() {
+});
 
-    casper.test.comment('cartContinue visible!');
+casper.waitForResource("checkout.js", function() {
+    this.echo('checkout.js has been loaded.');
+}, function() {
+  casper.test.comment('Js required for anon-click did not load, exiting...');
+  picit(order.id + '-15');
+  casper.exit(15);
+}, 120000);
 
-    this.evaluate(function() { mobileCart.shoppingCartTrans(); });
+// make sure the anonCheckout button is there and click it
+casper.then(function () {
+  casper.wait(120000, function () {
+    if(this.exists('#anonSignInBtn')) {
+      // casper.click('#anonSignInBtn');
 
-    // casper.click('#cartContinue');
-    casper.test.comment('cartContinue clicked.');
+      this.evaluate(function(){
+        var evt = document.createEvent("MouseEvents");
+        evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        document.querySelector("#anonSignInBtn").dispatchEvent(evt);
+      });
 
-  }, function() {
-
-    casper.test.comment('Timed out waiting for cartContinue...');
-    picit(order.id + '-1');
-    this.exit(1);
-
-  }, 60000);
-
-  casper.waitForSelector('#mAnonSignInBtn', function() {
-
-    casper.test.comment('mAnonSignInBtn visible!');
-
-    casper.click('#mAnonSignInBtn');
-    casper.test.comment('mAnonSignInBtn clicked.');
-
-  }, function() {
-
-    casper.test.comment('Timed out waiting for mAnonSignInBtn...');
-    picit(order.id + '-1');
-    this.exit(1);
-
-  }, 60000);
-
-
+      casper.test.comment('anonSignInBtn clicked!');
+    } else {
+      casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
+      picit(order.id + '-14');
+      this.exit(14);
+    }
+  });
 });
 
 // HEAD TO CHECKOUT END
 
 // SAMPLES POP-UP BEGIN
-// TODO: don't know if we need this in the mobile checkout
 
 // sometimes a 'sample' pop-up appears at this stage
 // check for it, and if it has appeared, dismiss it!
 
 //check for samples pop-up
-// casper.then(function () {
+casper.then(function () {
 
-//   casper.wait(2000, function () {
-//     if(this.exists('#samplesNoButton')) {
-//       casper.click('#samplesNoButton');
-//       casper.test.comment('Samples pop-up appeared');
-//     } else {
-//       casper.test.comment('No samples pop-up');
-//     }
-//   });
-// });
+  casper.wait(2000, function () {
+    if(this.exists('#samplesNoButton')) {
+      casper.click('#samplesNoButton');
+      casper.test.comment('Samples pop-up appeared');
+    } else {
+      casper.test.comment('No samples pop-up');
+    }
+  });
+});
 
 // SAMPLES POP-UP END
 
 // SHIPPING FORM BEGIN
 
 // check for shipping form
+// casper.then(function () {
+
+//   casper.test.comment('Starting to wait for shipping form...');
+
+//   casper.waitFor(function () {
+
+//     // return this.evaluate(function () {
+//     //   // return document.querySelectorAll('#shippingForm_se').length;
+//     // });
+
+//     var shippingAvailable = this.evaluate(function checkForShipping() {
+//                               return $('#shippingForm_se').length ;
+//                             });
+//     casper.test.comment('shippingAvailable: ' + shippingAvailable);
+//     return shippingAvailable;
+
+//   },
+//   function () {
+//     casper.test.comment('Begin filling out shipping form');
+//   },
+//   function () {
+//     casper.test.comment('Timed out, no shipping form present, exiting...');
+//     picit(order.id + '-15');
+//     casper.exit(15);
+//   }, 120000);
+// });
 
 casper.then(function () {
 
   casper.test.comment('Starting to wait for shipping form...');
 
-  casper.waitForSelector('#addressEdit', function() {
+  casper.waitForSelector('#shippingForm_se', function() {
     casper.test.comment('Begin filling out shipping form');
-    picit(order.id + '-before-starting');
-
   },
   function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
@@ -548,27 +569,44 @@ casper.then(function () {
   var sa = order.shipping_address;
 
   this.evaluate(function () {
-    var $select = $('select#country');
+    var $select = $('select#country_se');
     var _option = 'US';
     $select.val(_option);
     $select.change();
   });
 
   this.evaluate(function (state) {
-    var $select = $('select#state');
+    var $select = $('select#state_se');
     var _option = state;
     $select.val(_option);
     $select.change();
   }, sa.short_state);
 
+  this.evaluate(function () {
+
+    var $select = $('select#saPhoneType_se');
+    var _option = sa.phone;
+    // select other
+    $select.val(_option);
+    $select.change();
+  });
+
+  this.evaluate(function () {
+    var $select = $('select.shippingmethod');
+    var _option = 'SL3';
+    // ship via standard
+    $select.val(_option);
+    $select.change();
+  });
+
   var formValues = {
-    'input#saFirstName' : sa.first_name,
-    'input#saLastName' : sa.last_name,
-    'input#saAddressLine1' : sa.street1,
-    'input#saAddressLine2' : sa.street2,
-    'input#saCity' : sa.city,
-    'input#saZip' : sa.postal_code,
-    'input#saDayTelephone' : sa.phone
+    'input#saFirstName_se' : sa.first_name,
+    'input#saLastName_se' : sa.last_name,
+    'input#saAddressLine1_se' : sa.street1,
+    'input#saAddressLine2_se' : sa.street2,
+    'input#saCity_se' : sa.city,
+    'input#saZip_se' : sa.postal_code,
+    'input#saDayTelephone_se' : sa.phone
   };
 
   // This is for situations where form inputs have no name attribute
@@ -582,10 +620,10 @@ casper.then(function () {
   // eg: cole haan
   casper.then(function () {
 
-    if(this.exists('#saDeliveryTelephone')) {
+    if(this.exists('#saDeliveryTelephone_se')) {
 
       var optionalFormValues = {
-        'input#saDeliveryTelephone' : sa.phone
+        'input#saDeliveryTelephone_se' : sa.phone
       };
 
       this.evaluate(function (fields) {
@@ -602,81 +640,35 @@ casper.then(function () {
   });
 
   // Fill in that one radio selection
-  // this.fill('form#shippingForm', {
-  //   'poBox' : 'false'
-  // }, false);
-  this.evaluate(function () {
-    document.querySelector('#addr_po_false').checked = true;
-  });
+  this.fill('form#shippingForm_se', {
+    'poBox' : 'false'
+  }, false);
 
   // Check/uncheck useAsBillingFlag_se
   this.evaluate(function () {
-    document.querySelector('#useAsBillingFlag').checked = false;
+    document.querySelector('#useAsBillingFlag_se').checked = false;
   });
 
   // casper.then( function () {
   //   picit(order.id + '-shipping-form-before-submit');
   // });
 
-  // the onclick on the shipping function doesn't work
-  // so extract the id from that code and evaluate a direct call to that function
-
-  casper.then(function () {
-    var _c = this.evaluate(function() {
-      var click = $('#shippingSave').attr('onclick');
-      return click;
-    });
-
-    var _re = _c.match("submitShipping\\(\\'(.*)\\'\\)");
-
-    casper.test.comment('shipping id: ' + _re[1]);
-
-    this.evaluate(function (identifier) {
-      shipping.submitShipping(identifier.toString());
-    }, _re[1]);
-
-  });
-
-  casper.then(function () {
-    casper.wait(5000, function () {
-      picit(order.id + '-debug-after-shipping-click');
-    });
-  });
-
-
   // click NEXT step
-  // casper.then(function () {
-  //   if(casper.exists('span#shippingContinue_se')) {
-  //     casper.wait(2000, function () {
-  //       casper.click('span#shippingContinue_se');
-  //     });
-  //   } else {
-  //     casper.test.comment('ERROR: Next button not found on shipping form');
-  //     picit(order.id + '-16');
-  //     this.exit(16);
-  //   }
-  // });
-
-  // casper.test.comment('shipping zip length: ' + sa.postal_code.length);
-
-  // testForm(order.id, 'shipping');
-
-  casper.then(function() {
-    var errorLength = this.evaluate(function() {
-      return $('#errmsg').length && $('#errmsg').is(':visible');
-    });
-
-    if(errorLength) {
-      casper.test.comment('Error present in shipping form.');
-      casper.test.comment(this.evaluate(function () {
-        return $('#errmsg').text();
-      }));
-      picit(order.id + '-34');
-      casper.exit(34);
+  casper.then(function () {
+    if(casper.exists('span#shippingContinue_se')) {
+      casper.wait(2000, function () {
+        casper.click('span#shippingContinue_se');
+      });
     } else {
-      casper.test.comment('No errors on shipping form.');
+      casper.test.comment('ERROR: Next button not found on shipping form');
+      picit(order.id + '-16');
+      this.exit(16);
     }
   });
+
+  casper.test.comment('shipping zip length: ' + sa.postal_code.length);
+
+  testForm(order.id, 'shipping');
 
 });
 
@@ -686,16 +678,19 @@ casper.then(function () {
 
 // check for billing form
 casper.then(function () {
-
-  casper.waitForSelector('#payment', function() {
-    casper.test.comment('Begin filling out billing form');
+  casper.waitFor(function () {
+    return this.evaluate(function () {
+      return document.querySelectorAll('form#billingForm').length;
+    });
+  },
+  function () {
+    casper.test.comment('Billing form present, begin filling it out!');
   },
   function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-17');
     casper.exit(17);
   }, 120000);
-
 });
 
 casper.then(function () {
@@ -717,13 +712,13 @@ casper.then(function () {
     $select.change();
   }, ba.short_state);
 
-  // this.evaluate(function () {
-  //   var $select = $('select#billingAddrPhoneType');
-  //   var _option = ba.phone;
-  //   // select other
-  //   $select.val(_option);
-  //   $select.change();
-  // });
+  this.evaluate(function () {
+    var $select = $('select#billingAddrPhoneType');
+    var _option = ba.phone;
+    // select other
+    $select.val(_option);
+    $select.change();
+  });
 
   this.evaluate(function (card_type) {
     var $select = $('select#cardtype');
@@ -761,77 +756,40 @@ casper.then(function () {
 // });
 
 // click next to review
-// casper.then(function () {
-//   if(casper.exists('span#paymentSave')) {
-//     casper.wait(2000, function () {
-//       casper.click('span#paymentSave');
-//     });
-//   } else {
-//     casper.test.comment('ERROR: Save payment button not available');
-//     picit(order.id + '-18');
-//     this.exit(18);
-//   }
-// });
-
 casper.then(function () {
-  var _c = this.evaluate(function() {
-    var click = $('#paymentSave').attr('onclick');
-    return click;
-  });
-
-  var _re = _c.match("submit\\(\\'(.*)\\'\\)");
-
-  casper.test.comment('payment id: ' + _re[1]);
-
-  this.evaluate(function (identifier) {
-    payment.submit(identifier.toString());
-  }, _re[1]);
-
-});
-
-casper.then(function () {
-  casper.wait(5000, function () {
-    picit(order.id + '-debug-after-billing-click');
-  });
+  if(casper.exists('span#paymentSave')) {
+    casper.wait(2000, function () {
+      casper.click('span#paymentSave');
+    });
+  } else {
+    casper.test.comment('ERROR: Save payment button not available');
+    picit(order.id + '-18');
+    this.exit(18);
+  }
 });
 
 // test to see if any errors popped
-  casper.then(function() {
-    var errorLength = this.evaluate(function() {
-      return $('#errmsg').length && $('#errmsg').is(':visible');
-    });
-
-    if(errorLength) {
-      casper.test.comment('Error present in billing form.');
-      casper.test.comment(this.evaluate(function () {
-        return $('#errmsg').text();
-      }));
-      picit(order.id + '-35');
-      casper.exit(35);
-    } else {
-      casper.test.comment('No errors on billing form.');
-    }
-  });
+testForm(order.id, 'billing');
 
 // BILLING FORM END
 
 // DISMISS ANY ORDER CONFIRMATION POP-UP BEGIN
 
 // confirm address
-// casper.then(function () {
-//   casper.waitFor(function (){
-//     return this.evaluate(function () {
-//       return document.querySelector('#avAddressList form').length;
-//     });
-//   },
-//   function (){
-//     casper.test.comment('Need to verify address');
-//     casper.click('span#verificationButton');
-//   },
-//   function (){
-//     casper.test.comment('No need to verify address');
-//   });
-// });
+casper.then(function () {
+  casper.waitFor(function (){
+    return this.evaluate(function () {
+      return document.querySelector('#avAddressList form').length;
+    });
+  },
+  function (){
+    casper.test.comment('Need to verify address');
+    casper.click('span#verificationButton');
+  },
+  function (){
+    casper.test.comment('No need to verify address');
+  });
+});
 
 // DISMISS ANY ORDER CONFIRMATION POP-UP END
 
@@ -839,17 +797,13 @@ casper.then(function () {
 casper.then(function () {
 
   casper.wait(5000, function () {
-    if(casper.exists('.placeOrder')) {
+    if(casper.exists('#submitOrder')) {
 
       casper.test.comment('order.submitOrder set to: ' + order.submitOrder);
 
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
-
-        this.evaluate(function() {
-          payment.placeOrder();
-        });
-
+        casper.click('#submitOrder');
         casper.test.comment('Submit button CLICKED!');
       } else {
         casper.test.comment('Submit button visible!');

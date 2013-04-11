@@ -1,3 +1,9 @@
+// This version of the code uses the mobile user agent and attempts to process the order using the mobile
+// version of NM site.
+// The pending issue has been with trying to select a color and size dropdowns since they aren't regular
+// selects but rather have some javascript tied to the click that then probably does some sets
+// and displays the selected value in a span.
+
 // PRODUCTS USED FOR TESTING
 // These products are examples of the different ways size and color is rendered on neimanmarcus.com
 
