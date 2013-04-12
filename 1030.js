@@ -8,7 +8,7 @@ picit = (function (filename) {
     top: 0,
     left: 0,
     width: 480,
-    height: 10000
+    height: 5000
   });
 });
 
