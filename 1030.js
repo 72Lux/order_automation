@@ -22,9 +22,9 @@ var casper = require("casper").create({
   logLevel: "debug"
 });
 
-casper.on('remote.message', function(msg) {
-    this.echo('### DOM Msg ###: ' + msg);
-});
+// casper.on('remote.message', function(msg) {
+//     this.echo('### DOM Msg ###: ' + msg);
+// });
 
 // SELECTORS END
 
@@ -54,7 +54,6 @@ casper.each(lineItems, function(self, lineItem) {
     picit(order.id + '-before-anything');
 
     casper.waitForSelector('#buyButtonSubmit', function() {
-
 
       // var isSizeDropdownVisible = this.evaluate(function() { return $('.select-choice-size').length; });
       // var isSizeDropdownDisabled = this.evaluate(function() { $('.select-choice-size').hasClass("ui-state-disabled"); });
@@ -158,20 +157,20 @@ casper.each(lineItems, function(self, lineItem) {
 
                                           $('#dimension2_1 span').each(function() {
 
-                                            console.log('this text: ' + $(this).text());
-                                            console.log('color text: ' + color);
+                                            // console.log('this text: ' + $(this).text());
+                                            // console.log('color text: ' + color);
 
                                             if($(this).text().toLowerCase().indexOf(color.toLowerCase()) >= 0) {
 
-                                              console.log('found!');
+                                              // console.log('found!');
 
                                               var _parent = $(this).closest('a');
 
                                               // check if color is available
                                               if(!_parent.hasClass('unavailable')) {
 
-                                                console.log('parent does not have unavailable');
-                                                console.log('value: ' + _parent.attr('value'));
+                                                // console.log('parent does not have unavailable');
+                                                // console.log('value: ' + _parent.attr('value'));
                                                 // color found, click it!
                                                 //TODO: this click isn't working so setting value directly in hidden input.
                                                 // _parent.click();
@@ -184,20 +183,21 @@ casper.each(lineItems, function(self, lineItem) {
                                                 // console.log(result);
                                                 result = true;
                                                 return;
-                                              } else {
-                                                console.log('parent has unavailable');
                                               }
+                                              // else {
+                                              //   console.log('parent has unavailable');
+                                              // }
 
-                                            } else {
-                                              console.log('not found');
                                             }
+                                            //  else {
+                                            //   console.log('not found');
+                                            // }
                                           });
 
                                           // the color was not found
                                           return result;
 
                                         }, lineItem.color);
-
         });
 
         casper.then(function() {
@@ -220,7 +220,13 @@ casper.each(lineItems, function(self, lineItem) {
 
       }
 
-      // quantity is set on
+      // TODO set QUANTITIES
+      // casper.then(function() {
+      //   var itemNumber = this.fetchText('.item .sub');
+
+      //   casper.test.comment('ITEM NUMBER: ' + itemNumber);
+      // });
+
       casper.test.comment('Clicking on add button...');
       casper.then(function() {
         this.click('#buyButtonSubmit');
@@ -229,7 +235,6 @@ casper.each(lineItems, function(self, lineItem) {
       casper.then(function() {
         picit(order.id +  '-' + new Date().getTime() +'-after-add-click');
       });
-
 
     }, function() {
 
@@ -240,6 +245,7 @@ casper.each(lineItems, function(self, lineItem) {
     });
 
   });
+
 });
 
 // ADD ITEMS END
@@ -248,14 +254,64 @@ casper.each(lineItems, function(self, lineItem) {
 
 // https://msecure.nordstrom.com/shoppingbag/
 
-casper.thenOpen('https://msecure.nordstrom.com/shoppingbag/', function() {
-  this.wait(2000, function() {
-    picit(order.id + '-shoppingbag');
+// casper.thenOpen('https://msecure.nordstrom.com/shoppingbag/', function() {
+//   this.wait(2000, function() {
+//     picit(order.id + '-shopping-bag');
+//   });
+// });
+
+// HEAD TO CHECKOUT END
+
+casper.then(function() {
+  this.click('#proceed-to-checkout');
+});
+
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(order.id + '-proceed-to-checkout');
+  });
+});
+
+// NoThanksButton
+
+casper.then(function () {
+
+  casper.wait(2000, function () {
+    if(this.exists('#NoThanksButton')) {
+      casper.click('#NoThanksButton');
+      casper.test.comment('Samples screen appeared');
+    } else {
+      casper.test.comment('No samples screen');
+    }
+  });
+});
+
+// Continue to Checkout
+
+casper.then(function() {
+  if(isSizeAvailable) {
+      this.clickLabel('Continue to Checkout', 'a');
+  } else {
+    casper.test.comment('ERROR: OrderId: ' + order.id + '. Continue to Checkout unavailable: ' + lineItem.size + '. Exiting...');
+    picit(order.id + '-32');
+    this.exit(32);
+  }
+});
+
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(order.id + '-after-checkout');
     this.exit(0);
   });
 });
 
-// HEAD TO CHECKOUT END
+// casper.thenOpen('https://msecure.nordstrom.com/Address/ContactInformation', function() {
+//   this.wait(10000, function() {
+//     picit(order.id + '-customer-info');
+//     this.exit(0);
+//   });
+// });
+
 
 
 // RUN IIIIIIIIIIIT!

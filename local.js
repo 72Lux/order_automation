@@ -56,6 +56,12 @@ casper.then(function() {
   picit(new Date().getTime() + '-after-color-click');
 });
 
+
+casper.then(function() {
+  var itemNumber = this.fetchText('.item');
+  casper.test.comment('ITEM NUMBER: ' + itemNumber);
+});
+
 casper.then(function() {
   // Click on 1st result link
   this.click('#buyButtonSubmit');

@@ -443,26 +443,10 @@ casper.each(lineItems, function(self, lineItem) {
 // HEAD TO CHECKOUT BEGIN
 
 // verify link is available
-casper.then(function () {
-  casper.waitFor(function () {
-    return this.evaluate(function () {
-      return document.querySelectorAll('a[href="https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true"]').length;
-    });
-  },
-  function () {
-    casper.test.comment('Link to checkout visible');
-  },
-  function () {
-    casper.test.comment('Timed out waiting for checkout link');
-    picit(order.id + '-13');
-    this.exit(13);
+casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true', function() {
+  this.wait(2000, function() {
+    picit(order.id + new Date().getTime() + '-shopping-bag');
   });
-});
-
-// click checkout link
-casper.then(function () {
-  casper.click('a[href="https://www.neimanmarcus.com/mcheckout.jsp?perCatId=&catqo=&co=true"]');
-
 });
 
 casper.waitForResource("checkout.js", function() {
