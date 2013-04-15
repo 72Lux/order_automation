@@ -18,7 +18,7 @@ var casper = require("casper").create({
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
   },
-  verbose: false,
+  verbose: true,
   logLevel: "debug"
 });
 
@@ -29,6 +29,7 @@ var casper = require("casper").create({
 // SELECTORS END
 
 var order = JSON.parse(casper.cli.args);
+
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
 var imageHome = casper.cli.get('image-home');
@@ -275,11 +276,18 @@ casper.then(function() {
 // NoThanksButton
 
 casper.then(function () {
-
   casper.wait(2000, function () {
     if(this.exists('#NoThanksButton')) {
-      casper.click('#NoThanksButton');
+
+      // selectedSamples
+
+      this.click('.samplecheckbox');
+
+      picit(order.id + '-after-sample-click');
+
       casper.test.comment('Samples screen appeared');
+      this.click('#SampleBuyButton');
+      // this.evaluate(function(){ $('#NoThanksButton').click(); });
     } else {
       casper.test.comment('No samples screen');
     }
@@ -289,19 +297,12 @@ casper.then(function () {
 // Continue to Checkout
 
 casper.then(function() {
-  if(isSizeAvailable) {
-      this.clickLabel('Continue to Checkout', 'a');
-  } else {
-    casper.test.comment('ERROR: OrderId: ' + order.id + '. Continue to Checkout unavailable: ' + lineItem.size + '. Exiting...');
-    picit(order.id + '-32');
-    this.exit(32);
-  }
+  this.clickLabel('Continue to Checkout', 'a');
 });
 
 casper.then(function() {
   this.wait(10000, function() {
     picit(order.id + '-after-checkout');
-    this.exit(0);
   });
 });
 
@@ -312,7 +313,56 @@ casper.then(function() {
 //   });
 // });
 
+casper.then(function() {
+  casper.waitForSelector('#EmailAddress', function then() {
+    casper.test.comment('Begin filling out shipping form');
+  },
+  function () {
+    casper.test.comment('Timed out, no shipping form present, exiting...');
+    picit(order.id + '-15');
+    casper.exit(15);
+  }, 30000);
+});
 
+casper.then(function() {
+
+  var sa = order.shipping_address;
+  var ba = order.billing_address;
+  var pi = order.payment;
+
+  this.fill('form', {
+
+    'EmailAddress': ba.email,
+    'ConfirmEmailAddress': ba.email,
+    'PhoneNumber':   sa.phone,
+
+    'IsSubscribed': false,
+
+    'BillingAddress.FirstName' : ba.first_name,
+    'BillingAddress.LastName' : ba.last_name,
+    'BillingAddress.AddressLine1' : ba.street1,
+    'BillingAddress.AddressLine2' : ba.street2,
+    'BillingAddress.City' : ba.city,
+    // 'BillingAddress.StateId' : ba.postal_code,
+    'BillingAddress.PostalCode' : ba.postal_code,
+
+    'ShippingAddress.FirstName' : sa.first_name,
+    'ShippingAddress.LastName' : sa.last_name,
+    'ShippingAddress.AddressLine1' : sa.street1,
+    'ShippingAddress.AddressLine2' : sa.street2,
+    'ShippingAddress.City' : sa.city,
+    // 'ShippingAddress.StateId' : sa.postal_code,
+    'ShippingAddress.PostalCode' : sa.postal_code
+
+  }, false);
+});
+
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(order.id + '-after-fill');
+    this.exit(0);
+  });
+});
 
 // RUN IIIIIIIIIIIT!
 casper.run();
