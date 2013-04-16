@@ -1,5 +1,5 @@
 // to RUN, provide cookie file at cl :
-// casperjs --cookies-file=local-nordstrom.txt local-nordstrom.js
+// rm 1030-test.txt; casperjs --cookies-file=1030-test.txt 1030-test.js
 
 require("utils");
 
@@ -11,36 +11,44 @@ picit = (function (filename) {
     top: 0,
     left: 0,
     width: 480,
-    height: 3000
+    height: 2000
   });
 });
 
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js"],
-  verbose: true,
+  verbose: false,
   logLevel: "debug"
 });
 
+// Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
-
-// casper.on('resource.requested', function(resource) {
-//   for (var obj in resource.headers) {
-//     var name = resource.headers[obj].name;
-//     var value = resource.headers[obj].value;
-//     if (name == "User-Agent"){
-//       casper.echo(value);
-//     }
-//   }
-// });
 
 casper.start();
 
 casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
 
+// PRODUCT 1: Size/NO Color/YES
+
 casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535', function() {
-  this.wait(2000, function() {
-    picit(new Date().getTime() + '-before-anything');
-  });
+
+  casper.waitForSelector('#buyButtonSubmit', function found() {
+
+    casper.then(function () {
+      this.clickLabel('AMANDELLE', 'span');
+    });
+    casper.then(function () {
+      casper.test.comment('Clicking on add button');
+      this.click('#buyButtonSubmit');
+    });
+
+  }, function timeout() {
+
+      casper.test.comment('Timed out waiting for add button.');
+      casper.exit(1);
+
+  }, 30000);
+
 });
 
 // casper.then(function() {
@@ -51,13 +59,6 @@ casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&su
 //   picit(new Date().getTime() + '-after-size-click');
 // });
 
-casper.then(function() {
-  this.clickLabel('AMANDELLE', 'span');
-});
-
-casper.then(function() {
-  picit(new Date().getTime() + '-after-color-click');
-});
 
 
 // casper.then(function() {
@@ -65,41 +66,25 @@ casper.then(function() {
 //   casper.test.comment('ITEM NUMBER: ' + itemNumber);
 // });
 
-casper.then(function() {
-  // Click on 1st result link
-  this.click('#buyButtonSubmit');
-});
+//CHECKOUT BEGIN
 
 casper.then(function() {
-  picit(new Date().getTime() + '-after-add-click');
-});
-
-casper.then(function() {
+  casper.test.comment('Clicking on checkout');
   this.click('#proceed-to-checkout');
 });
 
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(new Date().getTime() + '-proceed-to-checkout');
-  });
-});
+// casper.then(function() {
+//   this.wait(10000, function() {
+//     picit(new Date().getTime() + '-proceed-to-checkout');
+//   });
+// });
 
 // NoThanksButton
 
 casper.then(function () {
   casper.waitForSelector('#NoThanksButton', function () {
-      // selectedSamples
-
-      // // this.click('.samplecheckbox');
-
-      // picit(new Date().getTime() + '-after-sample-click');
 
       casper.test.comment('Samples screen appeared');
-      // casper.click('input[type="button"][value="Skip"]');
-
-      // this.click('#NoThanksButton');
-      // this.evaluate(function(){ $('#NoThanksButton').click(); });
-
       casper.open('http://m.nordstrom.com//samples/nothanks', {
           method: 'post',
           data:   {
@@ -107,23 +92,21 @@ casper.then(function () {
           }
       });
 
-
-      // http://m.nordstrom.com//samples/nothanks?postaction=
-
     }, function() {
       casper.test.comment('No samples screen');
     }, 30000);
 });
 
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(new Date().getTime() + '-after-no-thanks-checkout');
-  });
-});
+// casper.then(function() {
+//   this.wait(10000, function() {
+//     picit(new Date().getTime() + '-after-no-thanks-checkout');
+//   });
+// });
 
 // Continue to Checkout
 
 casper.then(function() {
+  casper.test.comment('Clicking on anon checkout');
   this.clickLabel('Continue to Checkout', 'a');
 });
 
