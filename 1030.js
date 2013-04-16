@@ -276,23 +276,23 @@ casper.then(function() {
 // NoThanksButton
 
 casper.then(function () {
-  casper.wait(2000, function () {
-    if(this.exists('#NoThanksButton')) {
-
-      // selectedSamples
-
-      this.click('.samplecheckbox');
-
-      picit(order.id + '-after-sample-click');
+  casper.waitForSelector('#NoThanksButton', function () {
 
       casper.test.comment('Samples screen appeared');
-      this.click('#SampleBuyButton');
-      // this.evaluate(function(){ $('#NoThanksButton').click(); });
-    } else {
+      this.click('#NoThanksButton');
+
+      // casper.open('http://m.nordstrom.com//samples/nothanks', {
+      //     method: 'post',
+      //     data:   {
+      //         'postaction': ''
+      //     }
+      // });
+
+    }, function() {
       casper.test.comment('No samples screen');
-    }
-  });
+    }, 30000);
 });
+
 
 // Continue to Checkout
 
@@ -330,7 +330,9 @@ casper.then(function() {
   var ba = order.billing_address;
   var pi = order.payment;
 
-  this.fill('form', {
+  // action="/Address/ContactInformation"
+
+  this.fill('form[action="/Address/ContactInformation"]', {
 
     'EmailAddress': ba.email,
     'ConfirmEmailAddress': ba.email,

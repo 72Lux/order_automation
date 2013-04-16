@@ -1,5 +1,5 @@
 // to RUN, provide cookie file at cl :
-// casperjs --cookies-file=local-norstrom.txt local-norstrom.js
+// casperjs --cookies-file=local-nordstrom.txt local-nordstrom.js
 
 require("utils");
 
@@ -17,7 +17,7 @@ picit = (function (filename) {
 
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js"],
-  verbose: false,
+  verbose: true,
   logLevel: "debug"
 });
 
@@ -85,21 +85,37 @@ casper.then(function() {
 // NoThanksButton
 
 casper.then(function () {
-  casper.wait(2000, function () {
-    if(this.exists('#NoThanksButton')) {
-
+  casper.waitForSelector('#NoThanksButton', function () {
       // selectedSamples
 
-      this.click('.samplecheckbox');
+      // // this.click('.samplecheckbox');
 
-      picit(new Date().getTime() + '-after-sample-click');
+      // picit(new Date().getTime() + '-after-sample-click');
 
       casper.test.comment('Samples screen appeared');
-      this.click('#SampleBuyButton');
+      // casper.click('input[type="button"][value="Skip"]');
+
+      this.click('#NoThanksButton');
       // this.evaluate(function(){ $('#NoThanksButton').click(); });
-    } else {
+
+      // casper.open('http://m.nordstrom.com//samples/nothanks', {
+      //     method: 'post',
+      //     data:   {
+      //         'postaction': ''
+      //     }
+      // });
+
+
+      // http://m.nordstrom.com//samples/nothanks?postaction=
+
+    }, function() {
       casper.test.comment('No samples screen');
-    }
+    }, 30000);
+});
+
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(new Date().getTime() + '-after-no-thanks-checkout');
   });
 });
 
