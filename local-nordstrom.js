@@ -131,5 +131,23 @@ casper.then(function() {
   });
 });
 
+casper.then(function() {
+  casper.test.comment('Clicking on Save and Continue');
+  this.click('#Submit1');
+});
+
+casper.then(function() {
+  //field-validation-error
+  casper.waitForSelector('.field-validation-error', function () {
+      casper.test.comment('Error found on Customer Information form.');
+      picit(new Date().getTime() + '-34');
+    }, function() {
+      casper.test.comment('All is well, no form-validation-errors found');
+    }, 30000);
+});
+
+
+
+
 // RUN IIIIIIIIIIIT!
 casper.run();
