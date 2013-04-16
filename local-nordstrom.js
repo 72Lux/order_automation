@@ -5,7 +5,7 @@ require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = 'default_screen_caps/' + filename + '.png';
+  filename = filename + '.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
@@ -20,6 +20,8 @@ var casper = require("casper").create({
   verbose: true,
   logLevel: "debug"
 });
+
+var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
 
 // casper.on('resource.requested', function(resource) {
 //   for (var obj in resource.headers) {
@@ -132,6 +134,59 @@ casper.then(function() {
 });
 
 casper.then(function() {
+  casper.waitForSelector('#EmailAddress', function then() {
+    casper.test.comment('Begin filling out shipping form');
+  },
+  function () {
+    casper.test.comment('Timed out, no shipping form present, exiting...');
+    picit(new Date().getTime() + '-15');
+    casper.exit(15);
+  }, 30000);
+});
+
+casper.then(function() {
+
+  // var sa = order.shipping_address;
+  // var ba = order.billing_address;
+  // var pi = order.payment;
+
+  var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
+  // action="/Address/ContactInformation"
+
+  this.fill('form[action="/Address/ContactInformation"]', {
+
+    'EmailAddress': 'test@test.com',
+    'ConfirmEmailAddress': 'test@test.com',
+    'PhoneNumber':   '1231231234',
+
+    'IsSubscribed': false,
+
+    'BillingAddress.FirstName' : 'ba.first_name',
+    'BillingAddress.LastName' : 'ba.last_name',
+    'BillingAddress.AddressLine1' : '5137 papaya dr',
+    'BillingAddress.AddressLine2' : '',
+    'BillingAddress.City' : 'Fair Oaks',
+    'BillingAddress.StateId' : awesomeStateCodes['CA'],
+    'BillingAddress.PostalCode' : '95628',
+
+    'ShippingAddress.FirstName' : 'sa.first_name',
+    'ShippingAddress.LastName' : 'sa.last_name',
+    'ShippingAddress.AddressLine1' : '5137 papaya dr',
+    'ShippingAddress.AddressLine2' : '',
+    'ShippingAddress.City' : 'Fair Oaks',
+    'ShippingAddress.StateId' : awesomeStateCodes['CA'],
+    'ShippingAddress.PostalCode' : '95628'
+
+  }, false);
+});
+
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(new Date().getTime() + '-after-fill');
+  });
+});
+
+casper.then(function() {
   casper.test.comment('Clicking on Save and Continue');
   this.click('#Submit1');
 });
@@ -146,8 +201,41 @@ casper.then(function() {
     }, 30000);
 });
 
+casper.then(function() {
+  casper.waitForSelector('#CreditCardId', function () {
+      casper.test.comment('No address confirmation page. Moving on!');
+      picit(new Date().getTime() + '-payment-page');
+    }, function() {
+      casper.test.comment('Address needs to be confirmed...');
+      picit(new Date().getTime() + '-address-confirmation');
+    }, 30000);
+});
 
+casper.then(function() {
+  this.fill('form[action="/OrderReview/SubmitOrder"]', {
+    'CreditCardType': 'VISA',
+    'CreditCardNumber': '4111111111111111',
+    'cci':   '123',
+    'ExpMonth': '1',
+    'ExpYear' : '2014'
+  }, false);
+});
 
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(new Date().getTime() + '-after-payment-info');
+  });
+});
+
+casper.then(function () {
+  casper.waitForSelector('#submitButton', function () {
+
+      casper.test.comment('SubmitButton VISIBLE!');
+
+    }, function() {
+      casper.test.comment('SubmitButton NOT visible.');
+    }, 30000);
+});
 
 // RUN IIIIIIIIIIIT!
 casper.run();

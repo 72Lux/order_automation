@@ -29,6 +29,10 @@ var casper = require("casper").create({
 // SELECTORS END
 
 var order = JSON.parse(casper.cli.args);
+var sa = order.shipping_address;
+var ba = order.billing_address;
+var pi = order.payment;
+var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
 
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
@@ -279,14 +283,14 @@ casper.then(function () {
   casper.waitForSelector('#NoThanksButton', function () {
 
       casper.test.comment('Samples screen appeared');
-      this.click('#NoThanksButton');
+      // this.click('#NoThanksButton');
 
-      // casper.open('http://m.nordstrom.com//samples/nothanks', {
-      //     method: 'post',
-      //     data:   {
-      //         'postaction': ''
-      //     }
-      // });
+      casper.open('http://m.nordstrom.com//samples/nothanks', {
+          method: 'post',
+          data:   {
+              'postaction': ''
+          }
+      });
 
     }, function() {
       casper.test.comment('No samples screen');
@@ -326,10 +330,6 @@ casper.then(function() {
 
 casper.then(function() {
 
-  var sa = order.shipping_address;
-  var ba = order.billing_address;
-  var pi = order.payment;
-
   // action="/Address/ContactInformation"
 
   this.fill('form[action="/Address/ContactInformation"]', {
@@ -345,7 +345,7 @@ casper.then(function() {
     'BillingAddress.AddressLine1' : ba.street1,
     'BillingAddress.AddressLine2' : ba.street2,
     'BillingAddress.City' : ba.city,
-    // 'BillingAddress.StateId' : ba.postal_code,
+    'BillingAddress.StateId' : awesomeStateCodes[ba.short_state],
     'BillingAddress.PostalCode' : ba.postal_code,
 
     'ShippingAddress.FirstName' : sa.first_name,
@@ -353,7 +353,7 @@ casper.then(function() {
     'ShippingAddress.AddressLine1' : sa.street1,
     'ShippingAddress.AddressLine2' : sa.street2,
     'ShippingAddress.City' : sa.city,
-    // 'ShippingAddress.StateId' : sa.postal_code,
+    'ShippingAddress.StateId' : awesomeStateCodes[sa.short_state],
     'ShippingAddress.PostalCode' : sa.postal_code
 
   }, false);
@@ -380,7 +380,42 @@ casper.then(function() {
     }, 30000);
 });
 
-// RUN IIIIIIIIIIIT!
-casper.run();
+casper.then(function() {
+  casper.waitForSelector('#CreditCardId', function () {
+      casper.test.comment('No address confirmation page. Moving on!');
+      picit(new Date().getTime() + '-payment-page');
+    }, function() {
+      casper.test.comment('Address needs to be confirmed...');
+      picit(new Date().getTime() + '-address-confirmation');
+    }, 30000);
+});
+
+casper.then(function() {
+  this.fill('form[action="/OrderReview/SubmitOrder"]', {
+    'CreditCardType': pi.card_type,
+    'CreditCardNumber': pi.card_number,
+    'cci': pi.cvv,
+    'ExpMonth': pi.expiry_month,
+    'ExpYear' : pi.expiry_year
+  }, false);
+});
+
+casper.then(function() {
+  this.wait(10000, function() {
+    picit(new Date().getTime() + '-after-payment-info');
+  });
+});
+
+casper.then(function () {
+  casper.waitForSelector('#submitButton', function () {
+
+      casper.test.comment('SubmitButton VISIBLE!');
+
+    }, function() {
+      casper.test.comment('SubmitButton NOT visible.');
+    }, 30000);
+});
+
+
 // RUN IIIIIIIIIIIT!
 casper.run();
