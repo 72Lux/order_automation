@@ -95,15 +95,15 @@ casper.then(function () {
       casper.test.comment('Samples screen appeared');
       // casper.click('input[type="button"][value="Skip"]');
 
-      this.click('#NoThanksButton');
+      // this.click('#NoThanksButton');
       // this.evaluate(function(){ $('#NoThanksButton').click(); });
 
-      // casper.open('http://m.nordstrom.com//samples/nothanks', {
-      //     method: 'post',
-      //     data:   {
-      //         'postaction': ''
-      //     }
-      // });
+      casper.open('http://m.nordstrom.com//samples/nothanks', {
+          method: 'post',
+          data:   {
+              'postaction': ''
+          }
+      });
 
 
       // http://m.nordstrom.com//samples/nothanks?postaction=
