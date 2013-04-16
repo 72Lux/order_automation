@@ -56,49 +56,15 @@ casper.each(lineItems, function(self, lineItem) {
 
     casper.test.comment(this.getTitle());
 
-    picit(order.id + '-before-anything');
+    // picit(order.id + '-before-anything');
 
     casper.waitForSelector('#buyButtonSubmit', function() {
-
-      // var isSizeDropdownVisible = this.evaluate(function() { return $('.select-choice-size').length; });
-      // var isSizeDropdownDisabled = this.evaluate(function() { $('.select-choice-size').hasClass("ui-state-disabled"); });
-      // var sizeText = this.evaluate(function() { return $('.select-choice-size').parent().find('.ui-btn-text').text(); });
-
-      // var isColorDropdownVisible = this.evaluate(function() { return $('.select-choice-color').length; });
-      // var isColorDropdownDisabled = this.evaluate(function() { $('.select-choice-color').hasClass("ui-state-disabled"); });
-      // var colorText = this.evaluate(function() { return $('.select-choice-color').parent().find('.ui-btn-text').text(); });
 
       if (lineItem.size) {
 
         casper.test.comment('Set size to: ' + lineItem.size);
         casper.test.comment('length: ' + lineItem.size.length);
 
-        // var sizeExists = this.evaluate(function(size) { return document.getElementById(size).length; }, lineItem.size);
-        // casper.test.comment('sizeExists: ' + sizeExists);
-
-        // var sizeText = this.evaluate(function(size) { return size; }, lineItem.size);
-        // casper.test.comment('sizeText: ' + sizeText);
-
-        // if(sizeExists) {
-
-        //   casper.then(function() { casper.click('#'+lineItem.size); });
-        //   picit(order.id + '-after-size-click');
-
-        //   // verify size got selected
-
-        //   var sizeSelection = this.evaluate(function(size) { return $('#' + size).hasClass('selected'); }, lineItem.size);
-
-        //   if(!sizeSelection) {
-        //     casper.test.comment('ERROR: Size selection failed for orderId: ' + order.id + ' for size: ' + lineItem.size + '. Exiting...');
-        //     picit(order.id + '-1');
-        //     this.exit(1);
-        //   }
-
-        // } else {
-        //   casper.test.comment('ERROR: OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
-        //   picit(order.id + '-32');
-        //   this.exit(32);
-        // }
         casper.then(function() {
 
           isSizeAvailable = this.evaluate(function(size) {
@@ -137,14 +103,14 @@ casper.each(lineItems, function(self, lineItem) {
               this.clickLabel(lineItem.size, 'a');
           } else {
             casper.test.comment('ERROR: OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
-            picit(order.id + '-32');
+            picit(order.id + '-32' + '-' + new Date().getTime());
             this.exit(32);
           }
         });
 
-        casper.then(function() {
-          picit(order.id +  '-' + new Date().getTime() +'-after-size-click');
-        });
+        // casper.then(function() {
+        //   picit(order.id +  '-' + new Date().getTime() +'-after-size-click');
+        // });
       }
 
       if (lineItem.color) {
@@ -214,14 +180,14 @@ casper.each(lineItems, function(self, lineItem) {
               this.clickLabel(lineItem.color, 'span');
           } else {
             casper.test.comment('ERROR: OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
-            picit(order.id + '-32');
+            picit(order.id + '-32' + '-' + new Date().getTime());
             this.exit(32);
           }
         });
 
-        casper.then(function() {
-          picit(order.id +  '-' + new Date().getTime() +'-after-color-click');
-        });
+        // casper.then(function() {
+        //   picit(order.id +  '-' + new Date().getTime() +'-after-color-click');
+        // });
 
       }
 
@@ -237,14 +203,14 @@ casper.each(lineItems, function(self, lineItem) {
         this.click('#buyButtonSubmit');
       });
 
-      casper.then(function() {
-        picit(order.id +  '-' + new Date().getTime() +'-after-add-click');
-      });
+      // casper.then(function() {
+      //   picit(order.id +  '-' + new Date().getTime() +'-after-add-click');
+      // });
 
     }, function() {
 
       casper.test.comment('Timed out waiting for add to bag button');
-      picit(order.id + '-12');
+      picit(order.id + '-12' + '-' + new Date().getTime());
       this.exit(12);
 
     });
@@ -268,14 +234,15 @@ casper.each(lineItems, function(self, lineItem) {
 // HEAD TO CHECKOUT END
 
 casper.then(function() {
+  casper.test.comment('To the checkout!');
   this.click('#proceed-to-checkout');
 });
 
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(order.id + '-proceed-to-checkout');
-  });
-});
+// casper.then(function() {
+//   this.wait(10000, function() {
+//     picit(order.id + '-proceed-to-checkout');
+//   });
+// });
 
 // NoThanksButton
 
@@ -304,11 +271,11 @@ casper.then(function() {
   this.clickLabel('Continue to Checkout', 'a');
 });
 
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(order.id + '-after-checkout');
-  });
-});
+// casper.then(function() {
+//   this.wait(10000, function() {
+//     picit(order.id + '-after-checkout');
+//   });
+// });
 
 // casper.thenOpen('https://msecure.nordstrom.com/Address/ContactInformation', function() {
 //   this.wait(10000, function() {
@@ -323,7 +290,7 @@ casper.then(function() {
   },
   function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
-    picit(order.id + '-15');
+    picit(order.id + '-15' + '-' + new Date().getTime());
     casper.exit(15);
   }, 30000);
 });
@@ -359,11 +326,11 @@ casper.then(function() {
   }, false);
 });
 
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(order.id + '-after-fill');
-  });
-});
+// casper.then(function() {
+//   this.wait(10000, function() {
+//     picit(order.id + '-checkout-page');
+//   });
+// });
 
 casper.then(function() {
   casper.test.comment('Clicking on Save and Continue');
@@ -374,7 +341,8 @@ casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
       casper.test.comment('Error found on Customer Information form.');
-      picit(order.id + '-34');
+      picit(order.id + '-34' + '-' + new Date().getTime());
+      this.exit(34);
     }, function() {
       casper.test.comment('All is well, no form-validation-errors found');
     }, 30000);
@@ -383,10 +351,11 @@ casper.then(function() {
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
       casper.test.comment('No address confirmation page. Moving on!');
-      picit(new Date().getTime() + '-payment-page');
+      // picit(new Date().getTime() + '-payment-page');
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
-      picit(new Date().getTime() + '-address-confirmation');
+      picit(order.id + '-36' + '-' + new Date().getTime());
+      casper.exit(36);
     }, 30000);
 });
 
@@ -400,21 +369,120 @@ casper.then(function() {
   }, false);
 });
 
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(new Date().getTime() + '-after-payment-info');
-  });
-});
+// casper.then(function() {
+//   this.wait(10000, function() {
+//     picit(new Date().getTime() + '-after-payment-info');
+//   });
+// });
 
 casper.then(function () {
   casper.waitForSelector('#submitButton', function () {
 
-      casper.test.comment('SubmitButton VISIBLE!');
+      casper.test.comment('order.submitOrder set to: ' + order.submitOrder);
+
+      if(order.submitOrder) {
+        // TODO: OMG! ARE YOU READY FOR THIS?
+        casper.click('#submitButton');
+        casper.test.comment('Submit button CLICKED!');
+      } else {
+        casper.test.comment('SubmitButton is VISIBLE!');
+      }
 
     }, function() {
-      casper.test.comment('SubmitButton NOT visible.');
+      casper.test.comment('ERROR: Submit order button not available');
+      picit(order.id + '-18' + '-' + new Date().getTime());
+      casper.exit(18);
     }, 30000);
 });
+
+casper.then(function() {
+  this.wait(10000, function() {
+    casper.test.comment('Submit button clicked');
+    picit(order.id + '-0' + '-' + new Date().getTime());
+  });
+});
+
+// check for success or errors
+if(order.submitOrder) {
+
+  casper.then(function () {
+
+    //TODO: extract confirmation number
+    casper.waitForSelector('#confirmSummary', function () {
+
+      casper.then(function() {
+        var confirmationMsg = this.evaluate(function parseConfirmationMsg() { return $('#confirmSummary').html();});
+      });
+
+      if(!confirmationMsg) {
+        casper.then(function() {
+          casper.test.comment('ERROR: Order was submitted but could not find order confirmation text.');
+          picit(order.id + '-20' + '-' + new Date().getTime());
+          casper.exit(20);
+        });
+      }
+
+      if(auth && commentUrl) {
+
+        casper.then(function() {
+          casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+        });
+
+        casper.open(commentUrl, {
+            method: 'post',
+            data:   {
+              'comment': 'CONFIRMATION #: ' + confirmationMsg
+            },
+            headers: {
+              'Authorization' : auth
+            }
+        });
+
+        casper.then(function() {
+          casper.test.comment('Confirmation # posted!');
+        });
+
+        } else {
+          casper.then(function() {
+            casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+          });
+        }
+
+      }, function() {
+        casper.then(function() {
+          casper.test.comment('ERROR: Order was submitted but could not find order confirmation text.');
+          picit(order.id + '-20' + '-' + new Date().getTime());
+          casper.exit(20);
+        });
+      }, 30000);
+  });
+} else {
+  casper.then(function() {
+    if(auth && commentUrl) {
+      casper.then(function() {
+        casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+      });
+
+      casper.open(commentUrl, {
+          method: 'post',
+          data:   {
+            'comment': 'CONFIRMATION #: ' + confirmationMsg
+          },
+          headers: {
+            'Authorization' : auth
+          }
+      });
+
+      casper.then(function() {
+        casper.test.comment('Confirmation # posted!');
+      });
+    } else {
+      casper.then(function() {
+        casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+      });
+    }
+  });
+}
 
 
 // RUN IIIIIIIIIIIT!

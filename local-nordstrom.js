@@ -191,6 +191,7 @@ casper.then(function() {
   casper.waitForSelector('.field-validation-error', function () {
       casper.test.comment('Error found on Customer Information form.');
       picit(new Date().getTime() + '-34');
+      casper.exit(34);
     }, function() {
       casper.test.comment('All is well, no form-validation-errors found');
     }, 30000);
@@ -203,6 +204,7 @@ casper.then(function() {
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
       picit(new Date().getTime() + '-address-confirmation');
+      casper.exit(34);
     }, 30000);
 });
 
