@@ -28,14 +28,97 @@ casper.start();
 
 casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
 
-// PRODUCT 1: Size/NO Color/YES
+// PRODUCT 1: Size/ONE SIZE Color/AMANDELLE
 
 casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535', function() {
 
   casper.waitForSelector('#buyButtonSubmit', function found() {
 
     casper.then(function () {
+      this.clickLabel('One Size', 'a');
+    });
+
+    casper.then(function () {
       this.clickLabel('AMANDELLE', 'span');
+    });
+
+    casper.then(function () {
+      casper.test.comment('Clicking on add button');
+      this.click('#buyButtonSubmit');
+    });
+
+  }, function timeout() {
+
+      casper.test.comment('Timed out waiting for add button.');
+      casper.exit(1);
+
+  }, 30000);
+
+});
+
+// PRODUCT 2: Size/7(xl) Color/ARGENT GREY
+
+casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429', function() {
+
+  casper.waitForSelector('#buyButtonSubmit', function found() {
+
+    casper.then(function () {
+      this.clickLabel('7(xl)', 'a');
+    });
+
+    casper.then(function () {
+      this.clickLabel('ARGENT GREY', 'span');
+    });
+    casper.then(function () {
+      casper.test.comment('Clicking on add button');
+      this.click('#buyButtonSubmit');
+    });
+
+  }, function timeout() {
+
+      casper.test.comment('Timed out waiting for add button.');
+      casper.exit(1);
+
+  }, 30000);
+
+});
+
+// PRODUCT 3: Size/6.8 oz Color/NO
+
+casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742', function() {
+
+  casper.waitForSelector('#buyButtonSubmit', function found() {
+
+    casper.then(function () {
+      this.clickLabel('6.8 oz', 'a');
+    });
+
+    casper.then(function () {
+      casper.test.comment('Clicking on add button');
+      this.click('#buyButtonSubmit');
+    });
+
+  }, function timeout() {
+
+      casper.test.comment('Timed out waiting for add button.');
+      casper.exit(1);
+
+  }, 30000);
+
+});
+
+// PRODUCT 4: Size/8US / 7UK M Color/BLACK
+
+casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fprada-buckled-leather-slip-on-men%252F3198682', function() {
+
+  casper.waitForSelector('#buyButtonSubmit', function found() {
+
+    casper.then(function () {
+      this.clickLabel('8US / 7UK M', 'a');
+    });
+
+    casper.then(function () {
+      this.clickLabel('BLACK', 'span');
     });
     casper.then(function () {
       casper.test.comment('Clicking on add button');
@@ -55,9 +138,9 @@ casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&su
 //   this.clickLabel('7(xl)', 'a');
 // });
 
-// casper.then(function() {
-//   picit(new Date().getTime() + '-after-size-click');
-// });
+casper.then(function() {
+  picit(new Date().getTime() + '-shopping-bag');
+});
 
 
 
