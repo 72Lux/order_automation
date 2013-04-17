@@ -46,6 +46,27 @@ casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.
 
 var lineItems = order.line_items;
 
+// if quantity on any of the items is greater than 1
+// change it to 1 and add new lineItems to the array for the originalQty-1 items
+
+casper.test.comment('lineItem count BEFORE flattening: ' + lineItems.length);
+
+for(var n = 0; n < lineItems.length; n++) {
+
+  casper.test.comment('qty: ' + lineItems[n].qty);
+
+  var qty = lineItems[n].qty;
+
+  if(qty > 1) {
+    lineItems[n].qty = 1;
+    for(var m = 0; m < qty-1; m++) {
+      lineItems.push(lineItems[n]);
+    }
+  }
+}
+
+casper.test.comment('lineItem count AFTER flattening: ' + lineItems.length);
+
 casper.start();
 
 // ADD ITEMS BEGIN
@@ -54,6 +75,7 @@ casper.start();
 casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
 
 casper.each(lineItems, function(self, lineItem) {
+
   this.thenOpen(lineItem.affiliate_url, function() {
 
     casper.test.comment(this.getTitle());

@@ -5,7 +5,7 @@ require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = 'test-' + filename + '.png';
+  filename = 'screen_caps/test-' + filename + '.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
@@ -14,6 +14,93 @@ picit = (function (filename) {
     height: 2000
   });
 });
+
+// setItemQty = (function (targetQty, name, color, size) {
+
+//   var finalQty = casper.evaluate(function(targetQty, name, color, size) {
+
+//     normalizeString = (function (s) {
+//       var r = s.toLowerCase();
+
+//       r = r.replace(new RegExp("\\s", 'g'), "");
+//       r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+//       r = r.replace(new RegExp("æ", 'g'), "ae");
+//       r = r.replace(new RegExp("ç", 'g'), "c");
+//       r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+//       r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+//       r = r.replace(new RegExp("ñ", 'g'), "n");
+//       r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
+//       r = r.replace(new RegExp("œ", 'g'), "oe");
+//       r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+//       r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+//       r = r.replace(new RegExp("\\W", 'g'), "");
+
+//       return r;
+//     });
+
+//     var resultQty = 0;
+
+//     $('section').each(function() {
+
+//       var matchFound = false;
+
+//       var normalizedName = normalizeString(name);
+//       var normalizedColor = normalizeString(color);
+//       var normalizedSize = normalizeString(size);
+
+//       var normalizedTitle = normalizeString($(this).find('.title').text());
+//       var normalizedItem = normalizeString($(this).find('.item').text());
+
+//       if(normalizedTitle.indexOf(normalizedName) >= 0) {
+
+//         if(size && color) {
+
+//           if(normalizedItem.indexOf(normalizedSize) >= 0 && normalizedItem.indexOf(normalizedColor) >= 0) {
+//             matchFound = true;
+//           }
+
+//         } else if(size && !color) {
+
+//           if(normalizedItem.indexOf(normalizedSize) >= 0) {
+//             matchFound = true;
+//           }
+
+//         } else if(!size && color) {
+
+//           if(normalizedItem.indexOf(normalizedColor) >= 0) {
+//             matchFound = true;
+//           }
+
+//         } else {
+//           // just the name matched
+//           matchFound = true;
+//         }
+
+//         if(matchFound) {
+//           $(this).find('input[type="tel"][id ^=updateQty]').val(targetQty);
+//           resultQty = $(this).find('input[type="tel"][id ^=updateQty]').val();
+//           return;
+//         }
+
+//       }
+
+//     });
+
+//     return resultQty;
+
+//   }, targetQty, name, color, size);
+
+//   casper.test.comment('targetQty: ' + targetQty);
+//   casper.test.comment('finalQty: ' + finalQty);
+
+//   picit(new Date().getTime() + '-shopping-bag');
+
+//   if(targetQty != finalQty) {
+//     casper.test.comment('Set qty failed for targetQty: ' + targetQty);
+//     casper.exit(1);
+//   }
+
+// });
 
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js"],
@@ -24,6 +111,32 @@ var casper = require("casper").create({
 // Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
 
+var lineItems = {
+  0 : {
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'AMANDELLE',
+    qty: 1
+  },
+  1 : {
+   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'AMANDELLE',
+    qty: 1
+  },
+  2 : {
+   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'AMANDELLE',
+    qty: 1
+  },
+  3 : {
+   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'AMANDELLE',
+    qty: 1
+  }
+};
 casper.start();
 
 casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
@@ -56,12 +169,92 @@ casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&su
 
 });
 
-casper.then(function() {
-  casper.waitForSelector('#buyButtonSubmit', function found() {
+// // PRODUCT 2: Size/ONE SIZE Color/BRONZELLE
 
-  });
-});
-// // PRODUCT 2: Size/7(xl) Color/ARGENT GREY
+// casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535', function() {
+
+//   casper.waitForSelector('#buyButtonSubmit', function found() {
+
+//     casper.then(function () {
+//       this.clickLabel('One Size', 'a');
+//     });
+
+//     casper.then(function () {
+//       this.clickLabel('BRONZELLE', 'span');
+//     });
+
+//     casper.then(function () {
+//       casper.test.comment('Clicking on add button');
+//       this.click('#buyButtonSubmit');
+//     });
+
+//   }, function timeout() {
+
+//       casper.test.comment('Timed out waiting for add button.');
+//       casper.exit(1);
+
+//   }, 30000);
+
+// });
+
+// casper.then(function() {
+//   casper.waitForSelector('.cart', function found() {
+
+//     var targetQty = 2;
+
+//     var finalQty = this.evaluate(function(targetQty, name, color, size) {
+
+//       var resultQty = 0;
+
+//       $('section').each(function() {
+
+//         var matchFound = false;
+
+//         if($(this).find('.title').text().toLowerCase().indexOf(name.toLowerCase()) >= 0) {
+
+//           if(size && color) {
+
+//             if($(this).find('.item').text().toLowerCase().indexOf(size.toLowerCase()) >= 0 && $(this).find('.item').text().toLowerCase().indexOf(color.toLowerCase()) >= 0) {
+//               matchFound = true;
+//             }
+
+//           } else if(size && !color) {
+
+//             if($(this).find('.item').text().toLowerCase().indexOf(size.toLowerCase()) >= 0) {
+//               matchFound = true;
+//             }
+
+//           } else if(!size && color) {
+
+//             if($(this).find('.item').text().toLowerCase().indexOf(color.toLowerCase()) >= 0) {
+//               matchFound = true;
+//             }
+
+//           } else {
+//             // just the name matched
+//             matchFound = true;
+//           }
+
+//           if(matchFound) {
+//             $(this).find('input[type="tel"][id ^=updateQty]').val(targetQty);
+//             resultQty = $(this).find('input[type="tel"][id ^=updateQty]').val();
+//             return;
+//           }
+
+//         }
+
+//       });
+
+//       return resultQty;
+
+//     }, targetQty, "Lancôme 'Le Lipstique' LipColoring Stick with Brush", 'AMANDELLE', 'One Size');
+
+//     casper.test.comment('returned val: ' + finalQty);
+//     picit(new Date().getTime() + '-shopping-bag');
+//   });
+// });
+
+// // PRODUCT 3: Size/7(xl) Color/ARGENT GREY
 
 // casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429', function() {
 
@@ -88,7 +281,7 @@ casper.then(function() {
 
 // });
 
-// // PRODUCT 3: Size/6.8 oz Color/NO
+// // // PRODUCT 4: Size/6.8 oz Color/NO
 
 // casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742', function() {
 
@@ -112,7 +305,7 @@ casper.then(function() {
 
 // });
 
-// // PRODUCT 4: Size/8US / 7UK M Color/BLACK
+// // // PRODUCT 5: Size/8US / 7UK M Color/BLACK
 
 // casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fprada-buckled-leather-slip-on-men%252F3198682', function() {
 
@@ -138,21 +331,6 @@ casper.then(function() {
 //   }, 30000);
 
 // });
-
-// // casper.then(function() {
-// //   this.clickLabel('7(xl)', 'a');
-// // });
-
-// casper.then(function() {
-//   picit(new Date().getTime() + '-shopping-bag');
-// });
-
-
-
-// // casper.then(function() {
-// //   var itemNumber = this.fetchText('.item');
-// //   casper.test.comment('ITEM NUMBER: ' + itemNumber);
-// // });
 
 // //CHECKOUT BEGIN
 

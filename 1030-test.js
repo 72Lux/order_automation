@@ -24,130 +24,239 @@ var casper = require("casper").create({
 // Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
 
+var order = {id: 'test'};
+
+var lineItems = [];
+
+var item0 = {
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'AMANDELLE',
+    qty: 1
+  };
+
+lineItems.push(item0);
+
+var item1 = {
+   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'BRONZELLE',
+    qty: 1
+  };
+
+lineItems.push(item1);
+
+var item2 = {
+   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429',
+    size: '7(xl)',
+    color: 'ARGENT GREY',
+    qty: 1
+  };
+
+lineItems.push(item2);
+
+var item3 = {
+   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742',
+    size: '6.8 oz',
+    color: '',
+    qty: 2
+  };
+
+lineItems.push(item3);
+
+casper.test.comment('lineItems.length BEFORE: ' + lineItems.length);
+
+for(var n = 0; n < lineItems.length; n++) {
+
+  casper.test.comment('qty: ' + lineItems[n].qty);
+
+  var qty = lineItems[n].qty;
+  if(qty > 1) {
+    lineItems[n].qty = 1;
+    for(var m = 0; m < qty-1; m++) {
+      lineItems.push(lineItems[n]);
+    }
+  }
+}
+
+casper.test.comment('lineItems.length AFTER: ' + lineItems.length);
+
+for(var n = 0; n < lineItems.length; n++) {
+  casper.test.comment('qty: ' + lineItems[n].qty);
+}
+
 casper.start();
 
 casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
 
-// PRODUCT 1: Size/ONE SIZE Color/AMANDELLE
+casper.each(lineItems, function(self, lineItem) {
 
-casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535', function() {
+  this.thenOpen(lineItem.affiliate_url, function() {
 
-  casper.waitForSelector('#buyButtonSubmit', function found() {
+    casper.test.comment(this.getTitle());
 
-    casper.then(function () {
-      this.clickLabel('One Size', 'a');
+    // picit(order.id + '-before-anything');
+
+    casper.waitForSelector('#buyButtonSubmit', function() {
+
+      if (lineItem.size) {
+
+        casper.test.comment('Set size to: ' + lineItem.size);
+        casper.test.comment('length: ' + lineItem.size.length);
+
+        casper.then(function() {
+
+          isSizeAvailable = this.evaluate(function(size) {
+
+                                            var result = false;
+
+                                            $('#dimension1_1 a').each(function(index, value) {
+
+                                              if($(this).attr('id').toLowerCase().indexOf(size.toLowerCase()) >= 0) {
+
+                                                // check if color is available
+                                                if(!$(this).hasClass('unavailable')) {
+                                                  // color found, click it!
+                                                  // $(this).click();
+                                                  // // verify the
+                                                  // result = $(this).hasClass('selected');
+                                                  result = true;
+                                                  return;
+                                                }
+                                              }
+                                            });
+
+                                            // the color was not found
+                                            return result;
+
+                                          }, lineItem.size);
+
+        });
+
+        casper.then(function() {
+          casper.test.comment('isSizeAvailable: ' + isSizeAvailable);
+        });
+
+        casper.then(function() {
+          if(isSizeAvailable) {
+              this.clickLabel(lineItem.size, 'a');
+          } else {
+            casper.test.comment('ERROR: OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
+            picit(order.id + '-32' + '-' + new Date().getTime());
+            this.exit(32);
+          }
+        });
+
+        // casper.then(function() {
+        //   picit(order.id +  '-' + new Date().getTime() +'-after-size-click');
+        // });
+      }
+
+      if (lineItem.color) {
+
+        casper.test.comment('Set color to: ' + lineItem.color);
+
+        // eg: beauty
+        // process color
+
+        casper.then(function() {
+
+          isColorAvailable = this.evaluate(function(color) {
+
+                                          var result = false;
+
+                                          $('#dimension2_1 span').each(function() {
+
+                                            // console.log('this text: ' + $(this).text());
+                                            // console.log('color text: ' + color);
+
+                                            if($(this).text().toLowerCase().indexOf(color.toLowerCase()) >= 0) {
+
+                                              // console.log('found!');
+
+                                              var _parent = $(this).closest('a');
+
+                                              // check if color is available
+                                              if(!_parent.hasClass('unavailable')) {
+
+                                                // console.log('parent does not have unavailable');
+                                                // console.log('value: ' + _parent.attr('value'));
+                                                // color found, click it!
+                                                //TODO: this click isn't working so setting value directly in hidden input.
+                                                // _parent.click();
+                                                // $('#selectedSku').val(_parent.attr('value'));
+                                                // verify the
+                                                // alter result based on how we set the sku
+                                                // result = _parent.hasClass('selected');
+                                                // result = $('#selectedSku').val();
+
+                                                // console.log(result);
+                                                result = true;
+                                                return;
+                                              }
+                                              // else {
+                                              //   console.log('parent has unavailable');
+                                              // }
+
+                                            }
+                                            //  else {
+                                            //   console.log('not found');
+                                            // }
+                                          });
+
+                                          // the color was not found
+                                          return result;
+
+                                        }, lineItem.color);
+        });
+
+        casper.then(function() {
+          casper.test.comment('isColorAvailable: ' + isColorAvailable);
+        });
+
+        casper.then(function() {
+          if(isColorAvailable) {
+              this.clickLabel(lineItem.color, 'span');
+          } else {
+            casper.test.comment('ERROR: OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
+            picit(order.id + '-32' + '-' + new Date().getTime());
+            this.exit(32);
+          }
+        });
+
+        // casper.then(function() {
+        //   picit(order.id +  '-' + new Date().getTime() +'-after-color-click');
+        // });
+
+      }
+
+      // TODO set QUANTITIES
+      // casper.then(function() {
+      //   var itemNumber = this.fetchText('.item .sub');
+
+      //   casper.test.comment('ITEM NUMBER: ' + itemNumber);
+      // });
+
+      casper.test.comment('Clicking on add button...');
+      casper.then(function() {
+        this.click('#buyButtonSubmit');
+      });
+
+      // casper.then(function() {
+      //   picit(order.id +  '-' + new Date().getTime() +'-after-add-click');
+      // });
+
+    }, function() {
+
+      casper.test.comment('Timed out waiting for add to bag button');
+      picit(order.id + '-12' + '-' + new Date().getTime());
+      this.exit(12);
+
     });
 
-    casper.then(function () {
-      this.clickLabel('AMANDELLE', 'span');
-    });
-
-    casper.then(function () {
-      casper.test.comment('Clicking on add button');
-      this.click('#buyButtonSubmit');
-    });
-
-  }, function timeout() {
-
-      casper.test.comment('Timed out waiting for add button.');
-      casper.exit(1);
-
-  }, 30000);
+  });
 
 });
-
-// PRODUCT 2: Size/7(xl) Color/ARGENT GREY
-
-casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429', function() {
-
-  casper.waitForSelector('#buyButtonSubmit', function found() {
-
-    casper.then(function () {
-      this.clickLabel('7(xl)', 'a');
-    });
-
-    casper.then(function () {
-      this.clickLabel('ARGENT GREY', 'span');
-    });
-    casper.then(function () {
-      casper.test.comment('Clicking on add button');
-      this.click('#buyButtonSubmit');
-    });
-
-  }, function timeout() {
-
-      casper.test.comment('Timed out waiting for add button.');
-      casper.exit(1);
-
-  }, 30000);
-
-});
-
-// PRODUCT 3: Size/6.8 oz Color/NO
-
-casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742', function() {
-
-  casper.waitForSelector('#buyButtonSubmit', function found() {
-
-    casper.then(function () {
-      this.clickLabel('6.8 oz', 'a');
-    });
-
-    casper.then(function () {
-      casper.test.comment('Clicking on add button');
-      this.click('#buyButtonSubmit');
-    });
-
-  }, function timeout() {
-
-      casper.test.comment('Timed out waiting for add button.');
-      casper.exit(1);
-
-  }, 30000);
-
-});
-
-// PRODUCT 4: Size/8US / 7UK M Color/BLACK
-
-casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fprada-buckled-leather-slip-on-men%252F3198682', function() {
-
-  casper.waitForSelector('#buyButtonSubmit', function found() {
-
-    casper.then(function () {
-      this.clickLabel('8US / 7UK M', 'a');
-    });
-
-    casper.then(function () {
-      this.clickLabel('BLACK', 'span');
-    });
-    casper.then(function () {
-      casper.test.comment('Clicking on add button');
-      this.click('#buyButtonSubmit');
-    });
-
-  }, function timeout() {
-
-      casper.test.comment('Timed out waiting for add button.');
-      casper.exit(1);
-
-  }, 30000);
-
-});
-
-// casper.then(function() {
-//   this.clickLabel('7(xl)', 'a');
-// });
-
-casper.then(function() {
-  picit(new Date().getTime() + '-shopping-bag');
-});
-
-
-
-// casper.then(function() {
-//   var itemNumber = this.fetchText('.item');
-//   casper.test.comment('ITEM NUMBER: ' + itemNumber);
-// });
 
 //CHECKOUT BEGIN
 
