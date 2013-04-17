@@ -5,7 +5,7 @@ require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = '/home/vivekdhar/screen_caps/' + filename + '.png';
+  filename = '/tmp/order_automation/' + filename + '.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
@@ -290,15 +290,19 @@ casper.then(function() {
   });
 });
 
-casper.then(function () {
-  casper.waitForSelector('#submitButton', function () {
-
-      casper.test.comment('SubmitButton VISIBLE!');
-
-    }, function() {
-      casper.test.comment('SubmitButton NOT visible.');
-    }, 30000);
+casper.then(function() {
+  this.test.assertExists('#submitButton', 'Final submit order button VISIBLE!');
 });
+
+// casper.then(function () {
+//   casper.waitForSelector('#submitButton', function () {
+
+//       casper.test.comment('SubmitButton VISIBLE!');
+
+//     }, function() {
+//       casper.test.comment('SubmitButton NOT visible.');
+//     }, 30000);
+// });
 
 // RUN IIIIIIIIIIIT!
 casper.run();
