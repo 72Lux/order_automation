@@ -1,4 +1,4 @@
-  require("utils");
+require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
@@ -13,7 +13,7 @@ picit = (function (filename) {
 });
 
 var casper = require("casper").create({
-  clientScripts: ["jquery-1.8.3.min.js"],
+  clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   onAlert: function () {
     casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
@@ -93,28 +93,28 @@ casper.each(lineItems, function(self, lineItem) {
 
           isSizeAvailable = this.evaluate(function(size) {
 
-                                            var result = false;
+            var result = false;
 
-                                            $('#dimension1_1 a').each(function(index, value) {
+            $('#dimension1_1 a').each(function(index, value) {
 
-                                              if($(this).attr('id').toLowerCase().indexOf(size.toLowerCase()) >= 0) {
+              if(normalizeString($(this).attr('id')).indexOf(normalizeString(size)) >= 0) {
 
-                                                // check if color is available
-                                                if(!$(this).hasClass('unavailable')) {
-                                                  // color found, click it!
-                                                  // $(this).click();
-                                                  // // verify the
-                                                  // result = $(this).hasClass('selected');
-                                                  result = true;
-                                                  return;
-                                                }
-                                              }
-                                            });
+                // check if color is available
+                if(!$(this).hasClass('unavailable')) {
+                  // color found, click it!
+                  // $(this).click();
+                  // // verify the
+                  // result = $(this).hasClass('selected');
+                  result = true;
+                  return;
+                }
+              }
+            });
 
-                                            // the color was not found
-                                            return result;
+            // the color was not found
+            return result;
 
-                                          }, lineItem.size);
+          }, lineItem.size);
 
         });
 
@@ -131,10 +131,6 @@ casper.each(lineItems, function(self, lineItem) {
             this.exit(32);
           }
         });
-
-        // casper.then(function() {
-        //   picit(order.id +  '-' + new Date().getTime() +'-after-size-click');
-        // });
       }
 
       if (lineItem.color) {
@@ -148,51 +144,27 @@ casper.each(lineItems, function(self, lineItem) {
 
           isColorAvailable = this.evaluate(function(color) {
 
-                                          var result = false;
+            var result = false;
 
-                                          $('#dimension2_1 span').each(function() {
+            $('#dimension2_1 span').each(function() {
 
-                                            // console.log('this text: ' + $(this).text());
-                                            // console.log('color text: ' + color);
+              if(normalizeString($(this).text()).indexOf(normalizeString(color)) >= 0) {
 
-                                            if($(this).text().toLowerCase().indexOf(color.toLowerCase()) >= 0) {
+                var _parent = $(this).closest('a');
 
-                                              // console.log('found!');
+                // check if color is available
+                if(!_parent.hasClass('unavailable')) {
 
-                                              var _parent = $(this).closest('a');
+                  result = true;
+                  return;
+                }
+              }
+            });
 
-                                              // check if color is available
-                                              if(!_parent.hasClass('unavailable')) {
+            // the color was not found
+            return result;
 
-                                                // console.log('parent does not have unavailable');
-                                                // console.log('value: ' + _parent.attr('value'));
-                                                // color found, click it!
-                                                //TODO: this click isn't working so setting value directly in hidden input.
-                                                // _parent.click();
-                                                // $('#selectedSku').val(_parent.attr('value'));
-                                                // verify the
-                                                // alter result based on how we set the sku
-                                                // result = _parent.hasClass('selected');
-                                                // result = $('#selectedSku').val();
-
-                                                // console.log(result);
-                                                result = true;
-                                                return;
-                                              }
-                                              // else {
-                                              //   console.log('parent has unavailable');
-                                              // }
-
-                                            }
-                                            //  else {
-                                            //   console.log('not found');
-                                            // }
-                                          });
-
-                                          // the color was not found
-                                          return result;
-
-                                        }, lineItem.color);
+          }, lineItem.color);
         });
 
         casper.then(function() {
@@ -208,28 +180,12 @@ casper.each(lineItems, function(self, lineItem) {
             this.exit(32);
           }
         });
-
-        // casper.then(function() {
-        //   picit(order.id +  '-' + new Date().getTime() +'-after-color-click');
-        // });
-
       }
 
-      // TODO set QUANTITIES
-      // casper.then(function() {
-      //   var itemNumber = this.fetchText('.item .sub');
-
-      //   casper.test.comment('ITEM NUMBER: ' + itemNumber);
-      // });
-
-      casper.test.comment('Clicking on add button...');
       casper.then(function() {
+        casper.test.comment('Clicking on add button...');
         this.click('#buyButtonSubmit');
       });
-
-      // casper.then(function() {
-      //   picit(order.id +  '-' + new Date().getTime() +'-after-add-click');
-      // });
 
     }, function() {
 
@@ -247,26 +203,10 @@ casper.each(lineItems, function(self, lineItem) {
 
 // HEAD TO CHECKOUT BEGIN
 
-// https://msecure.nordstrom.com/shoppingbag/
-
-// casper.thenOpen('https://msecure.nordstrom.com/shoppingbag/', function() {
-//   this.wait(2000, function() {
-//     picit(order.id + '-shopping-bag');
-//   });
-// });
-
-// HEAD TO CHECKOUT END
-
 casper.then(function() {
   casper.test.comment('To the checkout!');
   this.click('#proceed-to-checkout');
 });
-
-// casper.then(function() {
-//   this.wait(10000, function() {
-//     picit(order.id + '-proceed-to-checkout');
-//   });
-// });
 
 // NoThanksButton
 
@@ -288,25 +228,11 @@ casper.then(function () {
     }, 30000);
 });
 
-
-// Continue to Checkout
-
 casper.then(function() {
   this.clickLabel('Continue to Checkout', 'a');
 });
 
-// casper.then(function() {
-//   this.wait(10000, function() {
-//     picit(order.id + '-after-checkout');
-//   });
-// });
-
-// casper.thenOpen('https://msecure.nordstrom.com/Address/ContactInformation', function() {
-//   this.wait(10000, function() {
-//     picit(order.id + '-customer-info');
-//     this.exit(0);
-//   });
-// });
+// HEAD TO CHECKOUT END
 
 casper.then(function() {
   casper.waitForSelector('#EmailAddress', function then() {
@@ -350,12 +276,6 @@ casper.then(function() {
   }, false);
 });
 
-// casper.then(function() {
-//   this.wait(10000, function() {
-//     picit(order.id + '-checkout-page');
-//   });
-// });
-
 casper.then(function() {
   casper.test.comment('Clicking on Save and Continue');
   this.click('#Submit1');
@@ -375,7 +295,6 @@ casper.then(function() {
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
       casper.test.comment('No address confirmation page. Moving on!');
-      // picit(new Date().getTime() + '-payment-page');
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
       picit(order.id + '-36' + '-' + new Date().getTime());
@@ -392,12 +311,6 @@ casper.then(function() {
     'ExpYear' : pi.expiry_year
   }, false);
 });
-
-// casper.then(function() {
-//   this.wait(10000, function() {
-//     picit(new Date().getTime() + '-after-payment-info');
-//   });
-// });
 
 casper.then(function () {
   casper.waitForSelector('#submitButton', function () {
