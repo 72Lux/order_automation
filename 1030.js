@@ -139,12 +139,12 @@ casper.each(lineItems, function(self, lineItem) {
 
       if (lineItem.color) {
 
-        casper.test.comment('Set color to: ' + lineItem.color);
-
         // eg: beauty
         // process color
 
         casper.then(function() {
+
+          casper.test.comment('Set color to: ' + lineItem.color);
 
           isColorAvailable = this.evaluate(function(color) {
 
