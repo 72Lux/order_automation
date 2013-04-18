@@ -3,18 +3,6 @@
 
 require("utils");
 
-// capture a snapshot
-picit = (function (filename) {
-  filename = 'screen_caps/test-' + filename + '.png';
-  casper.test.comment('Cheeeeeeese!');
-  casper.capture(filename, {
-    top: 0,
-    left: 0,
-    width: 480,
-    height: 2000
-  });
-});
-
 // setItemQty = (function (targetQty, name, color, size) {
 
 //   var finalQty = casper.evaluate(function(targetQty, name, color, size) {
@@ -103,7 +91,7 @@ picit = (function (filename) {
 // });
 
 var casper = require("casper").create({
-  clientScripts: ["jquery-1.8.3.min.js"],
+  clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   verbose: false,
   logLevel: "debug"
 });
@@ -149,6 +137,33 @@ casper.thenOpen('http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&su
 
     casper.then(function () {
       this.clickLabel('One Size', 'a');
+    });
+
+    casper.then(function() {
+
+      isColorAvailable = this.evaluate(function(color) {
+
+        var result = false;
+
+        $('#dimension2_1 span').each(function() {
+
+          if(normalizeString($(this).text()).indexOf(normalizeString(color)) >= 0) {
+
+            var _parent = $(this).closest('a');
+
+            // check if color is available
+            if(!_parent.hasClass('unavailable')) {
+              result = true;
+              return;
+            }
+
+          }
+        });
+        return result;
+
+      }, 'AMANDELLE');
+
+      casper.test.comment('isColorAvailable: ' + isColorAvailable);
     });
 
     casper.then(function () {

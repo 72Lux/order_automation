@@ -35,7 +35,7 @@ normalizeString = (function (s) {
 });
 
 var casper = require("casper").create({
-  clientScripts: ["jquery-1.8.3.min.js"],
+  clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   verbose: false,
   logLevel: "debug"
 });
@@ -87,13 +87,9 @@ var item3 = {
 
 lineItems.push(item3);
 
-// casper.test.comment('lineItem count BEFORE flattening: ' + lineItems.length);
-
 var originalLineItemCount = lineItems.length;
 
 for(var n = 0; n < lineItems.length; n++) {
-
-  // casper.test.comment('qty: ' + lineItems[n].qty);
 
   var qty = lineItems[n].qty;
   if(qty > 1) {
@@ -103,12 +99,6 @@ for(var n = 0; n < lineItems.length; n++) {
     }
   }
 }
-
-// casper.test.comment('lineItem count AFTER flattening: ' + lineItems.length);
-
-// for(var n = 0; n < lineItems.length; n++) {
-//   casper.test.comment('qty: ' + lineItems[n].qty);
-// }
 
 casper.start();
 
@@ -125,41 +115,36 @@ casper.each(lineItems, function(self, lineItem) {
     casper.then(function() {
       this.test.assert(normalizeString(this.getTitle()).indexOf(normalizeString(lineItem.name)) >= 0, 'Item name [' + lineItem.name + '] found in page title');
     });
-    // picit(order.id + '-before-anything');
 
     casper.waitForSelector('#buyButtonSubmit', function() {
 
       if (lineItem.size) {
 
-        // casper.test.comment('Set size to: ' + lineItem.size);
-        // casper.test.comment('length: ' + lineItem.size.length);
-
         casper.then(function() {
 
           isSizeAvailable = this.evaluate(function(size) {
 
-                                            var result = false;
+            var result = false;
 
-                                            $('#dimension1_1 a').each(function(index, value) {
+            $('#dimension1_1 a').each(function(index, value) {
 
-                                              if($(this).attr('id').toLowerCase().indexOf(size.toLowerCase()) >= 0) {
+              if(normalizeString($(this).attr('id')).indexOf(normalizeString(size)) >= 0) {
 
-                                                // check if color is available
-                                                if(!$(this).hasClass('unavailable')) {
-                                                  result = true;
-                                                  return;
-                                                }
-                                              }
-                                            });
+                // check if color is available
+                if(!$(this).hasClass('unavailable')) {
+                  result = true;
+                  return;
+                }
+              }
+            });
 
-                                            return result;
+            return result;
 
-                                          }, lineItem.size);
+          }, lineItem.size);
 
         });
 
         casper.then(function() {
-          // casper.test.comment('isSizeAvailable: ' + isSizeAvailable);
           this.test.assert(isSizeAvailable, 'Size [' + lineItem.size + '] available');
         });
 
@@ -177,14 +162,9 @@ casper.each(lineItems, function(self, lineItem) {
           var currentSize = this.evaluate(function() { return $('#dimension1_1 .selected').text(); });
           this.test.assert(normalizeString(lineItem.size) === normalizeString(currentSize), 'Size [' + currentSize + '] set successfully');
         });
-        // casper.then(function() {
-        //   picit(order.id +  '-' + new Date().getTime() +'-after-size-click');
-        // });
       }
 
       if (lineItem.color) {
-
-        // casper.test.comment('Set color to: ' + lineItem.color);
 
         // eg: beauty
         // process color
@@ -193,55 +173,29 @@ casper.each(lineItems, function(self, lineItem) {
 
           isColorAvailable = this.evaluate(function(color) {
 
-                                          var result = false;
+            var result = false;
 
-                                          $('#dimension2_1 span').each(function() {
+            $('#dimension2_1 span').each(function() {
 
-                                            // console.log('this text: ' + $(this).text());
-                                            // console.log('color text: ' + color);
+              if(normalizeString($(this).text()).indexOf(normalizeString(color)) >= 0) {
 
-                                            if($(this).text().toLowerCase().indexOf(color.toLowerCase()) >= 0) {
+                var _parent = $(this).closest('a');
 
-                                              // console.log('found!');
+                // check if color is available
+                if(!_parent.hasClass('unavailable')) {
+                  result = true;
+                  return;
+                }
+              }
+            });
 
-                                              var _parent = $(this).closest('a');
+            // the color was not found
+            return result;
 
-                                              // check if color is available
-                                              if(!_parent.hasClass('unavailable')) {
-
-                                                // console.log('parent does not have unavailable');
-                                                // console.log('value: ' + _parent.attr('value'));
-                                                // color found, click it!
-                                                //TODO: this click isn't working so setting value directly in hidden input.
-                                                // _parent.click();
-                                                // $('#selectedSku').val(_parent.attr('value'));
-                                                // verify the
-                                                // alter result based on how we set the sku
-                                                // result = _parent.hasClass('selected');
-                                                // result = $('#selectedSku').val();
-
-                                                // console.log(result);
-                                                result = true;
-                                                return;
-                                              }
-                                              // else {
-                                              //   console.log('parent has unavailable');
-                                              // }
-
-                                            }
-                                            //  else {
-                                            //   console.log('not found');
-                                            // }
-                                          });
-
-                                          // the color was not found
-                                          return result;
-
-                                        }, lineItem.color);
+          }, lineItem.color);
         });
 
         casper.then(function() {
-          // casper.test.comment('isColorAvailable: ' + isColorAvailable);
           this.test.assert(isColorAvailable, 'Color [' + lineItem.color + '] available');
         });
 
@@ -259,19 +213,7 @@ casper.each(lineItems, function(self, lineItem) {
           var currentColor = this.evaluate(function() { return $('#dimension2_1 .selected').text(); });
           this.test.assert(normalizeString(lineItem.color) === normalizeString(currentColor), 'Color [' + currentColor + '] set successfully');
         });
-
-        // casper.then(function() {
-        //   picit(order.id +  '-' + new Date().getTime() +'-after-color-click');
-        // });
-
       }
-
-      // TODO set QUANTITIES
-      // casper.then(function() {
-      //   var itemNumber = this.fetchText('.item .sub');
-
-      //   casper.test.comment('ITEM NUMBER: ' + itemNumber);
-      // });
 
       casper.then(function() {
         this.click('#buyButtonSubmit');
