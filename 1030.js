@@ -426,10 +426,10 @@ casper.then(function() {
   });
 });
 
-// check for success or errors
-if(order.submitOrder) {
+casper.then(function () {
 
-  casper.then(function () {
+  // check for success or errors
+  if(order.submitOrder) {
 
     //TODO: extract confirmation number
     casper.waitForSelector('#confirmSummary', function () {
@@ -479,9 +479,9 @@ if(order.submitOrder) {
           casper.exit(20);
         });
       }, 30000);
-  });
-} else {
-  casper.then(function() {
+
+  } else {
+
     if(auth && commentUrl) {
       casper.then(function() {
         casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
@@ -505,8 +505,8 @@ if(order.submitOrder) {
         casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
       });
     }
-  });
-}
+  }
+});
 
 
 // RUN IIIIIIIIIIIT!
