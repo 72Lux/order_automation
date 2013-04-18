@@ -421,7 +421,7 @@ casper.then(function () {
 
 casper.then(function() {
   this.wait(10000, function() {
-    casper.test.comment('Submit button clicked');
+    casper.test.comment('Final page');
     picit(order.id + '-0' + '-' + new Date().getTime());
   });
 });

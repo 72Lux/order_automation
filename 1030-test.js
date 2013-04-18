@@ -64,7 +64,7 @@ var item3 = {
 
 lineItems.push(item3);
 
-casper.test.comment('lineItems.length BEFORE: ' + lineItems.length);
+casper.test.comment('lineItem count BEFORE flattening: ' + lineItems.length);
 
 for(var n = 0; n < lineItems.length; n++) {
 
@@ -79,7 +79,7 @@ for(var n = 0; n < lineItems.length; n++) {
   }
 }
 
-casper.test.comment('lineItems.length AFTER: ' + lineItems.length);
+casper.test.comment('lineItem count AFTER flattening: ' + lineItems.length);
 
 for(var n = 0; n < lineItems.length; n++) {
   casper.test.comment('qty: ' + lineItems[n].qty);
