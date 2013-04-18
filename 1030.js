@@ -490,7 +490,7 @@ casper.then(function () {
       casper.open(commentUrl, {
           method: 'post',
           data:   {
-            'comment': 'CONFIRMATION #: ' + confirmationMsg
+            'comment': 'submitOrder set to false, so not confirmation# for you!'
           },
           headers: {
             'Authorization' : auth
@@ -498,7 +498,7 @@ casper.then(function () {
       });
 
       casper.then(function() {
-        casper.test.comment('Confirmation # posted!');
+        casper.test.comment('submitOrder set to false, so not confirmation# for you!');
       });
     } else {
       casper.then(function() {
