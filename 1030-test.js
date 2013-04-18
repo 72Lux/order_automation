@@ -89,6 +89,8 @@ lineItems.push(item3);
 
 // casper.test.comment('lineItem count BEFORE flattening: ' + lineItems.length);
 
+var originalLineItemCount = lineItems.length;
+
 for(var n = 0; n < lineItems.length; n++) {
 
   // casper.test.comment('qty: ' + lineItems[n].qty);
@@ -295,6 +297,11 @@ casper.then(function() {
   this.wait(10000, function() {
     picit(order.id + '-' + new Date().getTime() + '-shopping-bag');
   });
+});
+
+casper.then(function() {
+  var itemCount = this.evaluate(function() { return $('input[type="tel"][id ^=updateQty]').size(); });
+  this.test.assert(originalLineItemCount === itemCount, 'Count of products added matches original lineItem count');
 });
 
 //CHECKOUT BEGIN
