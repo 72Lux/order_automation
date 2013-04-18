@@ -119,8 +119,8 @@ casper.then(function () {
 casper.then(function () {
   //casper.waitForSelector('#anonSignInBtn', function () {
     casper.test.assertExists('#anonSignInBtn', 'Can anonymously check out');
-    //casper.click('#anonSignInBtn');
-    this.clickLabel('Checkout', 'span');
+    casper.click('#anonSignInBtn');
+    casper.click('#anonSignInBtn span.blabel');
   //});
 });
 
