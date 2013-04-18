@@ -387,19 +387,19 @@ casper.then(function() {
 
     'BillingAddress.FirstName' : 'ba.first_name',
     'BillingAddress.LastName' : 'ba.last_name',
-    'BillingAddress.AddressLine1' : '5137 papaya dr',
+    'BillingAddress.AddressLine1' : '400 Broad St',
     'BillingAddress.AddressLine2' : '',
-    'BillingAddress.City' : 'Fair Oaks',
-    'BillingAddress.StateId' : awesomeStateCodes['CA'],
-    'BillingAddress.PostalCode' : '95628',
+    'BillingAddress.City' : 'Seattle',
+    'BillingAddress.StateId' : awesomeStateCodes['WA'],
+    'BillingAddress.PostalCode' : '98102',
 
     'ShippingAddress.FirstName' : 'sa.first_name',
     'ShippingAddress.LastName' : 'sa.last_name',
-    'ShippingAddress.AddressLine1' : '5137 papaya dr',
+    'ShippingAddress.AddressLine1' : '400 Broad St',
     'ShippingAddress.AddressLine2' : '',
-    'ShippingAddress.City' : 'Fair Oaks',
-    'ShippingAddress.StateId' : awesomeStateCodes['CA'],
-    'ShippingAddress.PostalCode' : '95628'
+    'ShippingAddress.City' : 'Seattle',
+    'ShippingAddress.StateId' : awesomeStateCodes['WA'],
+    'ShippingAddress.PostalCode' : '98102'
 
   }, false);
 });
@@ -490,10 +490,6 @@ casper.then(function() {
 });
 
 casper.then(function() {
-  this.test.assertDoesntExist('.field-validation-error', 'No errors found on form submit');
-});
-
-casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
       casper.test.comment('Error found on Customer Information form.');
@@ -502,6 +498,10 @@ casper.then(function() {
     }, function() {
       // casper.test.comment('All is well, no form-validation-errors found');
     }, 30000);
+});
+
+casper.then(function() {
+  this.test.assertDoesntExist('.field-validation-error', 'No errors found on form submit');
 });
 
 casper.then(function() {
