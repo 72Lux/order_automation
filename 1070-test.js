@@ -117,8 +117,10 @@ casper.then(function () {
 
 // make sure the anonCheckout button is there
 casper.then(function () {
-  casper.test.assertExists('#anonSignInBtn', 'Can anonymously check out');
-  casper.click('#anonSignInBtn');
+  casper.waitForSelector('#anonSignInBtn', function () {
+    casper.test.assertExists('#anonSignInBtn', 'Can anonymously check out');
+    casper.click('#anonSignInBtn');
+  });
 });
 
 // check for shipping form
