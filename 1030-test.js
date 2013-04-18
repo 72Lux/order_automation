@@ -387,19 +387,19 @@ casper.then(function() {
 
     'BillingAddress.FirstName' : 'ba.first_name',
     'BillingAddress.LastName' : 'ba.last_name',
-    'BillingAddress.AddressLine1' : '400 Broad St',
+    'BillingAddress.AddressLine1' : '1 Market St',
     'BillingAddress.AddressLine2' : '',
-    'BillingAddress.City' : 'Seattle',
-    'BillingAddress.StateId' : awesomeStateCodes['WA'],
-    'BillingAddress.PostalCode' : '98102',
+    'BillingAddress.City' : 'San Francisco',
+    'BillingAddress.StateId' : awesomeStateCodes['CA'],
+    'BillingAddress.PostalCode' : '94105',
 
     'ShippingAddress.FirstName' : 'sa.first_name',
     'ShippingAddress.LastName' : 'sa.last_name',
-    'ShippingAddress.AddressLine1' : '400 Broad St',
+    'ShippingAddress.AddressLine1' : '1 Market St',
     'ShippingAddress.AddressLine2' : '',
-    'ShippingAddress.City' : 'Seattle',
-    'ShippingAddress.StateId' : awesomeStateCodes['WA'],
-    'ShippingAddress.PostalCode' : '98102'
+    'ShippingAddress.City' : 'San Francisco',
+    'ShippingAddress.StateId' : awesomeStateCodes['CA'],
+    'ShippingAddress.PostalCode' : '94105'
 
   }, false);
 });
