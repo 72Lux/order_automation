@@ -345,7 +345,7 @@ casper.then(function () {
   if(order.submitOrder) {
 
     //TODO: extract confirmation number
-    casper.waitForSelector('#confirmSummary', function () {
+    casper.waitForText('Thank you', function () {
 
       var confirmationMsg = 'Nordstrom order number : ';
 
