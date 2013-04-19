@@ -215,6 +215,12 @@ casper.each(lineItems, function(self, lineItem) {
 
       casper.then(function() {
 
+        // these need to be recalculated at this point since sometimes colors are limited
+        // by the size you select and the color dropdown dissappears on select
+
+        isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
+        colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
+
         if(lineItem.color) {
 
           if(isColorDropdownVisible && this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]')) {
@@ -248,11 +254,14 @@ casper.each(lineItems, function(self, lineItem) {
       casper.then(function () {
 
         casper.wait(2000, function () {
+
           var inStockVisible = this.evaluate(function checkForInstock() {
               return normalizeString($('.prodStatus img').attr('src')).indexOf('stock') >= 0 ;
           });
 
           if(inStockVisible) {
+
+            casper.test.comment('Product is in stock');
 
             if(lineItem.qty) {
               casper.test.comment('Setting qty to: ' + lineItem.qty);
