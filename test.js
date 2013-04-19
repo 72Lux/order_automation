@@ -529,7 +529,7 @@ casper.then(function () {
     });
     casper.then(function() {
       casper.test.comment('signInText: ' + signInText);
-      casper.clickLabel('luxsignin');
+      this.clickLabel('luxsignin');
       casper.test.comment('anonSignInBtn clicked!');
     });
 
