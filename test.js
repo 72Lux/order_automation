@@ -90,13 +90,13 @@ normalizeString = (function (s) {
 
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
-  verbose: false,
+  verbose: true,
   logLevel: "debug"
 });
 
-// casper.on('remote.message', function(msg) {
-//     this.echo('### DOM Msg ###: ' + msg);
-// });
+casper.on('remote.message', function(msg) {
+    this.echo('### DOM Msg ###: ' + msg);
+});
 
 // SELECTORS END
 
