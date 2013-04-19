@@ -43,38 +43,38 @@ var casper = require("casper").create({
 // Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
 
-var order = {id: '1030-test-' + new Date().getTime(), submitOrder: false};
-
-var sa = {
-  first_name: 'First',
-  last_name: 'Last',
-  street1: '1 Market St',
-  street2: '',
-  city: 'San Francisco',
-  state: 'California',
-  short_state: 'CA',
-  postal_code: '94108',
-  phone: '1231231234'
-};
-
-var ba = {
-  first_name: 'First',
-  last_name: 'Last',
-  street1: '1 Market St',
-  street2: '',
-  city: 'San Francisco',
-  state: 'California',
-  short_state: 'CA',
-  postal_code: '94108',
-  phone: '1231231234'
-};
-
-var pi = {
-  card_type: 'VISA',
-  card_number: '4111111111111111',
-  cvv: '123',
-  expiry_month: '12',
-  expiry_year: '2020'
+var order = {
+  id: '1030-test-' + new Date().getTime(),
+  submitOrder: false,
+  shipping_address: {
+    first_name: 'First',
+    last_name: 'Last',
+    street1: '1 Market St',
+    street2: '',
+    city: 'San Francisco',
+    state: 'California',
+    short_state: 'CA',
+    postal_code: '94108',
+    phone: '1231231234'
+  },
+  billing_address: {
+    first_name: 'First',
+    last_name: 'Last',
+    street1: '1 Market St',
+    street2: '',
+    city: 'San Francisco',
+    state: 'California',
+    short_state: 'CA',
+    postal_code: '94108',
+    phone: '1231231234'
+  },
+  payment: {
+    card_type: 'VISA',
+    card_number: '4111111111111111',
+    cvv: '123',
+    expiry_month: '12',
+    expiry_year: '2020'
+  }
 };
 
 var lineItems = [];
