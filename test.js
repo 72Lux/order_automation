@@ -127,7 +127,7 @@ var order = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'VISA',
+    card_type: 'Visa',
     card_number: '4111111111111111',
     cvv: '123',
     expiry_month: '12',
