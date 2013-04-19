@@ -257,7 +257,7 @@ casper.each(lineItems, function(self, lineItem) {
               // INSTOCK AND QTY REPEAT END
 
             } else {
-              casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
+              casper.test.comment('ERROR: OrderId: ' + order.id + ' size unavailable: ' + lineItem.size + '. Exiting...');
               picit(order.id + '-33');
               this.exit(33);
             }
@@ -372,7 +372,7 @@ casper.each(lineItems, function(self, lineItem) {
               // INSTOCK AND QTY REPEAT END
 
             } else {
-              casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
+              casper.test.comment('ERROR: OrderId: ' + order.id + ' size unavailable: ' + lineItem.size + '. Exiting...');
               picit(order.id + '-33');
               this.exit(33);
             }
