@@ -347,8 +347,19 @@ casper.then(function () {
     //TODO: extract confirmation number
     casper.waitForSelector('#confirmSummary', function () {
 
+      var confirmationMsg = 'Nordstrom order number : ';
+
       casper.then(function() {
-        var confirmationMsg = this.evaluate(function parseConfirmationMsg() { return $('#confirmSummary').html();});
+        var currentUrl = this.getCurrentUrl();
+
+        if(currentUrl && currentUrl.indexOf('orderNumber=')) {
+          var orderNumber = currentUrl.substring(currentUrl.indexOf('orderNumber=')+12);
+          confirmationMsg += orderNumber;
+        } else {
+          confirmationMsg += 'not found.';
+        }
+
+        casper.test.comment(confirmationMsg);
       });
 
       if(!confirmationMsg) {
@@ -368,7 +379,7 @@ casper.then(function () {
         casper.open(commentUrl, {
             method: 'post',
             data:   {
-              'comment': 'CONFIRMATION #: ' + confirmationMsg
+              'comment': confirmationMsg
             },
             headers: {
               'Authorization' : auth
@@ -376,7 +387,7 @@ casper.then(function () {
         });
 
         casper.then(function() {
-          casper.test.comment('Confirmation # posted!');
+          casper.test.comment('Nordstrom order number posted!');
         });
 
         } else {
@@ -403,7 +414,7 @@ casper.then(function () {
       casper.open(commentUrl, {
           method: 'post',
           data:   {
-            'comment': 'submitOrder set to false, so not confirmation# for you!'
+            'comment': 'submitOrder set to false, so not Nordstrom order number for you!'
           },
           headers: {
             'Authorization' : auth
@@ -411,7 +422,7 @@ casper.then(function () {
       });
 
       casper.then(function() {
-        casper.test.comment('submitOrder set to false, so not confirmation# for you!');
+        casper.test.comment('submitOrder set to false, so not Nordstrom order number for you!');
       });
     } else {
       casper.then(function() {
