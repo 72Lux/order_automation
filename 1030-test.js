@@ -45,6 +45,38 @@ var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, C
 
 var order = {id: '1030-test-' + new Date().getTime(), submitOrder: false};
 
+var sa = {
+  first_name: 'First',
+  last_name: 'Last',
+  street1: '1 Market St',
+  street2: '',
+  city: 'San Francisco',
+  state: 'California',
+  short_state: 'CA',
+  postal_code: '94108',
+  phone: '1231231234'
+};
+
+var ba = {
+  first_name: 'First',
+  last_name: 'Last',
+  street1: '1 Market St',
+  street2: '',
+  city: 'San Francisco',
+  state: 'California',
+  short_state: 'CA',
+  postal_code: '94108',
+  phone: '1231231234'
+};
+
+var pi = {
+  card_type: 'VISA',
+  card_number: '4111111111111111',
+  cvv: '123',
+  expiry_month: '12',
+  expiry_year: '2020'
+};
+
 var lineItems = [];
 
 var item0 = {
@@ -321,27 +353,27 @@ casper.then(function() {
 
   this.fill('form[action="/Address/ContactInformation"]', {
 
-    'EmailAddress': 'test@test.com',
-    'ConfirmEmailAddress': 'test@test.com',
-    'PhoneNumber':   '1231231234',
+    'EmailAddress': ba.email,
+    'ConfirmEmailAddress': ba.email,
+    'PhoneNumber':   sa.phone,
 
     'IsSubscribed': false,
 
-    'BillingAddress.FirstName' : 'ba.first_name',
-    'BillingAddress.LastName' : 'ba.last_name',
-    'BillingAddress.AddressLine1' : '1 Market St',
-    'BillingAddress.AddressLine2' : '',
-    'BillingAddress.City' : 'San Francisco',
-    'BillingAddress.StateId' : awesomeStateCodes['CA'],
-    'BillingAddress.PostalCode' : '94105',
+    'BillingAddress.FirstName' : ba.first_name,
+    'BillingAddress.LastName' : ba.last_name,
+    'BillingAddress.AddressLine1' : ba.street1,
+    'BillingAddress.AddressLine2' : ba.street2,
+    'BillingAddress.City' : ba.city,
+    'BillingAddress.StateId' : awesomeStateCodes[ba.short_state],
+    'BillingAddress.PostalCode' : ba.postal_code,
 
-    'ShippingAddress.FirstName' : 'sa.first_name',
-    'ShippingAddress.LastName' : 'sa.last_name',
-    'ShippingAddress.AddressLine1' : '1 Market St',
-    'ShippingAddress.AddressLine2' : '',
-    'ShippingAddress.City' : 'San Francisco',
-    'ShippingAddress.StateId' : awesomeStateCodes['CA'],
-    'ShippingAddress.PostalCode' : '94105'
+    'ShippingAddress.FirstName' : sa.first_name,
+    'ShippingAddress.LastName' : sa.last_name,
+    'ShippingAddress.AddressLine1' : sa.street1,
+    'ShippingAddress.AddressLine2' : sa.street2,
+    'ShippingAddress.City' : sa.city,
+    'ShippingAddress.StateId' : awesomeStateCodes[sa.short_state],
+    'ShippingAddress.PostalCode' : sa.postal_code
 
   }, false);
 });
@@ -459,11 +491,11 @@ casper.then(function() {
 
 casper.then(function() {
   this.fill('form[action="/OrderReview/SubmitOrder"]', {
-    'CreditCardType': 'VISA',
-    'CreditCardNumber': '4111111111111111',
-    'cci':   '123',
-    'ExpMonth': '1',
-    'ExpYear' : '2014'
+    'CreditCardType': pi.card_type,
+    'CreditCardNumber': pi.card_number,
+    'cci': pi.cvv,
+    'ExpMonth': pi.expiry_month,
+    'ExpYear' : pi.expiry_year
   }, false);
 });
 

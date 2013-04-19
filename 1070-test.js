@@ -102,6 +102,38 @@ var casper = require("casper").create({
 
 var order = {id: '1070-test-' + new Date().getTime(), submitOrder: false};
 
+var sa = {
+  first_name: 'First',
+  last_name: 'Last',
+  street1: '1 Market St',
+  street2: '',
+  city: 'San Francisco',
+  state: 'California',
+  short_state: 'CA',
+  postal_code: '94108',
+  phone: '1231231234'
+};
+
+var ba = {
+  first_name: 'First',
+  last_name: 'Last',
+  street1: '1 Market St',
+  street2: '',
+  city: 'San Francisco',
+  state: 'California',
+  short_state: 'CA',
+  postal_code: '94108',
+  phone: '1231231234'
+};
+
+var pi = {
+  card_type: 'VISA',
+  card_number: '4111111111111111',
+  cvv: '123',
+  expiry_month: '12',
+  expiry_year: '2020'
+};
+
 var lineItems = [];
 
 //var item0 = {
