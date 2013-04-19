@@ -172,20 +172,17 @@ casper.each(lineItems, function(self, lineItem) {
       var colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
       var sizeText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
 
-      if (lineItem.color && lineItem.size) {
+      // PROCESS SIZE
 
-        // eg: clothes and shoes
+      casper.then(function() {
 
-        if(isColorDropdownVisible && isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size') && (colorDropdownOptionText === 'Then, Select Color')) {
-          // TWO visible dropdowns
-          // set both dropdowns
-          // casper.test.comment('STEP1 : COLOR & SIZE');
-          casper.test.comment('Set both color and size dropdowns to: ' + lineItem.color + ' & ' + lineItem.size);
+        if(lineItem.size) {
 
-          casper.then(function () {
+          if(isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size')) {
+
             if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.size + '"]')) {
 
-              casper.test.comment('Size available');
+              casper.test.comment('Size [' + lineItem.size + '] available in select');
 
               this.evaluate(function (_option) {
                 var $select = $('[id ^=prod][id $=DD1]');
@@ -193,298 +190,94 @@ casper.each(lineItems, function(self, lineItem) {
                 $select.change();
               }, { _option : lineItem.size });
 
-              // these need to be recalculated at this point since sometimes colors are limited
-              // by the size you select and the color dropdown dissappears on select
-
-              isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
-              colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
-
-              if(isColorDropdownVisible && this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]')) {
-
-                casper.test.comment('Color available');
-
-                this.evaluate(function (_option) {
-                  var $select = $('[id ^=prod][id $=DD2]');
-                  $select.val(_option);
-                  $select.change();
-                }, { _option : lineItem.color });
-
-              } else if(colorText.toLowerCase().indexOf(lineItem.color.toLowerCase()) >= 0) {
-                casper.test.comment('Color text matched for: ' + lineItem.color);
-              } else {
-                casper.test.comment('ERROR: OrderId: ' + order.id + ' color / size unavailable for : ' + lineItem.color + ' / ' + lineItem.size + '. Exiting...');
-                picit(order.id + '-32');
-                this.exit(32);
-              }
-
-              // INSTOCK AND QTY REPEAT BEGIN
-              casper.then(function () {
-
-                casper.wait(2000, function () {
-                  var inStockVisible = this.evaluate(function checkForInstock() {
-                      return $('.prodStatus img').attr('src').indexOf('stock') >= 0 ;
-                  });
-
-                  if(inStockVisible) {
-
-                    if(lineItem.qty) {
-                      casper.test.comment('Setting qty to: ' + lineItem.qty);
-                      this.fill('#lineItemsForm', {
-                        'qty0': lineItem.qty
-                      }, false);
-                    } else {
-                      casper.test.comment('qty is required');
-                      picit(order.id + '-42');
-                      this.exit(42);
-                    }
-
-                    casper.test.comment('add button found');
-                    casper.click('#topAddToCartButton');
-
-                  } else {
-
-                    casper.test.comment('Product is not in stock');
-                    picit(order.id + '-31');
-                    this.exit(31);
-
-                  }
-                });
-
-              });
-              // INSTOCK AND QTY REPEAT END
-
             } else {
-              casper.test.comment('ERROR: OrderId: ' + order.id + ' size unavailable: ' + lineItem.size + '. Exiting...');
+              casper.test.comment('ERROR: OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
               picit(order.id + '-32');
               this.exit(32);
             }
-          });
+          } else if(!isSizeDropdownVisible && normalizeString(sizeText).indexOf(normalizeString(lineItem.size)) >= 0) {
 
-        } else if(!isColorDropdownVisible && isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size') && (colorText.toLowerCase().indexOf(lineItem.color.toLowerCase()) >= 0)) {
-          // set visible color dropdown
-          // casper.test.comment('STEP2 : COLOR & SIZE');
-          casper.test.comment('Set size dropdown to: ' + lineItem.size);
-          casper.test.comment('Color text matched for: ' + lineItem.color);
+            casper.test.comment('Size [' + lineItem.size + '] available in text');
 
-          casper.then(function () {
-
-            if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.size + '"]')) {
-
-              casper.test.comment('Size available');
-
-              this.evaluate(function (_option) {
-                var $select = $('[id ^=prod][id $=DD1]');
-                $select.val(_option);
-                $select.change();
-              }, { _option : lineItem.size });
-
-              // INSTOCK AND QTY REPEAT BEGIN
-              casper.then(function () {
-
-
-                casper.wait(2000, function () {
-                  var inStockVisible = this.evaluate(function checkForInstock() {
-                      return $('.prodStatus img').attr('src').indexOf('stock') >= 0 ;
-                  });
-
-                  if(inStockVisible) {
-
-                    if(lineItem.qty) {
-                      casper.test.comment('Setting qty to: ' + lineItem.qty);
-                      this.fill('#lineItemsForm', {
-                        'qty0': lineItem.qty
-                      }, false);
-                    } else {
-                      casper.test.comment('qty is required');
-                      picit(order.id + '-42');
-                      this.exit(42);
-                    }
-
-                    casper.test.comment('add button found');
-                    casper.click('#topAddToCartButton');
-
-                  } else {
-
-                    casper.test.comment('Product is not in stock');
-                    picit(order.id + '-31');
-                    this.exit(31);
-
-                  }
-                });
-
-              });
-              // INSTOCK AND QTY REPEAT END
-
-            } else {
-              casper.test.comment('ERROR: OrderId: ' + order.id + ' size unavailable: ' + lineItem.size + '. Exiting...');
-              picit(order.id + '-33');
-              this.exit(33);
-            }
-          });
-
-        } else if(!isColorDropdownVisible && !isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size') && (colorText.toLowerCase().indexOf(lineItem.color.toLowerCase()) >= 0 ) && (sizeText.toLowerCase().indexOf(lineItem.size.toLowerCase()) >= 0 )) {
-          // nothing to set
-          // casper.test.comment('STEP3 : COLOR & SIZE');
-          casper.test.comment('No dropdowns to set!');
-          casper.test.comment('Color & size text matched for: ' + lineItem.color + ' & ' + lineItem.size);
-          // INSTOCK AND QTY REPEAT BEGIN
-          casper.then(function () {
-
-            casper.wait(2000, function () {
-              var inStockVisible = this.evaluate(function checkForInstock() {
-                  return $('.prodStatus img').attr('src').indexOf('stock') >= 0 ;
-              });
-
-              if(inStockVisible) {
-
-                if(lineItem.qty) {
-                  casper.test.comment('Setting qty to: ' + lineItem.qty);
-                  this.fill('#lineItemsForm', {
-                    'qty0': lineItem.qty
-                  }, false);
-                } else {
-                  casper.test.comment('qty is required');
-                  picit(order.id + '-42');
-                  this.exit(42);
-                }
-
-                casper.test.comment('add button found');
-                casper.click('#topAddToCartButton');
-
-              } else {
-
-                casper.test.comment('Product is not in stock');
-                picit(order.id + '-31');
-                this.exit(31);
-
-              }
-            });
-
-          });
-          // INSTOCK AND QTY REPEAT END
+          } else {
+            casper.test.comment('ERROR: OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
+            picit(order.id + '-32');
+            this.exit(32);
+          }
 
         } else {
-          // exit with error
-          // casper.test.comment('ERROR : COLOR & SIZE');
-          casper.test.comment('ERROR: BAD! No conditions matched for: ' + lineItem.color + ' & ' + lineItem.size);
-          picit(order.id + '-41');
-          this.exit(41);
-
+          casper.test.comment('No size for product');
         }
 
-      } else if (lineItem.color && !lineItem.size) {
+      });
 
-        // eg: beauty
-        // the color select shows up in the #adSize div when there is no size to be selected
-        // so using size select instead of color
+      // PROCESS COLOR
 
-       if(sizeDropdownOptionText === 'Please Select Color') {
-          // set color
-          // casper.test.comment('STEP1 : COLOR ONLY');
-          casper.test.comment('Set color dropdown to: ' + lineItem.color);
-          casper.then(function () {
-            if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.color + '"]')) {
+      casper.then(function() {
 
-              casper.test.comment('Color available');
+        if(lineItem.color) {
 
-              this.evaluate(function (_option) {
-                var $select = $('[id ^=prod][id $=DD1]');
-                $select.val(_option);
-                $select.change();
-              }, { _option : lineItem.color });
+          if(isColorDropdownVisible && this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]')) {
 
-              // INSTOCK AND QTY REPEAT BEGIN
-              casper.then(function () {
+            casper.test.comment('Color [' + lineItem.color + '] available in select');
 
+            this.evaluate(function (_option) {
+              var $select = $('[id ^=prod][id $=DD2]');
+              $select.val(_option);
+              $select.change();
+            }, { _option : lineItem.color });
 
-                casper.wait(2000, function () {
-                  var inStockVisible = this.evaluate(function checkForInstock() {
-                      return $('.prodStatus img').attr('src').indexOf('stock') >= 0 ;
-                  });
+          } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
 
-                  if(inStockVisible) {
+            casper.test.comment('Color [' + lineItem.color + '] available in text');
 
-                    if(lineItem.qty) {
-                      casper.test.comment('Setting qty to: ' + lineItem.qty);
-                      this.fill('#lineItemsForm', {
-                        'qty0': lineItem.qty
-                      }, false);
-                    } else {
-                      casper.test.comment('qty is required');
-                      picit(order.id + '-42');
-                      this.exit(42);
-                    }
-
-                    casper.test.comment('add button found');
-                    casper.click('#topAddToCartButton');
-
-                  } else {
-
-                    casper.test.comment('Product is not in stock');
-                    picit(order.id + '-31');
-                    this.exit(31);
-
-                  }
-                });
-
-              });
-              // INSTOCK AND QTY REPEAT END
-
-            } else {
-              casper.test.comment('ERROR: OrderId: ' + order.id + ' color unavailable: ' + lineItem.color + '. Exiting...');
-              picit(order.id + '-33');
-              this.exit(33);
-            }
-          });
+          } else {
+            casper.test.comment('ERROR: OrderId: ' + order.id + ' color [' + lineItem.color + '] unavailable. Exiting...');
+            picit(order.id + '-32');
+            this.exit(32);
+          }
 
         } else {
-          // exit with error
-          // casper.test.comment('ERROR : COLOR ONLY');
-          casper.test.coment('ERROR: BAD! Color dropdown not found');
-          picit(order.id + '-11');
-          this.exit(11);
-
+          casper.test.comment('No color for product');
         }
 
-      } else {
-        // casper.test.comment('ERROR : NO SIZE OR COLOR');
-        // implies something like a beauty item
-        // just set qty, check for instock and add to bag
+      });
 
-        casper.then(function () {
+      // CHECK FOR INSTOCK
 
-          casper.wait(2000, function () {
-            var inStockVisible = this.evaluate(function checkForInstock() {
-                return $('.prodStatus img').attr('src').indexOf('stock') >= 0 ;
-            });
+      casper.then(function () {
 
-            if(inStockVisible) {
-
-              if(lineItem.qty) {
-                casper.test.comment('Setting qty to: ' + lineItem.qty);
-                this.fill('#lineItemsForm', {
-                  'qty0': lineItem.qty
-                }, false);
-              } else {
-                casper.test.comment('qty is required');
-                picit(order.id + '-42');
-                this.exit(42);
-              }
-
-              casper.test.comment('add button found');
-              casper.click('#topAddToCartButton');
-
-            } else {
-
-              casper.test.comment('Product is not in stock');
-              picit(order.id + '-31');
-              this.exit(31);
-
-            }
+        casper.wait(2000, function () {
+          var inStockVisible = this.evaluate(function checkForInstock() {
+              return normalizeString($('.prodStatus img').attr('src')).indexOf('stock') >= 0 ;
           });
 
+          if(inStockVisible) {
+
+            if(lineItem.qty) {
+              casper.test.comment('Setting qty to: ' + lineItem.qty);
+              this.fill('#lineItemsForm', {
+                'qty0': lineItem.qty
+              }, false);
+            } else {
+              casper.test.comment('qty is required');
+              picit(order.id + '-42');
+              this.exit(42);
+            }
+
+            casper.test.comment('add button found');
+            casper.click('#topAddToCartButton');
+
+          } else {
+
+            casper.test.comment('Product is not in stock');
+            picit(order.id + '-31');
+            this.exit(31);
+
+          }
         });
-      }
+
+      });
 
     }, function() {
 
