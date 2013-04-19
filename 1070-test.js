@@ -104,16 +104,17 @@ var order = {id: '1070-test-' + new Date().getTime(), submitOrder: false};
 
 var lineItems = [];
 
-var item0 = {
-    name: "Contour Jean Belt, Black",
-    affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FNeiman-Marcus-Contour-Jean-Belt-Black%2Fprod150910006_cat4300731__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat4300731%252526pageSize%25253D30%252526No%25253D120%252526refinements%25253D%26eItemId%3Dprod150910006%26cmCat%3Dproduct',
-    size: 'X-SMALL',
-    color: 'BLACK',
-    qty: 1
-  };
+//var item0 = {
+//    name: "Contour Jean Belt, Black",
+//    affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FNeiman-Marcus-Contour-Jean-Belt-Black%2Fprod150910006_cat4300731__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat4300731%252526pageSize%25253D30%252526No%25253D120%252526refinements%25253D%26eItemId%3Dprod150910006%26cmCat%3Dproduct',
+//    size: 'SMALL',
+//    color: 'BLACK',
+//    qty: 1
+//  };
 
-lineItems.push(item0);
+//lineItems.push(item0);
 
+// Nordstrom item - replace with neiman when possible
 // var item1 = {
 //     name: "'Le Lipstique' LipColoring Stick with Brush",
 //     affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
@@ -124,6 +125,7 @@ lineItems.push(item0);
 
 // lineItems.push(item1);
 
+// Nordstrom item - replace with neiman when possible
 // var item2 = {
 //     name: "Classic Fit Heathered Pique Polo",
 //     affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429',
@@ -134,6 +136,7 @@ lineItems.push(item0);
 
 // lineItems.push(item2);
 
+// Nordstrom item - replace with neiman when possible
 // var item3 = {
 //     name: "'Tonique Douceur' Alcohol-Free Freshener (6.8 oz.)",
 //     affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742',
@@ -143,6 +146,16 @@ lineItems.push(item0);
 //   };
 
 // lineItems.push(item3);
+
+var item4 = {
+  name: "Wing-Tip Chelsea Boot",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPrada-Wing-Tip-Chelsea-Boot%2Fprod146820012_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D600%252526refinements%25253D%26eItemId%3Dprod146820012%26cmCat%3Dproduct',
+  size: '7.5/8.5D',
+  color: '',
+  qty: 1
+}
+
+lineItem.push(item4);
 
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
