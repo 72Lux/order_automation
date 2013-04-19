@@ -544,7 +544,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-17');
     casper.exit(17);
-  }, 120000);
+  }, 45000);
 });
 
 casper.then(function () {

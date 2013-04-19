@@ -323,17 +323,17 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
   });
 });
 
-casper.waitForResource("checkout.js", function() {
-    this.echo('checkout.js has been loaded.');
-}, function() {
-  casper.test.comment('Js required for anon-click did not load, exiting...');
-  picit(order.id + '-15');
-  casper.exit(15);
-}, 120000);
+// casper.waitForResource("checkout.js", function() {
+//     this.echo('checkout.js has been loaded.');
+// }, function() {
+//   casper.test.comment('Js required for anon-click did not load, exiting...');
+//   picit(order.id + '-15');
+//   casper.exit(15);
+// }, 45000);
 
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
-  casper.wait(120000, function () {
+  casper.wait(45000, function () {
     if(this.exists('#anonSignInBtn')) {
       // casper.click('#anonSignInBtn');
 
@@ -415,7 +415,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
     picit(order.id + '-15');
     casper.exit(15);
-  }, 120000);
+  }, 45000);
 
 });
 
@@ -546,7 +546,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no billing form present, exiting...');
     picit(order.id + '-17');
     casper.exit(17);
-  }, 120000);
+  }, 45000);
 });
 
 casper.then(function () {
