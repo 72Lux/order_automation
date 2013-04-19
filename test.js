@@ -519,9 +519,19 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
   casper.waitForSelector('#anonSignInBtn', function () {
+    var signInText = '';
 
-    casper.click('#anonSignInBtn');
-    casper.test.comment('anonSignInBtn clicked!');
+    casper.then(function() {
+      signInText = this.evaluate(function() {
+        $('#anonSignInBtn').text('luxsignin');
+        return $('#anonSignInBtn').text();
+      });
+    });
+    casper.then(function() {
+      casper.test.comment('signInText: ' + signInText);
+      casper.clickLabel('luxsignin');
+      casper.test.comment('anonSignInBtn clicked!');
+    });
 
   }, function() {
 
@@ -567,7 +577,7 @@ casper.then(function () {
     casper.test.comment('Timed out, no shipping form present, exiting...');
     picit(order.id + '-15');
     casper.exit(15);
-  }, 120000);
+  }, 30000);
 
 });
 
