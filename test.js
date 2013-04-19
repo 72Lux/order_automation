@@ -115,6 +115,7 @@ var order = {
     phone: '1231231234'
   },
   billing_address: {
+    email: 'test@test.com',
     first_name: 'First',
     last_name: 'Last',
     street1: '1 Market St',
