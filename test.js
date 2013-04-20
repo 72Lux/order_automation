@@ -358,12 +358,7 @@ casper.then(function() {
 casper.then(function () {
   casper.waitForSelector('#anonSignInBtn', function () {
 
-    // casper.then(function() {
-    //   this.click('#anonSignInBtn');
-    //   casper.test.comment('anonSignInBtn clicked!');
-    // });
-
-    //this works begin
+    // CALL TO NEIMAN JS
     this.evaluate(function() {
       objErrorMessage.removeAllErrors(); var request = new LoginReq();
       request[LoginReq_email] = '';
@@ -371,7 +366,6 @@ casper.then(function () {
       request[LoginReq_type] = 'anonymous';
       checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
     });
-    // this works end
 
   }, function() {
 
@@ -515,8 +509,7 @@ casper.then(function () {
   casper.then(function () {
     if(casper.exists('span#shippingContinue_se')) {
       casper.wait(2000, function () {
-        // casper.click('span#shippingContinue_se');
-        casper.clickLabel('Continue', 'span');
+        // CALL TO NEIMAN JS
         this.evaluate(function() {
           var $s = $('#shippingContinue_se');
           objShippingEdit.shippingEditContinue($s.attr("pageType"), $s.attr("sgId"));
@@ -620,20 +613,17 @@ casper.then(function () {
 
 // click next to review
 casper.then(function () {
-  if(casper.exists('span#paymentSave')) {
-    casper.wait(2000, function () {
-      casper.click('span#paymentSave');
-
-      this.evaluate(function() {
-        var $p = $('#paymentSave');
-        paymentEdit.verifyData($p.attr("pgId"));
-      });
+  casper.waitForSelector('#paymentSave', function() {
+    // CALL TO NEIMAN JS
+    this.evaluate(function() {
+      var $p = $('#paymentSave');
+      paymentEdit.verifyData($p.attr("pgId"));
     });
-  } else {
+  }, function() {
     casper.test.comment('ERROR: Save payment button not available');
     picit(order.id + '-18');
     this.exit(18);
-  }
+  }, 30000);
 });
 
 // test to see if any errors popped
@@ -641,9 +631,7 @@ testForm(order.id, 'billing');
 
 // BILLING FORM END
 
-// DISMISS ANY ORDER CONFIRMATION POP-UP BEGIN
-
-// confirm address
+// exit if address needs to be confirmed
 casper.then(function () {
   casper.waitFor(function (){
     return this.evaluate(function () {
@@ -660,31 +648,27 @@ casper.then(function () {
   });
 });
 
-// DISMISS ANY ORDER CONFIRMATION POP-UP END
-
 //CLICK ON SUBMIT
 casper.then(function () {
 
-  casper.wait(5000, function () {
-    if(casper.exists('#submitOrder')) {
+  casper.waitForSelector('#submitOrder', function() {
 
-      casper.test.comment('order.submitOrder set to: ' + order.submitOrder);
+    casper.test.comment('order.submitOrder set to: ' + order.submitOrder);
 
-      if(order.submitOrder) {
-        // TODO: OMG! ARE YOU READY FOR THIS?
-        casper.click('#submitOrder');
-        this.evaluate(function() { performCcAuth(); });
-        casper.test.comment('Submit button CLICKED!');
-      } else {
-        casper.test.comment('Submit button visible!');
-      }
-
+    if(order.submitOrder) {
+      // TODO: OMG! ARE YOU READY FOR THIS?
+      casper.click('#submitOrder');
+      this.evaluate(function() { performCcAuth(); });
+      casper.test.comment('Submit button CLICKED!');
     } else {
-      casper.test.comment('ERROR: Submit order button not available');
-      picit(order.id + '-18');
-      this.exit(18);
+      casper.test.comment('Submit button visible!');
     }
-  });
+
+  }, function() {
+    casper.test.comment('ERROR: Submit order button not available');
+    picit(order.id + '-18');
+    this.exit(18);
+  }, 30000);
 
 });
 
