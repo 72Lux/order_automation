@@ -358,19 +358,19 @@ casper.then(function() {
 casper.then(function () {
   casper.waitForSelector('#anonSignInBtn', function () {
 
-    casper.then(function() {
-      this.click('#anonSignInBtn');
-      casper.test.comment('anonSignInBtn clicked!');
-    });
+    // casper.then(function() {
+    //   this.click('#anonSignInBtn');
+    //   casper.test.comment('anonSignInBtn clicked!');
+    // });
 
     //this works begin
-    // this.evaluate(function() {
-    //   objErrorMessage.removeAllErrors(); var request = new LoginReq();
-    //   request[LoginReq_email] = '';
-    //   request[LoginReq_password] = '';
-    //   request[LoginReq_type] = 'anonymous';
-    //   checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
-    // });
+    this.evaluate(function() {
+      objErrorMessage.removeAllErrors(); var request = new LoginReq();
+      request[LoginReq_email] = '';
+      request[LoginReq_password] = '';
+      request[LoginReq_type] = 'anonymous';
+      checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
+    });
     // this works end
 
   }, function() {
