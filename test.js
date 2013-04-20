@@ -623,6 +623,11 @@ casper.then(function () {
   if(casper.exists('span#paymentSave')) {
     casper.wait(2000, function () {
       casper.click('span#paymentSave');
+
+      this.evaluate(function() {
+        var $p = $('#paymentSave');
+        paymentEdit.verifyData($p.attr("pgId"));
+      });
     });
   } else {
     casper.test.comment('ERROR: Save payment button not available');
