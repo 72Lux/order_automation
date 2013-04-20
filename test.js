@@ -32,7 +32,7 @@ require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = filename + '.png' || 'default_screen_caps/results.png';
+  filename = '/tmp/order_automation/screen_caps/' + filename + '.png' || 'default_screen_caps/results.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
@@ -104,26 +104,26 @@ var order = {
   id: 'Test-test-' + new Date().getTime(),
   submitOrder: false,
   shipping_address: {
-    first_name: 'First',
-    last_name: 'Last',
-    street1: '1 Market St',
+    first_name: 'Nick',
+    last_name: 'Drake',
+    street1: '5129 Papaya Dr',
     street2: '',
-    city: 'San Francisco',
+    city: 'Fair Oaks',
     state: 'California',
     short_state: 'CA',
-    postal_code: '94108',
+    postal_code: '95628',
     phone: '1231231234'
   },
   billing_address: {
     email: 'test@test.com',
-    first_name: 'First',
-    last_name: 'Last',
-    street1: '1 Market St',
+    first_name: 'Nick',
+    last_name: 'Drake',
+    street1: '5129 Papaya Dr',
     street2: '',
-    city: 'San Francisco',
+    city: 'Fair Oaks',
     state: 'California',
     short_state: 'CA',
-    postal_code: '94108',
+    postal_code: '95628',
     phone: '1231231234'
   },
   payment: {
