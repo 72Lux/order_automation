@@ -672,6 +672,7 @@ casper.then(function () {
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
         casper.click('#submitOrder');
+        this.evaluate(function() { performCcAuth(); });
         casper.test.comment('Submit button CLICKED!');
       } else {
         casper.test.comment('Submit button visible!');

@@ -640,8 +640,9 @@ casper.then(function () {
     });
   },
   function (){
-    casper.test.comment('Need to verify address');
-    casper.click('span#verificationButton');
+    casper.test.comment('Address needs to be confirmed...');
+    picit(new Date().getTime() + '-address-confirmation');
+    casper.exit(34);
   },
   function (){
     casper.test.comment('No need to verify address');
