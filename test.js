@@ -515,7 +515,8 @@ casper.then(function () {
   casper.then(function () {
     if(casper.exists('span#shippingContinue_se')) {
       casper.wait(2000, function () {
-        casper.click('span#shippingContinue_se');
+        // casper.click('span#shippingContinue_se');
+        casper.clickLabel('Continue', 'span');
       });
     } else {
       casper.test.comment('ERROR: Next button not found on shipping form');
