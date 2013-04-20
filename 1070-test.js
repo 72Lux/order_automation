@@ -1,33 +1,6 @@
 // to RUN, provide cookie file at cl :
 // rm 1070-test.txt; casperjs --cookies-file=1070-test.txt 1070-test.js
 
-// NOTE:
-// This version of the code uses the default user agent and works just fine locally.
-// The pending issue is with the process getting stuck after the click on the
-// anonymous sign in button on Dev.
-// Given the issues with the other two (see 1070_mobile & 1070_mixed) this might be the best hope of getting it done.
-// Figure out what is causing the environment specific timeout on the click.
-// The timeout NEVER happens locally.
-
-// PRODUCTS USED FOR TESTING
-// These products are examples of the different ways size and color is rendered on neimanmarcus.com
-
-// COLOR.dropdown : YES
-// SIZE.dropdown : YES
-// http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Tribtoo-Patent-Pump/prod139100403/?eVar4=You%20May%20Also%20Like%20RR
-
-// COLOR.dropdown : NO
-// SIZE.dropdown : YES
-// http://www.neimanmarcus.com/p/Dolce-Gabbana-Martini-Stretch-Wool-Suit-Black/prod147270408_cat11940745__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.service%253FitemId%253Dcat11940745%2526pageSize%253D30%2526No%253D90%2526refinements%253D&eItemId=prod147270408&cmCat=product&ecid=NMALRv9jIDxMZD/A&CS_003=5630585
-
-// COLOR.dropdown : YES
-// SIZE.dropdown : NO
-// http://www.neimanmarcus.com/p/Sisley-Paris-Hydrating-Long-Lasting-Lipstick/prod20521024/?eVar4=You%20May%20Also%20Like%20RR
-
-// COLOR.dropdown : NO
-// SIZE.dropdown : NO
-// http://www.neimanmarcus.com/p/Hugo-Boss-Three-Piece-Plaid-Suit/prod150180164_cat11940745__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.service%253FitemId%253Dcat11940745%2526pageSize%253D30%2526No%253D90%2526refinements%253D&eItemId=prod150180164&cmCat=product&ecid=NMALRv9jIDxMZD/A&CS_003=5630585#mycart
-
 require("utils");
 
 // capture a snapshot
@@ -137,15 +110,15 @@ var order = {
 
 var lineItems = [];
 
-//var item0 = {
-//    name: "Contour Jean Belt, Black",
-//    affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FNeiman-Marcus-Contour-Jean-Belt-Black%2Fprod150910006_cat4300731__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat4300731%252526pageSize%25253D30%252526No%25253D120%252526refinements%25253D%26eItemId%3Dprod150910006%26cmCat%3Dproduct',
-//    size: 'SMALL',
-//    color: 'BLACK',
-//    qty: 1
-//  };
+var item0 = {
+   name: "Contour Jean Belt, Black",
+   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FNeiman-Marcus-Contour-Jean-Belt-Black%2Fprod150910006_cat4300731__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat4300731%252526pageSize%25253D30%252526No%25253D120%252526refinements%25253D%26eItemId%3Dprod150910006%26cmCat%3Dproduct',
+   size: 'SMALL',
+   color: 'BLACK',
+   qty: 1
+ };
 
-//lineItems.push(item0);
+lineItems.push(item0);
 
 var item1 = {
   name: "Wing-Tip Chelsea Boot",
@@ -153,9 +126,39 @@ var item1 = {
   size: '7/8D',
   color: '',
   qty: 1
-}
+};
 
 lineItems.push(item1);
+
+var item2 = {
+  name: "Gisele Short Pajamas, Eggplant/Pink",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FEberjey-Gisele-Short-Pajamas-Eggplant-Pink%2Fprod152510464_cat10360732__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10360732%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod152510464%26cmCat%3Dproduct',
+  size: 'LARGE/10-12',
+  color: 'EGGPLANT/PINK',
+  qty: 1
+};
+
+lineItems.push(item2);
+
+var item3 = {
+  name: "Pyramid Studded Hobo Bag, Pale Khaki",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FTory-Burch-Pyramid-Studded-Hobo-Bag-Pale-Khaki%2Fprod155700016_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D210%252526refinements%25253D%26eItemId%3Dprod155700016%26cmCat%3Dproduct',
+  size: '',
+  color: '',
+  qty: 1
+};
+
+lineItems.push(item3);
+
+var item4 = {
+  name: "The Lipstick",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FKanebo-Sensai-Collection-The-Lipstick%2Fprod92160003_cat10470768__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10470768%252526pageSize%25253D30%252526No%25253D150%252526refinements%25253D%26eItemId%3Dprod92160003%26cmCat%3Dproduct',
+  size: '',
+  color: 'AYA 17',
+  qty: 2
+};
+
+lineItems.push(item4);
 
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
@@ -175,22 +178,16 @@ casper.each(lineItems, function(self, lineItem) {
 
     casper.waitForSelector('#topAddToCartButton', function() {
 
-      var isSizeDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').is(":visible"); });
-      var isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
-
-      var sizeDropdownOptionText = this.evaluate(function() { return $('[id ^=prod][id $=DD1]' + ' option:first').text(); });
-      var colorDropdownOptionText = this.evaluate(function() { return $('[id ^=prod][id $=DD2]' + ' option:first').text(); });
-
-      var colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
-      var sizeText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
-
       // PROCESS SIZE
 
       casper.then(function() {
 
         if(lineItem.size) {
 
-          if(isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size')) {
+          var isSizeDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').is(":visible"); });
+          var sizeText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
+
+          if(isSizeDropdownVisible) {
 
             if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.size + '"]')) {
 
@@ -207,6 +204,7 @@ casper.each(lineItems, function(self, lineItem) {
               picit(order.id + '-32');
               this.exit(32);
             }
+
           } else if(!isSizeDropdownVisible && normalizeString(sizeText).indexOf(normalizeString(lineItem.size)) >= 0) {
 
             casper.test.comment('Size [' + lineItem.size + '] available in text');
@@ -227,23 +225,33 @@ casper.each(lineItems, function(self, lineItem) {
 
       casper.then(function() {
 
-        // these need to be recalculated at this point since sometimes colors are limited
-        // by the size you select and the color dropdown dissappears on select
-
-        isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
-        colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
-
         if(lineItem.color) {
 
-          if(isColorDropdownVisible && this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]')) {
+          var isColorDropdownVisible, colorText, colorExists, dropdownSelector;
+
+          // if there is a size for a product, then the selector id for the color dropdown ends in DD2. else DD1.
+          if(lineItem.size) {
+            isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
+            colorExists = this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]');
+            dropdownSelector = '[id ^=prod][id $=DD2]';
+
+          } else {
+            isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').is(":visible"); });
+            colorExists = this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.color + '"]');
+            dropdownSelector = '[id ^=prod][id $=DD1]';
+          }
+
+          colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
+
+          if(isColorDropdownVisible && colorExists) {
 
             casper.test.comment('Color [' + lineItem.color + '] available in select');
 
-            this.evaluate(function (_option) {
-              var $select = $('[id ^=prod][id $=DD2]');
+            this.evaluate(function (_option, _dd) {
+              var $select = $(_dd);
               $select.val(_option);
               $select.change();
-            }, { _option : lineItem.color });
+            }, { _option : lineItem.color, _dd : dropdownSelector });
 
           } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
 

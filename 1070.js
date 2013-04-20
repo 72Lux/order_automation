@@ -1,30 +1,3 @@
-// NOTE:
-// This version of the code uses the default user agent and works just fine locally.
-// The pending issue is with the process getting stuck after the click on the
-// anonymous sign in button on Dev.
-// Given the issues with the other two (see 1070_mobile & 1070_mixed) this might be the best hope of getting it done.
-// Figure out what is causing the environment specific timeout on the click.
-// The timeout NEVER happens locally.
-
-// PRODUCTS USED FOR TESTING
-// These products are examples of the different ways size and color is rendered on neimanmarcus.com
-
-// COLOR.dropdown : YES
-// SIZE.dropdown : YES
-// http://www.neimanmarcus.com/p/Yves-Saint-Laurent-Tribtoo-Patent-Pump/prod139100403/?eVar4=You%20May%20Also%20Like%20RR
-
-// COLOR.dropdown : NO
-// SIZE.dropdown : YES
-// http://www.neimanmarcus.com/p/Dolce-Gabbana-Martini-Stretch-Wool-Suit-Black/prod147270408_cat11940745__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.service%253FitemId%253Dcat11940745%2526pageSize%253D30%2526No%253D90%2526refinements%253D&eItemId=prod147270408&cmCat=product&ecid=NMALRv9jIDxMZD/A&CS_003=5630585
-
-// COLOR.dropdown : YES
-// SIZE.dropdown : NO
-// http://www.neimanmarcus.com/p/Sisley-Paris-Hydrating-Long-Lasting-Lipstick/prod20521024/?eVar4=You%20May%20Also%20Like%20RR
-
-// COLOR.dropdown : NO
-// SIZE.dropdown : NO
-// http://www.neimanmarcus.com/p/Hugo-Boss-Three-Piece-Plaid-Suit/prod150180164_cat11940745__/?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.service%253FitemId%253Dcat11940745%2526pageSize%253D30%2526No%253D90%2526refinements%253D&eItemId=prod150180164&cmCat=product&ecid=NMALRv9jIDxMZD/A&CS_003=5630585#mycart
-
 require("utils");
 
 // capture a snapshot
@@ -118,22 +91,16 @@ casper.each(lineItems, function(self, lineItem) {
 
     casper.waitForSelector('#topAddToCartButton', function() {
 
-      var isSizeDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').is(":visible"); });
-      var isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
-
-      var sizeDropdownOptionText = this.evaluate(function() { return $('[id ^=prod][id $=DD1]' + ' option:first').text(); });
-      var colorDropdownOptionText = this.evaluate(function() { return $('[id ^=prod][id $=DD2]' + ' option:first').text(); });
-
-      var colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
-      var sizeText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
-
       // PROCESS SIZE
 
       casper.then(function() {
 
         if(lineItem.size) {
 
-          if(isSizeDropdownVisible && (sizeDropdownOptionText === 'First, Select Size')) {
+          var isSizeDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').is(":visible"); });
+          var sizeText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
+
+          if(isSizeDropdownVisible) {
 
             if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.size + '"]')) {
 
@@ -170,23 +137,33 @@ casper.each(lineItems, function(self, lineItem) {
 
       casper.then(function() {
 
-        // these need to be recalculated at this point since sometimes colors are limited
-        // by the size you select and the color dropdown dissappears on select
-
-        isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
-        colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
-
         if(lineItem.color) {
 
-          if(isColorDropdownVisible && this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]')) {
+          var isColorDropdownVisible, colorText, colorExists, dropdownSelector;
+
+          // if there is a size for a product, then the selector id for the color dropdown ends in DD2. else DD1.
+          if(lineItem.size) {
+            isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD2]').is(":visible"); });
+            colorExists = this.exists('[id ^=prod][id $=DD2]' + ' option[value="' + lineItem.color + '"]');
+            dropdownSelector = '[id ^=prod][id $=DD2]';
+
+          } else {
+            isColorDropdownVisible = this.evaluate(function() { return $('[id ^=prod][id $=DD1]').is(":visible"); });
+            colorExists = this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.color + '"]');
+            dropdownSelector = '[id ^=prod][id $=DD1]';
+          }
+
+          colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
+
+          if(isColorDropdownVisible && colorExists) {
 
             casper.test.comment('Color [' + lineItem.color + '] available in select');
 
-            this.evaluate(function (_option) {
-              var $select = $('[id ^=prod][id $=DD2]');
+            this.evaluate(function (_option, _dd) {
+              var $select = $(_dd);
               $select.val(_option);
               $select.change();
-            }, { _option : lineItem.color });
+            }, { _option : lineItem.color, _dd : dropdownSelector });
 
           } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
 
