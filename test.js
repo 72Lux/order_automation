@@ -350,29 +350,29 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 //   casper.exit(15);
 // }, 120000);
 
+casper.then(function() {
+  this.evaluate(function() { jQuery(nm.checkout.init); });
+});
+
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
   casper.waitForSelector('#anonSignInBtn', function () {
-    // var signInText = '';
 
-    // casper.then(function() {
-    //   signInText = this.evaluate(function() {
-    //     $('#anonSignInBtn').text('luxsignin');
-    //     return $('#anonSignInBtn').text();
-    //   });
-    // });
-    // casper.then(function() {
-    //   casper.test.comment('signInText: ' + signInText);
-    //   this.clickLabel('luxsignin');
-    //   casper.test.comment('anonSignInBtn clicked!');
-    // });
-    this.evaluate(function() {
-      objErrorMessage.removeAllErrors(); var request = new LoginReq();
-      request[LoginReq_email] = '';
-      request[LoginReq_password] = '';
-      request[LoginReq_type] = 'anonymous';
-      checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
+    casper.then(function() {
+      this.click('#anonSignInBtn');
+      casper.test.comment('anonSignInBtn clicked!');
     });
+
+    //this works begin
+    // this.evaluate(function() {
+    //   objErrorMessage.removeAllErrors(); var request = new LoginReq();
+    //   request[LoginReq_email] = '';
+    //   request[LoginReq_password] = '';
+    //   request[LoginReq_type] = 'anonymous';
+    //   checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
+    // });
+    // this works end
+
   }, function() {
 
     casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
