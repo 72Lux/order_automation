@@ -90,13 +90,13 @@ normalizeString = (function (s) {
 
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
-  verbose: true,
+  verbose: false,
   logLevel: "debug"
 });
 
-casper.on('remote.message', function(msg) {
-    this.echo('### DOM Msg ###: ' + msg);
-});
+// casper.on('remote.message', function(msg) {
+//     this.echo('### DOM Msg ###: ' + msg);
+// });
 
 // SELECTORS END
 
@@ -517,6 +517,10 @@ casper.then(function () {
       casper.wait(2000, function () {
         // casper.click('span#shippingContinue_se');
         casper.clickLabel('Continue', 'span');
+        this.evaluate(function() {
+          var $s = $('#shippingContinue_se');
+          objShippingEdit.shippingEditContinue($s.attr("pageType"), $s.attr("sgId"));
+        });
       });
     } else {
       casper.test.comment('ERROR: Next button not found on shipping form');
