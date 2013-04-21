@@ -1,5 +1,5 @@
 // to RUN, provide cookie file at cl :
-// rm 1070-test.txt; casperjs --cookies-file=1070-test.txt 1070-test.js
+// rm 1070-test.txt; casperjs --cookies-file=1070-test.txt --image-home=/home/vivekdhar/screen_caps  1070-test.js
 
 require("utils");
 
@@ -373,11 +373,10 @@ casper.then(function () {
 
 //check for samples pop-up
 casper.then(function () {
-
   casper.wait(2000, function () {
     if(this.exists('#samplesNoButton')) {
-      casper.click('#samplesNoButton');
       casper.test.comment('Samples pop-up appeared');
+      this.evaluate(function() { gwpSelector.noItems(); });
     } else {
       casper.test.comment('No samples pop-up');
     }

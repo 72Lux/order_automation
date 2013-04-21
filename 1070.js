@@ -285,16 +285,16 @@ casper.then(function () {
 
 //check for samples pop-up
 casper.then(function () {
-
   casper.wait(2000, function () {
     if(this.exists('#samplesNoButton')) {
-      casper.click('#samplesNoButton');
       casper.test.comment('Samples pop-up appeared');
+      this.evaluate(function() { gwpSelector.noItems(); });
     } else {
       casper.test.comment('No samples pop-up');
     }
   });
 });
+
 
 // SAMPLES POP-UP END
 
