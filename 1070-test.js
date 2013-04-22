@@ -652,30 +652,13 @@ testForm(order.id, 'billing');
 
 // BILLING FORM END
 
-// exit if address needs to be confirmed
-// casper.then(function () {
-//   casper.waitFor(function (){
-//     return this.evaluate(function () {
-//       return document.querySelector('#avAddressList form').length;
-//     });
-//   },
-//   function (){
-//     casper.test.comment('Address needs to be confirmed...');
-//     picit(new Date().getTime() + '-address-confirmation');
-//     casper.exit(34);
-//   },
-//   function (){
-//     casper.test.comment('No need to verify address');
-//   });
-// });
-
-
 // /page/addressverification
 
 casper.then(function() {
   casper.waitForSelector('#verificationButton', function() {
     // this.evaluate(function() { $('#verificationButton').submit(); });
     casper.test.comment('Address needs to be confirmed...');
+    picit(order.id + '-address-confirmation');
     casper.click('#verificationButton');
   }, function() {
     casper.test.comment('No need to verify address');

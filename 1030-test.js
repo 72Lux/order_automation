@@ -78,6 +78,10 @@ var order = {
   }
 };
 
+var sa = order.shipping_address;
+var ba = order.billing_address;
+var pi = order.payment;
+
 var lineItems = [];
 
 var item0 = {
@@ -481,12 +485,14 @@ casper.then(function() {
 
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
-      // casper.test.comment('No address confirmation page. Moving on!');
+      casper.test.comment('No address confirmation page. Moving on!');
       picit(new Date().getTime() + '-payment-page');
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
-      picit(new Date().getTime() + '-address-confirmation');
-      casper.exit(34);
+      // picit(new Date().getTime() + '-address-confirmation');
+      // casper.exit(34);
+      casper.click('input[name="actionMode"][value="Use"]');
+      // this.evaluate(function() { $('input[action="actionMode"][value="Use"]').click(); });
     }, 30000);
 });
 
