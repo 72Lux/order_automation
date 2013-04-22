@@ -540,7 +540,7 @@ casper.then(function () {
   },
   function (){
     casper.test.comment('Address needs to be confirmed...');
-    picit(new Date().getTime() + '-address-confirmation');
+    picit(new Date().getTime() + '-34');
     casper.exit(34);
   },
   function (){
