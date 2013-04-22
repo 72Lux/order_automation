@@ -295,10 +295,11 @@ casper.then(function() {
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
       casper.test.comment('No address confirmation page. Moving on!');
+      picit(new Date().getTime() + '-payment-page');
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
-      picit(order.id + '-36' + '-' + new Date().getTime());
-      casper.exit(36);
+      picit(new Date().getTime() + '-address-confirmation');
+      casper.click('input[name="actionMode"][value="Use"]');
     }, 30000);
 });
 

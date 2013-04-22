@@ -489,10 +489,8 @@ casper.then(function() {
       picit(new Date().getTime() + '-payment-page');
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
-      // picit(new Date().getTime() + '-address-confirmation');
-      // casper.exit(34);
+      picit(new Date().getTime() + '-address-confirmation');
       casper.click('input[name="actionMode"][value="Use"]');
-      // this.evaluate(function() { $('input[action="actionMode"][value="Use"]').click(); });
     }, 30000);
 });
 
