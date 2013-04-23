@@ -126,20 +126,22 @@ var item3 = {
 
 lineItems.push(item3);
 
-var originalLineItemCount = lineItems.length;
+casper.start();
 
-for(var n = 0; n < lineItems.length; n++) {
+casper.then(function() {
+  var originalLineItemCount = lineItems.length;
 
-  var qty = lineItems[n].qty;
-  if(qty > 1) {
-    lineItems[n].qty = 1;
-    for(var m = 0; m < qty-1; m++) {
-      lineItems.push(lineItems[n]);
+  for(var n = 0; n < lineItems.length; n++) {
+
+    var qty = lineItems[n].qty;
+    if(qty > 1) {
+      lineItems[n].qty = 1;
+      for(var m = 0; m < qty-1; m++) {
+        lineItems.push(lineItems[n]);
+      }
     }
   }
-}
-
-casper.start();
+});
 
 casper.then(function() {
   this.test.assert(lineItems.length === 6, 'Number of lineitems after flattening is 6.');
