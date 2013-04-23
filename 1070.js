@@ -3,7 +3,7 @@ require("utils");
 // capture a snapshot
 picit = (function (filename) {
   filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
-  casper.test.comment('Cheeeeeeese!');
+  casper.test.comment('Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
