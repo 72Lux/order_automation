@@ -75,7 +75,7 @@ var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
 var imageHome = casper.cli.get('image-home');
 
-casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + order.line_items.length + ' submitOrder: ' + order.submitOrder);
+casper.test.comment('Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
 
 var lineItems = order.line_items;
 
@@ -521,12 +521,12 @@ testForm(order.id, 'billing');
 casper.then(function() {
   casper.waitForSelector('#verificationButton', function() {
 
-    casper.test.comment('Address confirmation need [true]');
+    casper.test.comment('Address confirmation needed [true]');
     picit(order.id + '-address-confirmation');
     this.evaluate(function() { $('#verificationButton').click(); });
 
   }, function() {
-    casper.test.comment('Address confirmation need [false]');
+    casper.test.comment('Address confirmation needed [false]');
   }, 30000);
 });
 
