@@ -5,7 +5,7 @@ require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = imageHome + '/' + filename + '.png';
+  filename = imageHome + '/' + filename + '.png' || 'default_screen_caps/results.png';
   casper.test.comment('Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
@@ -44,6 +44,7 @@ var imageHome = casper.cli.get('image-home');
 
 // Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
+var originalLineItemCount = 0;
 
 var order = {
   id: '1030-test-' + new Date().getTime(),
@@ -129,7 +130,7 @@ lineItems.push(item3);
 casper.start();
 
 casper.then(function() {
-  var originalLineItemCount = lineItems.length;
+  originalLineItemCount = lineItems.length;
 
   for(var n = 0; n < lineItems.length; n++) {
 
