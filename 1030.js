@@ -299,8 +299,12 @@ casper.then(function() {
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
       picit(new Date().getTime() + '-address-confirmation');
-      casper.click('input[name="actionMode"][value="Use"]');
+      casper.then(function() {
+        this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
+      });
+
     }, 30000);
+  });
 });
 
 casper.then(function() {

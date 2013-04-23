@@ -490,22 +490,8 @@ casper.then(function() {
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
       picit(new Date().getTime() + '-address-confirmation');
-      // casper.click('input[name="actionMode"][value="Use"]');
-
       casper.then(function() {
         this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
-
-        // var hdnAddress = encodeURIComponent( this.evaluate(function() { return $('input[type="hidden"][name="hdnAddress"]').val(); }) );
-        // casper.test.comment('hdnAddress: ' + hdnAddress);
-        // casper.open('https://msecure.nordstrom.com/Address/SaveSuggestion?Addressbooklistid=0&basePage=ContactInformation&isSameAsBilling=False&entryType=Shipping&billingAddressId=51899392&subscribedName=1', {
-        //   method: 'post',
-        //   data:   {
-        //     'hdnAddress': hdnAddress,
-        //     'actionMode': 'Use'
-        //   }
-        // }, function() {
-        //   casper.test.comment("POST request has been sent.");
-        // });
       });
 
     }, 30000);
