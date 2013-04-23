@@ -238,7 +238,7 @@ casper.each(lineItems, function(self, lineItem) {
 // verify link is available
 casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=true', function() {
   this.wait(2000, function() {
-    picit(order.id + new Date().getTime() + '-shopping-bag');
+    picit(order.id + '-shopping-bag');
   });
 });
 
@@ -250,9 +250,9 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 //   casper.exit(15);
 // }, 120000);
 
-casper.then(function() {
-  this.evaluate(function() { jQuery(nm.checkout.init); });
-});
+// casper.then(function() {
+//   this.evaluate(function() { jQuery(nm.checkout.init); });
+// });
 
 // make sure the anonCheckout button is there and click it
 casper.then(function () {

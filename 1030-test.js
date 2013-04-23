@@ -1,17 +1,17 @@
 // to RUN, provide cookie file at cl :
-// rm 1030-test.txt; casperjs --cookies-file=1030-test.txt 1030-test.js
+// rm 1030-test.txt; casperjs --cookies-file=1030-test.txt  --image-home=/Users/vivekdhar/tmp/order_automation 1030-test.js
 
 require("utils");
 
 // capture a snapshot
 picit = (function (filename) {
-  filename = '/tmp/order_automation/' + filename + '.png';
+  filename = imageHome + '/' + filename + '.png';
   casper.test.comment('Cheeeeeeese!');
   casper.capture(filename, {
     top: 0,
     left: 0,
     width: 480,
-    height: 2000
+    height: 3000
   });
 });
 
@@ -39,6 +39,8 @@ var casper = require("casper").create({
   verbose: false,
   logLevel: "debug"
 });
+
+var imageHome = casper.cli.get('image-home');
 
 // Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
@@ -285,14 +287,38 @@ casper.then(function() {
 
 //CHECKOUT BEGIN
 
-casper.then(function() {
-  this.test.assertExists('#proceed-to-checkout', 'Checkout button is visible');
+//https://msecure.nordstrom.com/Account/GuestCheckout
+
+casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function() {
+
+  casper.then(function() {
+    this.wait(10000, function() {
+      picit(new Date().getTime() + '-after-checkout');
+    });
+  });
+
+  casper.then(function() {
+    casper.waitForSelector('#EmailAddress', function then() {
+      // casper.test.comment('Begin filling out shipping form');
+    },
+    function () {
+      casper.test.comment('Timed out, no shipping form present, exiting...');
+      picit(new Date().getTime() + '-15');
+      casper.exit(15);
+    }, 30000);
+  });
+
 });
 
-casper.then(function() {
-  // casper.test.comment('Clicking on checkout');
-  this.click('#proceed-to-checkout');
-});
+// casper.then(function() {
+//   this.test.assertExists('#proceed-to-checkout', 'Checkout button is visible');
+// });
+
+// casper.then(function() {
+//   // casper.test.comment('Clicking on checkout');
+//   this.evaluate(function() { $('#proceed-to-checkout').click(); });
+
+// });
 
 // casper.then(function() {
 //   this.wait(10000, function() {
@@ -300,57 +326,40 @@ casper.then(function() {
 //   });
 // });
 
-// NoThanksButton
+// // NoThanksButton
 
-casper.then(function () {
-  casper.waitForSelector('#NoThanksButton', function () {
+// casper.then(function () {
+//   casper.waitForSelector('#NoThanksButton', function () {
 
-      // casper.test.comment('Samples screen appeared');
-      casper.open('http://m.nordstrom.com//samples/nothanks', {
-          method: 'post',
-          data:   {
-              'postaction': ''
-          }
-      });
+//       // casper.test.comment('Samples screen appeared');
+//       casper.open('http://m.nordstrom.com//samples/nothanks', {
+//           method: 'post',
+//           data:   {
+//               'postaction': ''
+//           }
+//       });
 
-    }, function() {
-      // casper.test.comment('No samples screen');
-    }, 30000);
-});
-
-// casper.then(function() {
-//   this.wait(10000, function() {
-//     picit(new Date().getTime() + '-after-no-thanks-checkout');
-//   });
+//     }, function() {
+//       // casper.test.comment('No samples screen');
+//     }, 30000);
 // });
 
-// Continue to Checkout
+// // casper.then(function() {
+// //   this.wait(10000, function() {
+// //     picit(new Date().getTime() + '-after-no-thanks-checkout');
+// //   });
+// // });
 
-casper.then(function() {
-  this.test.assertTextExists('Continue to Checkout', 'Continue to Checkout is visible');
-});
-
-casper.then(function() {
-  // casper.test.comment('Clicking on anon checkout');
-  this.clickLabel('Continue to Checkout', 'a');
-});
+// // Continue to Checkout
 
 // casper.then(function() {
-//   this.wait(10000, function() {
-//     picit(new Date().getTime() + '-after-checkout');
-//   });
+//   this.test.assertTextExists('Continue to Checkout', 'Continue to Checkout is visible');
 // });
 
-casper.then(function() {
-  casper.waitForSelector('#EmailAddress', function then() {
-    // casper.test.comment('Begin filling out shipping form');
-  },
-  function () {
-    casper.test.comment('Timed out, no shipping form present, exiting...');
-    picit(new Date().getTime() + '-15');
-    casper.exit(15);
-  }, 30000);
-});
+// casper.then(function() {
+//   // casper.test.comment('Clicking on anon checkout');
+//   this.clickLabel('Continue to Checkout', 'a');
+// });
 
 casper.then(function() {
 
@@ -469,6 +478,12 @@ casper.then(function() {
 });
 
 casper.then(function() {
+  this.wait(10000, function() {
+    picit(new Date().getTime() + '-after-save-and-continue');
+  });
+});
+
+casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
       casper.test.comment('Error found on Customer Information form.');
@@ -486,16 +501,19 @@ casper.then(function() {
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
       casper.test.comment('No address confirmation page. Moving on!');
-      picit(new Date().getTime() + '-payment-page');
     }, function() {
       casper.test.comment('Address needs to be confirmed...');
-      picit(new Date().getTime() + '-address-confirmation');
+      picit(order.id + '-address-confirmation');
       casper.then(function() {
         this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
       });
 
     }, 30000);
   });
+});
+
+casper.then(function() {
+  picit('test-1030-' + new Date().getTime());
 });
 
 casper.then(function() {

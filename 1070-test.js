@@ -1,5 +1,5 @@
 // to RUN, provide cookie file at cl :
-// rm 1070-test.txt; casperjs --cookies-file=1070-test.txt --image-home=/home/vivekdhar/screen_caps  1070-test.js
+// rm 1070-test.txt; casperjs --cookies-file=1070-test.txt --image-home=/Users/vivekdhar/tmp/order_automation 1070-test.js
 
 require("utils");
 
@@ -659,7 +659,10 @@ casper.then(function() {
     // this.evaluate(function() { $('#verificationButton').submit(); });
     casper.test.comment('Address needs to be confirmed...');
     picit(order.id + '-address-confirmation');
-    casper.click('#verificationButton');
+    // casper.click('#verificationButton');
+
+    this.evaluate(function() { $('#verificationButton').click(); });
+
   }, function() {
     casper.test.comment('No need to verify address');
   }, 30000);
