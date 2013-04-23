@@ -11,4 +11,4 @@ Below are the steps to get set up for development for this project
 
 
 ### 3. Run the script
-`casperjs yoox.js`
+`rm 1030-test.txt; casperjs --cookies-file=1030-test.txt  --image-home=[directory with write permissions] 1030-test.js`
