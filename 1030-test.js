@@ -503,9 +503,9 @@ casper.then(function() {
 
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
-      casper.test.comment('No address confirmation page. Moving on!');
+      casper.test.comment('Address confirmation need [false]');
     }, function() {
-      casper.test.comment('Address needs to be confirmed...');
+      casper.test.comment('Address confirmation need [true]');
       picit(order.id + '-address-confirmation');
       casper.then(function() {
         this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
