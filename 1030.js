@@ -544,7 +544,7 @@ casper.then(function () {
           logMessage('Sending confirmation comment to order with id [' + order.id + ']');
         });
 
-        casper.open(commentUrl, {
+        casper.thenOpen(commentUrl, {
             method: 'post',
             data:   {
               'comment': confirmationMsg
@@ -578,7 +578,7 @@ casper.then(function () {
         logMessage('Sending confirmation comment to order with id [' + order.id + ']');
       });
 
-      casper.open(commentUrl, {
+      casper.thenOpen(commentUrl, {
           method: 'post',
           data:   {
             'comment': 'submitOrder set to false, so no Nordstrom order number for you!'

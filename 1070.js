@@ -723,7 +723,7 @@ casper.then(function () {
               logMessage('Sending confirmation comment to order with id [' + order.id + ']');
             });
 
-            casper.open(commentUrl, {
+            casper.thenOpen(commentUrl, {
                 method: 'post',
                 data:   {
                   'comment': 'CONFIRMATION #: ' + confirmationMsg
@@ -766,7 +766,7 @@ casper.then(function () {
             logMessage('Sending confirmation comment to order with id: ' + order.id);
           });
 
-          casper.open(commentUrl, {
+          casper.thenOpen(commentUrl, {
               method: 'post',
               data:   {
                 'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
