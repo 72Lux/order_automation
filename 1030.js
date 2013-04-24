@@ -50,7 +50,7 @@ logError = (function (msg) {
 // take screen capture
 // exit process
 exitProcess = (function (code) {
-  if(!code) {
+  if(!code && (code !== 0)) {
     logError('Exit code not provided. Setting it to 1.');
     code = 1;
   }
@@ -258,7 +258,7 @@ casper.each(lineItems, function(self, lineItem) {
         });
 
         casper.then(function() {
-          logMessage('Size available [' + isSizeAvailable + ']');
+          logMessage('Size [' + lineItem.size + '] available [' + isSizeAvailable + ']');
         });
 
         casper.then(function() {
@@ -317,7 +317,7 @@ casper.each(lineItems, function(self, lineItem) {
         });
 
         casper.then(function() {
-          logMessage('Color available [' + isColorAvailable + ']');
+          logMessage('Lineitem color [' + lineItem.color + '] available [' + isColorAvailable + ']');
         });
 
         casper.then(function() {

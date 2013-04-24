@@ -1,47 +1,27 @@
 require("utils");
 
-// capture a snapshot
+// HELPER FUNCTIONS
+
+// screen capture
 picit = (function (filename) {
-  filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
-  casper.echo('### ' + 'Saving screen capture [' + filename + ']');
+  if(!imageHome) { imageHome = '/tmp/order_automation'; }
+  filename = imageHome + '/' + filename + '.png' || 'default_screen_caps/results.png';
+  logMessage('Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
-    width: 1024,
-    height: 1024
+    width: 480,
+    height: 2000
   });
 });
 
-// test whether any error messages popped up
-testForm = (function (orderId, formType) {
-  return casper.then(function () {
-    casper.waitFor(function () {
-      return this.evaluate(function () {
-        return document.querySelectorAll('table.coErrorMessageClass').length;
-      });
-    },
-    function () {
-      this.echo('### ERROR ### ' + 'Error present in ' + formType + ' form.');
-      this.echo('### ERROR ### ' + this.evaluate(function () {
-        return $('table.coErrorMessageClass td.text').text();
-      }));
-      if(formType && (formType === 'shipping')) {
-        picit(orderId + '-34');
-        this.exit(34);
-      } else {
-        picit(orderId + '-35');
-        this.exit(35);
-      }
-    },
-    function () {
-      this.echo('### ' + 'No errors found on form');
-    });
-  });
-});
+// remove spaces and replace accented characters with corresponding regular ones
+// used when search for string using indexOf
+// the same functions exists in client-utils.js for injection onto client page
+// to make it available for this.evaluate
 
 normalizeString = (function (s) {
   var r = s.toLowerCase();
-
   r = r.replace(new RegExp("\\s", 'g'), "");
   r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
   r = r.replace(new RegExp("æ", 'g'), "ae");
@@ -58,38 +38,201 @@ normalizeString = (function (s) {
   return r;
 });
 
+logMessage = (function (msg) {
+  casper.echo('## ' + msg);
+});
+
+logError = (function (msg) {
+  casper.echo('## ERROR ## ' + msg);
+});
+
+// test whether any error messages popped up
+testForm = (function (orderId, formType) {
+  return casper.then(function () {
+    casper.waitFor(function () {
+      return this.evaluate(function () {
+        return document.querySelectorAll('table.coErrorMessageClass').length;
+      });
+    },
+    function () {
+      logError('Error present in [' + formType + '] form');
+      logError(this.evaluate(function () {
+        return $('table.coErrorMessageClass td.text').text();
+      }));
+      if(formType && (formType === 'shipping')) {
+        exitProcess(34);
+      } else {
+        exitProcess(35);
+      }
+    },
+    function () {
+      logMessage('No errors found on form');
+    });
+  });
+});
+
+// log exit code
+// take screen capture
+// exit process
+exitProcess = (function (code) {
+  if(!code && (code !== 0)) {
+    logError('Exit code not provided. Setting it to 1.');
+    code = 1;
+  }
+  logMessage('Exiting with code [' + code + ']');
+  picit(order.id + '-' + code);
+  casper.exit(code);
+});
+
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
+  onAlert: function () {
+    logMessage('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
+    picit('alert');
+  },
   verbose: false,
   logLevel: "debug"
 });
 
-// casper.on('remote.message', function(msg) {
-//     this.echo('### DOM Msg ###: ' + msg);
-// });
+// TEST DATA BEGIN
 
-var confirmationMsg = '';
+var testLineItems = [];
 
-var order = JSON.parse(casper.cli.args);
+
+var item0 = {
+   title: "Contour Jean Belt, Black",
+   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FNeiman-Marcus-Contour-Jean-Belt-Black%2Fprod150910006_cat4300731__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat4300731%252526pageSize%25253D30%252526No%25253D120%252526refinements%25253D%26eItemId%3Dprod150910006%26cmCat%3Dproduct',
+   size: 'SMALL',
+   color: 'BLACK',
+   qty: 1
+ };
+
+testLineItems.push(item0);
+
+var item1 = {
+  title: "Wing-Tip Chelsea Boot",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPrada-Wing-Tip-Chelsea-Boot%2Fprod146820012_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D600%252526refinements%25253D%26eItemId%3Dprod146820012%26cmCat%3Dproduct',
+  size: '7/8D',
+  color: '',
+  qty: 1
+};
+
+testLineItems.push(item1);
+
+var item2 = {
+  title: "Gisele Short Pajamas, Eggplant/Pink",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FEberjey-Gisele-Short-Pajamas-Eggplant-Pink%2Fprod152510464_cat10360732__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10360732%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod152510464%26cmCat%3Dproduct',
+  size: 'LARGE/10-12',
+  color: 'EGGPLANT/PINK',
+  qty: 1
+};
+
+testLineItems.push(item2);
+
+var item3 = {
+  title: "Pyramid Studded Hobo Bag, Pale Khaki",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FTory-Burch-Pyramid-Studded-Hobo-Bag-Pale-Khaki%2Fprod155700016_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D210%252526refinements%25253D%26eItemId%3Dprod155700016%26cmCat%3Dproduct',
+  size: '',
+  color: '',
+  qty: 1
+};
+
+testLineItems.push(item3);
+
+var item4 = {
+  title: "The Lipstick",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FKanebo-Sensai-Collection-The-Lipstick%2Fprod92160003_cat10470768__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10470768%252526pageSize%25253D30%252526No%25253D150%252526refinements%25253D%26eItemId%3Dprod92160003%26cmCat%3Dproduct',
+  size: '',
+  color: 'AYA 17',
+  qty: 2
+};
+
+testLineItems.push(item4);
+
+var testOrder = {
+  id: '1030-test-' + new Date().getTime(),
+  submitOrder: false,
+  shipping_address: {
+    first_name: 'First',
+    last_name: 'Last',
+    street1: '1 Market St',
+    street2: '',
+    city: 'San Francisco',
+    state: 'California',
+    short_state: 'CA',
+    postal_code: '94108',
+    phone: '1231231234'
+  },
+  billing_address: {
+    email: 'test@test.com',
+    first_name: 'First',
+    last_name: 'Last',
+    street1: '1 Market St',
+    street2: '',
+    city: 'San Francisco',
+    state: 'California',
+    short_state: 'CA',
+    postal_code: '94108',
+    phone: '1231231234'
+  },
+  payment: {
+    card_type: 'Visa',
+    card_number: '4111111111111111',
+    cvv: '123',
+    expiry_month: '12',
+    expiry_year: '2020'
+  },
+  line_items: testLineItems
+};
+
+// TEST DATA END
+
+var order = casper.cli.get('order');
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
 var imageHome = casper.cli.get('image-home');
 
-this.echo('### ' + 'Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
+// if order is made available on the command line, make sure the other required options are present as well.
+// if there is no --order option available, use the testOrder [the testOrder will not be submitted; order.submitOrder = false]
 
+if(order) {
+  if(!auth || !commentUrl || !imageHome) {
+    logError('--auth, --comment-url, --image-home are required for a real order to be processed.');
+    exit(1);
+  }
+  order = JSON.parse(order);
+  logMessage('Using --order');
+} else {
+  order = testOrder;
+  logMessage('Using testOrder');
+}
+
+var sa = order.shipping_address;
+var ba = order.billing_address;
+var pi = order.payment;
 var lineItems = order.line_items;
+var confirmationMsg = '';
 
 casper.start();
 
 // ADD ITEMS BEGIN
+casper.then(function() {
+  logMessage('Order Id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
+});
 
 casper.each(lineItems, function(self, lineItem) {
+
+  casper.then(function() {
+    logMessage('Opening [' + lineItem.affiliate_url + ']');
+  });
+
   this.thenOpen(lineItem.affiliate_url, function() {
 
-    this.echo('### ' + this.getTitle());
-    // picit(order.id + '-before-anything');
+    logMessage(this.getTitle());
 
     casper.waitForSelector('#topAddToCartButton', function() {
+
+      logMessage('Add to Cart available [true]');
 
       // PROCESS SIZE
 
@@ -104,7 +247,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.size + '"]')) {
 
-              this.echo('### ' + 'Size [' + lineItem.size + '] available in select');
+              logMessage('Size [' + lineItem.size + '] available in select');
 
               this.evaluate(function (_option) {
                 var $select = $('[id ^=prod][id $=DD1]');
@@ -113,22 +256,20 @@ casper.each(lineItems, function(self, lineItem) {
               }, { _option : lineItem.size });
 
             } else {
-              this.echo('### ERROR ### ' + 'OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
-              picit(order.id + '-32');
-              this.exit(32);
+              logError('OrderId [' + order.id + '] UNAVAILABLE size [' + lineItem.size + ']');
+              exitProcess(32);
             }
           } else if(!isSizeDropdownVisible && normalizeString(sizeText).indexOf(normalizeString(lineItem.size)) >= 0) {
 
-            this.echo('### ' + 'Size [' + lineItem.size + '] available in text');
+            logMessage('Size [' + lineItem.size + '] available in text');
 
           } else {
-            this.echo('###  ERROR ### ' + 'OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
-            picit(order.id + '-32');
-            this.exit(32);
+            logError('OrderId [' + order.id + '] UNAVAILABLE size [' + lineItem.size + ']');
+            exitProcess(32);
           }
 
         } else {
-          this.echo('### ' + 'No size for product');
+          logMessage('No size for product');
         }
 
       });
@@ -157,7 +298,7 @@ casper.each(lineItems, function(self, lineItem) {
 
           if(isColorDropdownVisible && colorExists) {
 
-            this.echo('### ' + 'Color [' + lineItem.color + '] available in select');
+            logMessage('Color [' + lineItem.color + '] available in select');
 
             this.evaluate(function (_option, _dd) {
               var $select = $(_dd);
@@ -167,16 +308,15 @@ casper.each(lineItems, function(self, lineItem) {
 
           } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
 
-            this.echo('### ' + 'Color [' + lineItem.color + '] available in text');
+            logMessage('Color [' + lineItem.color + '] available in text');
 
           } else {
-            this.echo('###  ERROR ### ' + 'OrderId: ' + order.id + ' color [' + lineItem.color + '] unavailable. Exiting...');
-            picit(order.id + '-32');
-            this.exit(32);
+            logError('OrderId [' + order.id + '] UNAVAILABLE color [' + lineItem.color + ']');
+            exitProcess(32);
           }
 
         } else {
-          this.echo('### ' + 'No color for product');
+          logMessage('No color for product');
         }
 
       });
@@ -193,27 +333,35 @@ casper.each(lineItems, function(self, lineItem) {
 
           if(inStockVisible) {
 
-            this.echo('### ' + 'Product is in stock');
+            casper.then(function() {
 
-            if(lineItem.qty) {
-              this.echo('### ' + 'Setting qty to: ' + lineItem.qty);
-              this.fill('#lineItemsForm', {
-                'qty0': lineItem.qty
-              }, false);
-            } else {
-              this.echo('###  ERROR ### ' + 'Required quantity is missing');
-              picit(order.id + '-42');
-              this.exit(42);
-            }
+              logMessage('Product in stock [true]');
 
-            this.echo('### ' + 'Add to cart button available [false]');
-            casper.click('#topAddToCartButton');
+
+              if(lineItem.qty) {
+
+                logMessage('Quantity [' + lineItem.qty + ']');
+
+                this.fill('#lineItemsForm', {
+                  'qty0': lineItem.qty
+                }, false);
+              } else {
+                logError('Required quantity is missing');
+                exitProcess(42);
+              }
+
+            });
+
+            casper.then(function() {
+
+              logMessage('Add to Cart available [false]');
+              casper.click('#topAddToCartButton');
+            });
 
           } else {
 
-            this.echo('###  ERROR ### ' + 'Product is not in stock');
-            picit(order.id + '-31');
-            this.exit(31);
+            logError('Product in stock [false]');
+            exitProcess(31);
 
           }
         });
@@ -222,9 +370,8 @@ casper.each(lineItems, function(self, lineItem) {
 
     }, function() {
 
-      this.echo('###  ERROR ### ' + 'Add to cart button available [true]');
-      picit(order.id + '-12');
-      this.exit(12);
+      logError('Add to Cart available [false]');
+      exitProcess(12);
 
     });
 
@@ -246,20 +393,27 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
 casper.then(function () {
   casper.waitForSelector('#anonSignInBtn', function () {
 
-    // CALL TO NEIMAN JS
-    this.evaluate(function() {
-      objErrorMessage.removeAllErrors(); var request = new LoginReq();
-      request[LoginReq_email] = '';
-      request[LoginReq_password] = '';
-      request[LoginReq_type] = 'anonymous';
-      checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
+    casper.then(function() {
+        logMessage('Anon sign-in button available [true]');
     });
+
+    casper.then(function() {
+      this.evaluate(function() { $('#anonSignInBtn').click(); });
+    });
+
+    // CALL TO NEIMAN JS
+    // this.evaluate(function() {
+    //   objErrorMessage.removeAllErrors(); var request = new LoginReq();
+    //   request[LoginReq_email] = '';
+    //   request[LoginReq_password] = '';
+    //   request[LoginReq_type] = 'anonymous';
+    //   checkoutGateway.ajaxService(request, this.loginSuccess, loginError);
+    // });
 
   }, function() {
 
-    this.echo('### ERROR ### ' + 'Anon sign-in button no available. Exiting...');
-    picit(order.id + '-14');
-    this.exit(14);
+    logError('Anon sign-in button available [false]');
+    exitProcess(14);
 
   });
 });
@@ -275,10 +429,10 @@ casper.then(function () {
 casper.then(function () {
   casper.wait(2000, function () {
     if(this.exists('#samplesNoButton')) {
-      this.echo('### ' + 'Samples pop-up [true]');
+      logMessage('Samples pop-up [true]');
       this.evaluate(function() { gwpSelector.noItems(); });
     } else {
-      this.echo('### ' + 'Samples pop-up [false]');
+      logMessage('Samples pop-up [false]');
     }
   });
 });
@@ -291,12 +445,11 @@ casper.then(function () {
 casper.then(function () {
 
   casper.waitForSelector('#shippingForm_se', function() {
-    this.echo('### ' + 'Shipping form available [true]');
+    logMessage('Shipping form available [true]');
   },
   function () {
-    this.echo('###  ERROR ### ' + 'Shipping form available [false]');
-    picit(order.id + '-15');
-    casper.exit(15);
+    logError('Shipping form available [false]');
+    exitProcess(15);
   }, 30000);
 
 });
@@ -370,10 +523,10 @@ casper.then(function () {
         }
       }, { fields : optionalFormValues });
 
-      this.echo('### ' + 'Optional delivery telephone needed [true]');
+      logMessage('Optional delivery telephone needed [true]');
 
     } else {
-      this.echo('### ' + 'Optional delivery telephone needed [false]');
+      logMessage('Optional delivery telephone needed [false]');
     }
   });
 
@@ -387,39 +540,25 @@ casper.then(function () {
     document.querySelector('#useAsBillingFlag_se').checked = false;
   });
 
-  // casper.then( function () {
-  //   picit(order.id + '-shipping-form-before-submit');
-  // });
-
   // click NEXT step
   casper.then(function () {
-    if(casper.exists('span#shippingContinue_se')) {
-      casper.wait(2000, function () {
+
+      casper.waitForSelector('#shippingContinue_se', function () {
         // CALL TO NEIMAN JS
+        casper.then(function() {
+          logMessage('Next button found on shipping form [false]');
+        });
+
         this.evaluate(function() {
           var $s = $('#shippingContinue_se');
           objShippingEdit.shippingEditContinue($s.attr("pageType"), $s.attr("sgId"));
         });
-      });
-    } else {
-      this.echo('###  ERROR ### ' + 'Next button not found on shipping form');
-      picit(order.id + '-16');
-      this.exit(16);
-    }
+      }, function() {
+        logError('Next button found on shipping form [false]');
+        exitProcess(16);
+      }, 30000);
+
   });
-
-  // this.echo('### ' + 'shipping zip length: ' + sa.postal_code.length);
-
-  // casper.then(function() {
-  //   //field-validation-error
-  //   casper.waitForSelector('.field-validation-error', function () {
-  //       this.echo('### ERROR ### ' + 'Validation errors for customer info [true]');
-  //       picit(order.id + '-34');
-  //       this.exit(34);
-  //     }, function() {
-  //       this.echo('### ' + 'Validation errors for customer info [false]');
-  //     }, 30000);
-  // });
 
   testForm(order.id, 'shipping');
 
@@ -437,12 +576,11 @@ casper.then(function () {
     });
   },
   function () {
-    this.echo('### ' + 'Billing form available [true]');
+    logMessage('Billing form available [true]');
   },
   function () {
-    this.echo('###  ERROR ### ' + 'Billing form available [false]');
-    picit(order.id + '-17');
-    casper.exit(17);
+    logError('Billing form available [false]');
+    exitProcess(17);
   }, 45000);
 });
 
@@ -504,22 +642,22 @@ casper.then(function () {
 
 });
 
-// casper.then( function () {
-//   picit(order.id + '-billing-form-before-submit');
-// });
-
 // click next to review
 casper.then(function () {
   casper.waitForSelector('#paymentSave', function() {
+
+    casper.then(function() {
+      logMessage('Save payment button available [false]');
+    });
+
     // CALL TO NEIMAN JS
     this.evaluate(function() {
       var $p = $('#paymentSave');
       paymentEdit.verifyData($p.attr("pgId"));
     });
   }, function() {
-    this.echo('###  ERROR ### ' + 'Save payment button not available');
-    picit(order.id + '-18');
-    this.exit(18);
+    logError('Save payment button available [false]');
+    exitProcess(18);
   }, 30000);
 });
 
@@ -531,13 +669,15 @@ testForm(order.id, 'billing');
 // exit if address needs to be confirmed
 casper.then(function() {
   casper.waitForSelector('#verificationButton', function() {
+    casper.then(function() {
+      logMessage('Address confirmation needed [true]');
+    });
 
-    this.echo('### ' + 'Address confirmation needed [true]');
     picit(order.id + '-address-confirmation');
     this.evaluate(function() { $('#verificationButton').click(); });
 
   }, function() {
-    this.echo('### ' + 'Address confirmation needed [false]');
+    logMessage('Address confirmation needed [false]');
   }, 30000);
 });
 
@@ -546,21 +686,21 @@ casper.then(function () {
 
   casper.waitForSelector('#submitOrder', function() {
 
-    this.echo('### ' + 'Submit Order set to [' + order.submitOrder + ']');
-
-    if(order.submitOrder) {
-      // TODO: OMG! ARE YOU READY FOR THIS?
-      casper.click('#submitOrder');
-      this.evaluate(function() { performCcAuth(); });
-      this.echo('### ' + 'Submit button [CLICKED!]');
-    } else {
-      this.echo('### ' + 'Submit button [VISIBLE]');
-    }
+    logMessage('Submit Order set to [' + order.submitOrder + ']');
+    casper.then(function() {
+      if(order.submitOrder) {
+        // TODO: OMG! ARE YOU READY FOR THIS?
+        casper.click('#submitOrder');
+        this.evaluate(function() { performCcAuth(); });
+        logMessage('Submit button [CLICKED!]');
+      } else {
+        logMessage('Submit button [VISIBLE]');
+      }
+    });
 
   }, function() {
-    this.echo('###  ERROR ### ' + 'Submit order button not available');
-    picit(order.id + '-18');
-    this.exit(18);
+    logError('Submit button available [false]');
+    exitProcess(18);
   }, 30000);
 
 });
@@ -579,7 +719,7 @@ casper.then(function () {
         if(auth && commentUrl) {
 
           casper.then(function() {
-            this.echo('### ' + 'Sending confirmation comment to order with id [' + order.id + ']');
+            logMessage('Sending confirmation comment to order with id [' + order.id + ']');
           });
 
           casper.open(commentUrl, {
@@ -593,38 +733,36 @@ casper.then(function () {
           });
 
           casper.then(function() {
-            this.echo('### ' + 'Order id [' + order.id + ' NM confirmation number [' + confirmationMsg + ']');
+            logMessage('Order id [' + order.id + ' NM confirmation number [' + confirmationMsg + ']');
           });
 
         } else {
           casper.then(function() {
-            this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
+            logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
           });
        }
 
         casper.then(function() {
-          picit(order.id + '-0');
-          casper.exit(0);
+          exitProcess(0);
         });
 
       } else {
         casper.then(function() {
-          this.echo('###  ERROR ### ' + 'Could not find order confirmation text.');
-          picit(order.id + '-20');
-          casper.exit(20);
+          logError('Could not find order confirmation text.');
+          exitProcess(20);
         });
       }
 
     } else {
 
       casper.then(function() {
-        this.echo('### ' + 'Submit is set to [' + order.submitOrder + '], so you will not see the confirmation page.');
+        logMessage('Submit is set to [' + order.submitOrder + '], so you will not see the confirmation page.');
       });
 
       if(auth && commentUrl) {
 
         casper.then(function() {
-          this.echo('### ' + 'Sending confirmation comment to order with id: ' + order.id);
+          logMessage('Sending confirmation comment to order with id: ' + order.id);
         });
 
         casper.open(commentUrl, {
@@ -638,17 +776,16 @@ casper.then(function () {
         });
 
         casper.then(function() {
-          this.echo('### ' + 'Confirmation # posted!');
+          logMessage('Confirmation # posted!');
         });
       } else {
         casper.then(function() {
-          this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
+          logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
         });
       }
 
       casper.then(function() {
-        picit(order.id + '-0');
-        casper.exit(0);
+        exitProcess(0);
       });
     }
   });
@@ -656,3 +793,6 @@ casper.then(function () {
 
 // RUN IIIIIIIIIIIT!
 casper.run();
+
+
+
