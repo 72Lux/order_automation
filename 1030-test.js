@@ -6,7 +6,7 @@ require("utils");
 // capture a snapshot
 picit = (function (filename) {
   filename = imageHome + '/' + filename + '.png' || 'default_screen_caps/results.png';
-  casper.test.comment('Saving screen capture [' + filename + ']');
+  this.echo('### ' + 'Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
@@ -194,7 +194,7 @@ casper.each(lineItems, function(self, lineItem) {
           if(isSizeAvailable) {
               this.clickLabel(lineItem.size, 'a');
           } else {
-            casper.test.comment('ERROR: OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
+            this.echo('### ERROR ### ' + 'OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
             picit(order.id + '-32' + '-' + new Date().getTime());
             this.exit(32);
           }
@@ -245,7 +245,7 @@ casper.each(lineItems, function(self, lineItem) {
           if(isColorAvailable) {
               this.clickLabel(lineItem.color, 'span');
           } else {
-            casper.test.comment('ERROR: OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
+            this.echo('### ERROR ### ' + 'OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
             picit(order.id + '-32' + '-' + new Date().getTime());
             this.exit(32);
           }
@@ -267,7 +267,7 @@ casper.each(lineItems, function(self, lineItem) {
 
     }, function() {
 
-      casper.test.comment('Timed out waiting for add to bag button');
+      this.echo('### ERROR ### ' + 'Timed out waiting for add to bag button');
       picit(order.id + '-12' + '-' + new Date().getTime());
       this.exit(12);
 
@@ -302,11 +302,11 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 
   casper.then(function() {
     casper.waitForSelector('#EmailAddress', function then() {
-      // casper.test.comment('Begin filling out shipping form');
+      this.echo('### ' + 'Shipping form available [true]');
     },
     function () {
-      casper.test.comment('Timed out, no shipping form present, exiting...');
-      picit(new Date().getTime() + '-15');
+      this.echo('### ERROR ### ' + 'Shipping form available [false]');
+      picit(order.id + '-15');
       casper.exit(15);
     }, 30000);
   });
@@ -318,7 +318,7 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 // });
 
 // casper.then(function() {
-//   // casper.test.comment('Clicking on checkout');
+//   // this.echo('### ' + 'Clicking on checkout');
 //   this.evaluate(function() { $('#proceed-to-checkout').click(); });
 
 // });
@@ -334,7 +334,7 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 // casper.then(function () {
 //   casper.waitForSelector('#NoThanksButton', function () {
 
-//       // casper.test.comment('Samples screen appeared');
+//       // this.echo('### ' + 'Samples screen appeared');
 //       casper.open('http://m.nordstrom.com//samples/nothanks', {
 //           method: 'post',
 //           data:   {
@@ -343,7 +343,7 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 //       });
 
 //     }, function() {
-//       // casper.test.comment('No samples screen');
+//       // this.echo('### ' + 'No samples screen');
 //     }, 30000);
 // });
 
@@ -360,7 +360,7 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 // });
 
 // casper.then(function() {
-//   // casper.test.comment('Clicking on anon checkout');
+//   // this.echo('### ' + 'Clicking on anon checkout');
 //   this.clickLabel('Continue to Checkout', 'a');
 // });
 
@@ -476,7 +476,7 @@ casper.then(function() {
 });
 
 casper.then(function() {
-  // casper.test.comment('Clicking on Save and Continue');
+  // this.echo('### ' + 'Clicking on Save and Continue');
   this.click('#Submit1');
 });
 
@@ -489,11 +489,11 @@ casper.then(function() {
 casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
-      casper.test.comment('Error found on Customer Information form.');
+      this.echo('### ERROR ### ' + 'Error found on Customer Information form.');
       picit(new Date().getTime() + '-34');
       casper.exit(34);
     }, function() {
-      // casper.test.comment('All is well, no form-validation-errors found');
+      // this.echo('### ' + 'All is well, no form-validation-errors found');
     }, 30000);
 });
 
@@ -503,9 +503,9 @@ casper.then(function() {
 
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
-      casper.test.comment('Address confirmation need [false]');
+      this.echo('### ' + 'Address confirmation need [false]');
     }, function() {
-      casper.test.comment('Address confirmation need [true]');
+      this.echo('### ' + 'Address confirmation need [true]');
       picit(order.id + '-address-confirmation');
       casper.then(function() {
         this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
@@ -542,10 +542,10 @@ casper.then(function() {
 // casper.then(function () {
 //   casper.waitForSelector('#submitButton', function () {
 
-//       casper.test.comment('SubmitButton VISIBLE!');
+//       this.echo('### ' + 'SubmitButton VISIBLE!');
 
 //     }, function() {
-//       casper.test.comment('SubmitButton NOT visible.');
+//       this.echo('### ' + 'SubmitButton NOT visible.');
 //     }, 30000);
 // });
 

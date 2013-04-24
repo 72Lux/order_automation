@@ -3,7 +3,7 @@ require("utils");
 // capture a snapshot
 picit = (function (filename) {
   filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
-  casper.test.comment('Saving screen capture [' + filename + ']');
+  this.echo('### ' + 'Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
@@ -15,7 +15,7 @@ picit = (function (filename) {
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   onAlert: function () {
-    casper.test.comment('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
+    this.echo('### ' + 'an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
   },
   verbose: false,
@@ -42,7 +42,7 @@ var imageHome = casper.cli.get('image-home');
 var isSizeAvailable = false;
 var isColorAvailable = false;
 
-casper.test.comment('Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
+this.echo('### ' + 'Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
 
 var lineItems = order.line_items;
 
@@ -52,7 +52,7 @@ var lineItems = order.line_items;
 casper.start();
 
 casper.then(function() {
-  casper.test.comment('Lineitem count [' + lineItems.length + ']');
+  this.echo('### ' + 'Lineitem count [' + lineItems.length + ']');
 });
 
 casper.then(function() {
@@ -74,7 +74,7 @@ casper.then(function() {
 });
 
 casper.then(function() {
-  casper.test.comment('Total product quantity [' + lineItems.length + ']');
+  this.echo('### ' + 'Total product quantity [' + lineItems.length + ']');
 });
 
 
@@ -87,7 +87,7 @@ casper.each(lineItems, function(self, lineItem) {
 
   this.thenOpen(lineItem.affiliate_url, function() {
 
-    casper.test.comment(this.getTitle());
+    this.echo('### ' + this.getTitle());
 
     // picit(order.id + '-before-anything');
 
@@ -95,7 +95,7 @@ casper.each(lineItems, function(self, lineItem) {
 
       if (lineItem.size) {
 
-        casper.test.comment('Set size to [' + lineItem.size + ']');
+        this.echo('### ' + 'Set size to [' + lineItem.size + ']');
 
         casper.then(function() {
 
@@ -109,10 +109,6 @@ casper.each(lineItems, function(self, lineItem) {
 
                 // check if color is available
                 if(!$(this).hasClass('unavailable')) {
-                  // color found, click it!
-                  // $(this).click();
-                  // // verify the
-                  // result = $(this).hasClass('selected');
                   result = true;
                   return;
                 }
@@ -127,14 +123,14 @@ casper.each(lineItems, function(self, lineItem) {
         });
 
         casper.then(function() {
-          casper.test.comment('Size availability [' + isSizeAvailable + ']');
+          this.echo('### ' + 'Size availability [' + isSizeAvailable + ']');
         });
 
         casper.then(function() {
           if(isSizeAvailable) {
               this.clickLabel(lineItem.size, 'a');
           } else {
-            casper.test.comment('ERROR: OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
+            this.echo('### ERROR ### ' + 'OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
             picit(order.id + '-32');
             this.exit(32);
           }
@@ -148,7 +144,7 @@ casper.each(lineItems, function(self, lineItem) {
 
         casper.then(function() {
 
-          casper.test.comment('Set color to [' + lineItem.color + ']');
+          this.echo('### ' + 'Set color to [' + lineItem.color + ']');
 
           isColorAvailable = this.evaluate(function(color) {
 
@@ -176,14 +172,14 @@ casper.each(lineItems, function(self, lineItem) {
         });
 
         casper.then(function() {
-          casper.test.comment('Color availability [' + isColorAvailable + ']');
+          this.echo('### ' + 'Color availability [' + isColorAvailable + ']');
         });
 
         casper.then(function() {
           if(isColorAvailable) {
               this.clickLabel(lineItem.color, 'span');
           } else {
-            casper.test.comment('ERROR: OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
+            this.echo('### ERROR ### ' + 'OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
             picit(order.id + '-32');
             this.exit(32);
           }
@@ -191,13 +187,13 @@ casper.each(lineItems, function(self, lineItem) {
       }
 
       casper.then(function() {
-        casper.test.comment('Clicking on [Buy Button]');
+        this.echo('### ' + 'Clicking on [Buy Button]');
         this.click('#buyButtonSubmit');
       });
 
     }, function() {
 
-      casper.test.comment('Buy Button available [false]');
+      this.echo('### ERROR ### ' + 'Buy Button available [false]');
       picit(order.id + '-12');
       this.exit(12);
 
@@ -221,58 +217,16 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 
   casper.then(function() {
     casper.waitForSelector('#EmailAddress', function then() {
-      casper.test.comment('Shipping form available [true]');
+      this.echo('### ' + 'Shipping form available [true]');
     },
     function () {
-      casper.test.comment('Shipping form available [false]');
+      this.echo('### ERROR ### ' + 'Shipping form available [false]');
       picit(order.id + '-15');
       casper.exit(15);
     }, 30000);
   });
 
 });
-
-// casper.then(function() {
-//   casper.test.comment('To the checkout!');
-//   this.click('#proceed-to-checkout');
-// });
-
-// // NoThanksButton
-
-// casper.then(function () {
-//   casper.waitForSelector('#NoThanksButton', function () {
-
-//       casper.test.comment('Samples screen appeared');
-//       // this.click('#NoThanksButton');
-
-//       casper.open('http://m.nordstrom.com//samples/nothanks', {
-//           method: 'post',
-//           data:   {
-//               'postaction': ''
-//           }
-//       });
-
-//     }, function() {
-//       casper.test.comment('No samples screen');
-//     }, 30000);
-// });
-
-// casper.then(function() {
-//   this.clickLabel('Continue to Checkout', 'a');
-// });
-
-// // HEAD TO CHECKOUT END
-
-// casper.then(function() {
-//   casper.waitForSelector('#EmailAddress', function then() {
-//     casper.test.comment('Begin filling out shipping form');
-//   },
-//   function () {
-//     casper.test.comment('Timed out, no shipping form present, exiting...');
-//     picit(order.id + '-15');
-//     casper.exit(15);
-//   }, 30000);
-// });
 
 casper.then(function() {
 
@@ -306,26 +260,26 @@ casper.then(function() {
 });
 
 casper.then(function() {
-  casper.test.comment('Clicking on [Save and Continue]');
+  this.echo('### ' + 'Clicking on [Save and Continue]');
   this.click('#Submit1');
 });
 
 casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
-      casper.test.comment('Validation errors for customer info [true]');
+      this.echo('### ERROR ### ' + 'Validation errors for customer info [true]');
       picit(order.id + '-34');
       this.exit(34);
     }, function() {
-      casper.test.comment('Validation errors for customer info [false]');
+      this.echo('### ' + 'Validation errors for customer info [false]');
     }, 30000);
 });
 
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
-      casper.test.comment('Address confirmation needed [false]');
+      this.echo('### ' + 'Address confirmation needed [false]');
     }, function() {
-      casper.test.comment('Address confirmation needed [true]');
+      this.echo('### ' + 'Address confirmation needed [true]');
       picit(order.id + '-address-confirmation');
       casper.then(function() {
         this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
@@ -337,9 +291,9 @@ casper.then(function() {
 
 casper.then(function() {
   casper.waitForSelector('form[action="/OrderReview/SubmitOrder"]', function() {
-    casper.test.comment('Payment form availability [true]');
+    this.echo('### ' + 'Payment form available [true]');
   }, function() {
-    casper.test.comment('Payment form availability [false]');
+    this.echo('### ERROR ### ' + 'Payment form available [false]');
     picit(order.id + '-1');
     this.exit(1);
   }, 30000);
@@ -358,18 +312,18 @@ casper.then(function() {
 casper.then(function () {
   casper.waitForSelector('#submitButton', function () {
 
-      casper.test.comment('SubmitOrder is set to [' + order.submitOrder + ']');
+      this.echo('### ' + 'SubmitOrder is set to [' + order.submitOrder + ']');
 
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
         casper.click('#submitButton');
-        casper.test.comment('Submit button [CLICKED!]');
+        this.echo('### ' + 'Submit button [CLICKED!]');
       } else {
-        casper.test.comment('Submit Button is [VISIBLE]');
+        this.echo('### ' + 'Submit Button is [VISIBLE]');
       }
 
     }, function() {
-      casper.test.comment('ERROR: Submit order button not available');
+      this.echo('### ERROR ### ' + 'Submit order button not available');
       picit(order.id + '-18');
       casper.exit(18);
     }, 30000);
@@ -401,12 +355,12 @@ casper.then(function () {
           confirmationMsg += 'not found.';
         }
 
-        casper.test.comment(confirmationMsg);
+        this.echo('### ' + confirmationMsg);
       });
 
       if(!confirmationMsg) {
         casper.then(function() {
-          casper.test.comment('ERROR: Order was submitted but could not find order confirmation text.');
+          this.echo('### ERROR ### ' + 'Order was submitted but could not find order confirmation text.');
           picit(order.id + '-20');
           casper.exit(20);
         });
@@ -415,7 +369,7 @@ casper.then(function () {
       if(auth && commentUrl) {
 
         casper.then(function() {
-          casper.test.comment('Sending confirmation comment to order with id [' + order.id + ']');
+          this.echo('### ' + 'Sending confirmation comment to order with id [' + order.id + ']');
         });
 
         casper.open(commentUrl, {
@@ -429,18 +383,18 @@ casper.then(function () {
         });
 
         casper.then(function() {
-          casper.test.comment('Order id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
+          this.echo('### ' + 'Order id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
         });
 
         } else {
           casper.then(function() {
-            casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+            this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
           });
         }
 
       }, function() {
         casper.then(function() {
-          casper.test.comment('ERROR: Order was submitted but could not find order confirmation text.');
+          this.echo('### ERROR ### ' + 'Order was submitted but could not find order confirmation text.');
           picit(order.id + '-20');
           casper.exit(20);
         });
@@ -450,7 +404,7 @@ casper.then(function () {
 
     if(auth && commentUrl) {
       casper.then(function() {
-        casper.test.comment('Sending confirmation comment to order with id [' + order.id + ']');
+        this.echo('### ' + 'Sending confirmation comment to order with id [' + order.id + ']');
       });
 
       casper.open(commentUrl, {
@@ -464,12 +418,12 @@ casper.then(function () {
       });
 
       casper.then(function() {
-        casper.test.comment('SubmitOrder set to [false], so no [Nordstrom order number] for you!');
+        this.echo('### ' + 'SubmitOrder set to [false], so no [Nordstrom order number] for you!');
       });
 
     } else {
       casper.then(function() {
-        casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+        this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
       });
     }
   }

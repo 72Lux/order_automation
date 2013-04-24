@@ -3,7 +3,7 @@ require("utils");
 // capture a snapshot
 picit = (function (filename) {
   filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
-  casper.test.comment('Saving screen capture [' + filename + ']');
+  this.echo('### ' + 'Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
@@ -21,8 +21,8 @@ testForm = (function (orderId, formType) {
       });
     },
     function () {
-      casper.test.comment('Error present in ' + formType + ' form.');
-      casper.test.comment(this.evaluate(function () {
+      this.echo('### ' + 'Error present in ' + formType + ' form.');
+      this.echo('### ' + this.evaluate(function () {
         return $('table.coErrorMessageClass td.text').text();
       }));
       if(formType && (formType === 'shipping')) {
@@ -34,7 +34,7 @@ testForm = (function (orderId, formType) {
       }
     },
     function () {
-      casper.test.comment('No errors found on form');
+      this.echo('### ' + 'No errors found on form');
     });
   });
 });
@@ -75,7 +75,7 @@ var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
 var imageHome = casper.cli.get('image-home');
 
-casper.test.comment('Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
+this.echo('### ' + 'Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
 
 var lineItems = order.line_items;
 
@@ -86,7 +86,7 @@ casper.start();
 casper.each(lineItems, function(self, lineItem) {
   this.thenOpen(lineItem.affiliate_url, function() {
 
-    casper.test.comment(this.getTitle());
+    this.echo('### ' + this.getTitle());
     // picit(order.id + '-before-anything');
 
     casper.waitForSelector('#topAddToCartButton', function() {
@@ -104,7 +104,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             if(this.exists('[id ^=prod][id $=DD1]' + ' option[value="' + lineItem.size + '"]')) {
 
-              casper.test.comment('Size [' + lineItem.size + '] available in select');
+              this.echo('### ' + 'Size [' + lineItem.size + '] available in select');
 
               this.evaluate(function (_option) {
                 var $select = $('[id ^=prod][id $=DD1]');
@@ -113,22 +113,22 @@ casper.each(lineItems, function(self, lineItem) {
               }, { _option : lineItem.size });
 
             } else {
-              casper.test.comment('ERROR: OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
+              this.echo('### ERROR ### ' + 'OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
               picit(order.id + '-32');
               this.exit(32);
             }
           } else if(!isSizeDropdownVisible && normalizeString(sizeText).indexOf(normalizeString(lineItem.size)) >= 0) {
 
-            casper.test.comment('Size [' + lineItem.size + '] available in text');
+            this.echo('### ' + 'Size [' + lineItem.size + '] available in text');
 
           } else {
-            casper.test.comment('ERROR: OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
+            this.echo('###  ERROR ### ' + 'OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
             picit(order.id + '-32');
             this.exit(32);
           }
 
         } else {
-          casper.test.comment('No size for product');
+          this.echo('### ' + 'No size for product');
         }
 
       });
@@ -157,7 +157,7 @@ casper.each(lineItems, function(self, lineItem) {
 
           if(isColorDropdownVisible && colorExists) {
 
-            casper.test.comment('Color [' + lineItem.color + '] available in select');
+            this.echo('### ' + 'Color [' + lineItem.color + '] available in select');
 
             this.evaluate(function (_option, _dd) {
               var $select = $(_dd);
@@ -167,16 +167,16 @@ casper.each(lineItems, function(self, lineItem) {
 
           } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
 
-            casper.test.comment('Color [' + lineItem.color + '] available in text');
+            this.echo('### ' + 'Color [' + lineItem.color + '] available in text');
 
           } else {
-            casper.test.comment('ERROR: OrderId: ' + order.id + ' color [' + lineItem.color + '] unavailable. Exiting...');
+            this.echo('###  ERROR ### ' + 'OrderId: ' + order.id + ' color [' + lineItem.color + '] unavailable. Exiting...');
             picit(order.id + '-32');
             this.exit(32);
           }
 
         } else {
-          casper.test.comment('No color for product');
+          this.echo('### ' + 'No color for product');
         }
 
       });
@@ -193,25 +193,25 @@ casper.each(lineItems, function(self, lineItem) {
 
           if(inStockVisible) {
 
-            casper.test.comment('Product is in stock');
+            this.echo('### ' + 'Product is in stock');
 
             if(lineItem.qty) {
-              casper.test.comment('Setting qty to: ' + lineItem.qty);
+              this.echo('### ' + 'Setting qty to: ' + lineItem.qty);
               this.fill('#lineItemsForm', {
                 'qty0': lineItem.qty
               }, false);
             } else {
-              casper.test.comment('qty is required');
+              this.echo('###  ERROR ### ' + 'Required quantity is missing');
               picit(order.id + '-42');
               this.exit(42);
             }
 
-            casper.test.comment('add button found');
+            this.echo('### ' + 'Add to cart button available [false]');
             casper.click('#topAddToCartButton');
 
           } else {
 
-            casper.test.comment('Product is not in stock');
+            this.echo('###  ERROR ### ' + 'Product is not in stock');
             picit(order.id + '-31');
             this.exit(31);
 
@@ -222,7 +222,7 @@ casper.each(lineItems, function(self, lineItem) {
 
     }, function() {
 
-      casper.test.comment('Timed out waiting for add to bag button');
+      this.echo('###  ERROR ### ' + 'Add to cart button available [true]');
       picit(order.id + '-12');
       this.exit(12);
 
@@ -257,7 +257,7 @@ casper.then(function () {
 
   }, function() {
 
-    casper.test.comment('ERROR: Anon sign-in button no available. Exiting...');
+    this.echo('### ERROR ### ' + 'Anon sign-in button no available. Exiting...');
     picit(order.id + '-14');
     this.exit(14);
 
@@ -275,10 +275,10 @@ casper.then(function () {
 casper.then(function () {
   casper.wait(2000, function () {
     if(this.exists('#samplesNoButton')) {
-      casper.test.comment('Samples pop-up [true]');
+      this.echo('### ' + 'Samples pop-up [true]');
       this.evaluate(function() { gwpSelector.noItems(); });
     } else {
-      casper.test.comment('Samples pop-up [false]');
+      this.echo('### ' + 'Samples pop-up [false]');
     }
   });
 });
@@ -291,10 +291,10 @@ casper.then(function () {
 casper.then(function () {
 
   casper.waitForSelector('#shippingForm_se', function() {
-    casper.test.comment('Shipping form available [true]');
+    this.echo('### ' + 'Shipping form available [true]');
   },
   function () {
-    casper.test.comment('Shipping form available [false]');
+    this.echo('###  ERROR ### ' + 'Shipping form available [false]');
     picit(order.id + '-15');
     casper.exit(15);
   }, 30000);
@@ -370,10 +370,10 @@ casper.then(function () {
         }
       }, { fields : optionalFormValues });
 
-      casper.test.comment('Optional delivery telephone needed [true]');
+      this.echo('### ' + 'Optional delivery telephone needed [true]');
 
     } else {
-      casper.test.comment('Optional delivery telephone needed [false]');
+      this.echo('### ' + 'Optional delivery telephone needed [false]');
     }
   });
 
@@ -402,13 +402,13 @@ casper.then(function () {
         });
       });
     } else {
-      casper.test.comment('ERROR: Next button not found on shipping form');
+      this.echo('###  ERROR ### ' + 'Next button not found on shipping form');
       picit(order.id + '-16');
       this.exit(16);
     }
   });
 
-  // casper.test.comment('shipping zip length: ' + sa.postal_code.length);
+  // this.echo('### ' + 'shipping zip length: ' + sa.postal_code.length);
 
   testForm(order.id, 'shipping');
 
@@ -426,10 +426,10 @@ casper.then(function () {
     });
   },
   function () {
-    casper.test.comment('Billing form available [true]');
+    this.echo('### ' + 'Billing form available [true]');
   },
   function () {
-    casper.test.comment('Billing form available [false]');
+    this.echo('###  ERROR ### ' + 'Billing form available [false]');
     picit(order.id + '-17');
     casper.exit(17);
   }, 45000);
@@ -506,7 +506,7 @@ casper.then(function () {
       paymentEdit.verifyData($p.attr("pgId"));
     });
   }, function() {
-    casper.test.comment('ERROR: Save payment button not available');
+    this.echo('###  ERROR ### ' + 'Save payment button not available');
     picit(order.id + '-18');
     this.exit(18);
   }, 30000);
@@ -521,12 +521,12 @@ testForm(order.id, 'billing');
 casper.then(function() {
   casper.waitForSelector('#verificationButton', function() {
 
-    casper.test.comment('Address confirmation needed [true]');
+    this.echo('### ' + 'Address confirmation needed [true]');
     picit(order.id + '-address-confirmation');
     this.evaluate(function() { $('#verificationButton').click(); });
 
   }, function() {
-    casper.test.comment('Address confirmation needed [false]');
+    this.echo('### ' + 'Address confirmation needed [false]');
   }, 30000);
 });
 
@@ -535,19 +535,19 @@ casper.then(function () {
 
   casper.waitForSelector('#submitOrder', function() {
 
-    casper.test.comment('Submit Order set to [' + order.submitOrder + ']');
+    this.echo('### ' + 'Submit Order set to [' + order.submitOrder + ']');
 
     if(order.submitOrder) {
       // TODO: OMG! ARE YOU READY FOR THIS?
       casper.click('#submitOrder');
       this.evaluate(function() { performCcAuth(); });
-      casper.test.comment('Submit button [CLICKED!]');
+      this.echo('### ' + 'Submit button [CLICKED!]');
     } else {
-      casper.test.comment('Submit button [VISIBLE]');
+      this.echo('### ' + 'Submit button [VISIBLE]');
     }
 
   }, function() {
-    casper.test.comment('ERROR: Submit order button not available');
+    this.echo('###  ERROR ### ' + 'Submit order button not available');
     picit(order.id + '-18');
     this.exit(18);
   }, 30000);
@@ -568,7 +568,7 @@ casper.then(function () {
         if(auth && commentUrl) {
 
           casper.then(function() {
-            casper.test.comment('Sending confirmation comment to order with id [' + order.id + ']');
+            this.echo('### ' + 'Sending confirmation comment to order with id [' + order.id + ']');
           });
 
           casper.open(commentUrl, {
@@ -582,12 +582,12 @@ casper.then(function () {
           });
 
           casper.then(function() {
-            casper.test.comment('Order id [' + order.id + ' NM confirmation number [' + confirmationMsg + ']');
+            this.echo('### ' + 'Order id [' + order.id + ' NM confirmation number [' + confirmationMsg + ']');
           });
 
         } else {
           casper.then(function() {
-            casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+            this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
           });
        }
 
@@ -598,7 +598,7 @@ casper.then(function () {
 
       } else {
         casper.then(function() {
-          casper.test.comment('ERROR: Could not find order confirmation text.');
+          this.echo('###  ERROR ### ' + 'Could not find order confirmation text.');
           picit(order.id + '-20');
           casper.exit(20);
         });
@@ -607,13 +607,13 @@ casper.then(function () {
     } else {
 
       casper.then(function() {
-        casper.test.comment('Submit is set to [' + order.submitOrder + '], so you will not see the confirmation page.');
+        this.echo('### ' + 'Submit is set to [' + order.submitOrder + '], so you will not see the confirmation page.');
       });
 
       if(auth && commentUrl) {
 
         casper.then(function() {
-          casper.test.comment('Sending confirmation comment to order with id: ' + order.id);
+          this.echo('### ' + 'Sending confirmation comment to order with id: ' + order.id);
         });
 
         casper.open(commentUrl, {
@@ -627,11 +627,11 @@ casper.then(function () {
         });
 
         casper.then(function() {
-          casper.test.comment('Confirmation # posted!');
+          this.echo('### ' + 'Confirmation # posted!');
         });
       } else {
         casper.then(function() {
-          casper.test.comment('Could not post confirmation comment. Auth or comment-url unavailable.');
+          this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
         });
       }
 
