@@ -1,3 +1,6 @@
+// to run from cli:
+// rm 1070.txt; casperjs --cookies-file=1070.txt 1070.js
+
 require("utils");
 
 // HELPER FUNCTIONS
@@ -705,23 +708,68 @@ casper.then(function () {
 casper.then(function () {
   casper.wait(20000, function () {
 
-    if(order.submitOrder) {
-      if(casper.exists('#confirmSummary')) {
+    casper.then(function() {
+
+      if(order.submitOrder) {
+        if(casper.exists('#confirmSummary')) {
+
+          casper.then(function() {
+            confirmationMsg = this.evaluate(function parseConfirmationMsg() { return $('#confirmSummary').html();});
+          });
+
+          if(auth && commentUrl) {
+
+            casper.then(function() {
+              logMessage('Sending confirmation comment to order with id [' + order.id + ']');
+            });
+
+            casper.open(commentUrl, {
+                method: 'post',
+                data:   {
+                  'comment': 'CONFIRMATION #: ' + confirmationMsg
+                },
+                headers: {
+                  'Authorization' : auth
+                }
+            });
+
+            casper.then(function() {
+              logMessage('Order id [' + order.id + ' NM confirmation number [' + confirmationMsg + ']');
+            });
+
+          } else {
+            casper.then(function() {
+              logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
+            });
+         }
+
+          casper.then(function() {
+            exitProcess(0);
+          });
+
+        } else {
+          casper.then(function() {
+            logError('Could not find order confirmation text.');
+            exitProcess(20);
+          });
+        }
+
+      } else {
 
         casper.then(function() {
-          confirmationMsg = this.evaluate(function parseConfirmationMsg() { return $('#confirmSummary').html();});
+          logMessage('Submit is set to [' + order.submitOrder + '], so you will not see the confirmation page.');
         });
 
         if(auth && commentUrl) {
 
           casper.then(function() {
-            logMessage('Sending confirmation comment to order with id [' + order.id + ']');
+            logMessage('Sending confirmation comment to order with id: ' + order.id);
           });
 
           casper.open(commentUrl, {
               method: 'post',
               data:   {
-                'comment': 'CONFIRMATION #: ' + confirmationMsg
+                'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
               },
               headers: {
                 'Authorization' : auth
@@ -729,61 +777,19 @@ casper.then(function () {
           });
 
           casper.then(function() {
-            logMessage('Order id [' + order.id + ' NM confirmation number [' + confirmationMsg + ']');
+            logMessage('Confirmation # posted!');
           });
-
         } else {
           casper.then(function() {
             logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
           });
-       }
+        }
 
         casper.then(function() {
           exitProcess(0);
         });
-
-      } else {
-        casper.then(function() {
-          logError('Could not find order confirmation text.');
-          exitProcess(20);
-        });
       }
-
-    } else {
-
-      casper.then(function() {
-        logMessage('Submit is set to [' + order.submitOrder + '], so you will not see the confirmation page.');
-      });
-
-      if(auth && commentUrl) {
-
-        casper.then(function() {
-          logMessage('Sending confirmation comment to order with id: ' + order.id);
-        });
-
-        casper.open(commentUrl, {
-            method: 'post',
-            data:   {
-              'comment': 'CONFIRMATION #: Since submitOrder is set to false, no soup for you!'
-            },
-            headers: {
-              'Authorization' : auth
-            }
-        });
-
-        casper.then(function() {
-          logMessage('Confirmation # posted!');
-        });
-      } else {
-        casper.then(function() {
-          logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
-        });
-      }
-
-      casper.then(function() {
-        exitProcess(0);
-      });
-    }
+    });
   });
 });
 

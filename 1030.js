@@ -1,3 +1,6 @@
+// to run from cli:
+// rm 1030.txt; casperjs --cookies-file=1030.txt 1030.js
+
 require("utils");
 
 // HELPER FUNCTIONS
