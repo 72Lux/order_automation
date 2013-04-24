@@ -1,9 +1,12 @@
 require("utils");
 
-// capture a snapshot
+// HELPER FUNCTIONS
+
+// screen capture
 picit = (function (filename) {
-  filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
-  casper.echo('### ' + 'Saving screen capture [' + filename + ']');
+  if(!imageHome) { imageHome = '/tmp/order_automation'; }
+  filename = imageHome + '/' + filename + '.png' || 'default_screen_caps/results.png';
+  logMessage('Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
@@ -12,58 +15,184 @@ picit = (function (filename) {
   });
 });
 
+// remove spaces and replace accented characters with corresponding regular ones
+// used when search for string using indexOf
+// the same functions exists in client-utils.js for injection onto client page
+// to make it available for this.evaluate
+
+normalizeString = (function (s) {
+  var r = s.toLowerCase();
+  r = r.replace(new RegExp("\\s", 'g'), "");
+  r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+  r = r.replace(new RegExp("æ", 'g'), "ae");
+  r = r.replace(new RegExp("ç", 'g'), "c");
+  r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+  r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+  r = r.replace(new RegExp("ñ", 'g'), "n");
+  r = r.replace(new RegExp("[òóôõö]", 'g'), "o");
+  r = r.replace(new RegExp("œ", 'g'), "oe");
+  r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+  r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+  r = r.replace(new RegExp("\\W", 'g'), "");
+
+  return r;
+});
+
+logMessage = (function (msg) {
+  casper.echo('## ' + msg);
+});
+
+logError = (function (msg) {
+  casper.echo('## ERROR ## ' + msg);
+});
+
+// log exit code
+// take screen capture
+// exit process
+exitProcess = (function (code) {
+  if(!code) {
+    logError('Exit code not provided. Setting it to 1.');
+    code = 1;
+  }
+  logMessage('Exiting with code [' + code + ']');
+  picit(order.id + '-' + code);
+  casper.exit(code);
+});
+
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   onAlert: function () {
-    this.echo('### ' + 'an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
+    logMessage('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
   },
   verbose: false,
   logLevel: "debug"
 });
 
-// casper.on('remote.message', function(msg) {
-//     this.echo('### DOM Msg ###: ' + msg);
-// });
+// TEST DATA BEGIN
 
-// SELECTORS END
+var testLineItems = [];
 
-var order = JSON.parse(casper.cli.args);
+var item0 = {
+    title: "'Le Lipstique' LipColoring Stick with Brush",
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'AMANDELLE',
+    qty: 1
+  };
+
+testLineItems.push(item0);
+
+var item1 = {
+    title: "'Le Lipstique' LipColoring Stick with Brush",
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+    size: 'One Size',
+    color: 'BRONZELLE',
+    qty: 1
+  };
+
+testLineItems.push(item1);
+
+var item2 = {
+    title: "Classic Fit Heathered Pique Polo",
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429',
+    size: '7(xl)',
+    color: 'ARGENT GREY',
+    qty: 2
+  };
+
+testLineItems.push(item2);
+
+var item3 = {
+    title: "'Tonique Douceur' Alcohol-Free Freshener (6.8 oz.)",
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742',
+    size: '6.8 oz',
+    color: '',
+    qty: 2
+  };
+
+testLineItems.push(item3);
+
+var testOrder = {
+  id: '1030-test-' + new Date().getTime(),
+  submitOrder: false,
+  shipping_address: {
+    first_name: 'First',
+    last_name: 'Last',
+    street1: '1 Market St',
+    street2: '',
+    city: 'San Francisco',
+    state: 'California',
+    short_state: 'CA',
+    postal_code: '94108',
+    phone: '1231231234'
+  },
+  billing_address: {
+    email: 'test@test.com',
+    first_name: 'First',
+    last_name: 'Last',
+    street1: '1 Market St',
+    street2: '',
+    city: 'San Francisco',
+    state: 'California',
+    short_state: 'CA',
+    postal_code: '94108',
+    phone: '1231231234'
+  },
+  payment: {
+    card_type: 'Visa',
+    card_number: '4111111111111111',
+    cvv: '123',
+    expiry_month: '12',
+    expiry_year: '2020'
+  },
+  line_items: testLineItems
+};
+
+// TEST DATA END
+
+var order = casper.cli.get('order');
+var auth = casper.cli.get('auth');
+var commentUrl = casper.cli.get('comment-url');
+var imageHome = casper.cli.get('image-home');
+
+// if order is made available on the command line, make sure the other required options are present as well.
+// if there is no --order option available, use the testOrder [the testOrder will not be submitted; order.submitOrder = false]
+
+
+if(order) {
+  if(!auth || !commentUrl || !imageHome) {
+    logError('--auth, --comment-url, --image-home are required for a real order to be processed.');
+    exit(1);
+  }
+  order = JSON.parse(order);
+  logMessage('Using --order');
+} else {
+  order = testOrder;
+  logMessage('Using testOrder');
+}
+
 var sa = order.shipping_address;
 var ba = order.billing_address;
 var pi = order.payment;
+var lineItems = order.line_items;
 
 // Nordstrom uses these numeric codes for the states dropdown.
 var awesomeStateCodes = {AL : 73, AK : 16, AZ : 70, AR : 75, CA : 71, CO : 72, CT : 67, DE : 69, DC : 68, FL : 65, GA : 66, HI : 62, ID : 63, IL : 58, IN : 59, IA : 60, KS : 55, KY : 56, LA : 57, ME : 52, MD : 50, MA : 51, MI : 47, MN : 48, MS : 49, MO : 44, MT : 45, NE : 46, NV : 41, NH : 42, NJ : 43, NM : 38, NY : 39, NC : 40, ND : 35, OH : 36, OK : 37, OR : 32, PA : 34, RI : 30, SC : 31, SD : 26, TN : 27, TX : 28, UT : 23, VT : 24, VA : 25, WA : 21, WV : 22, WI : 17, WY : 18};
 
-var auth = casper.cli.get('auth');
-var commentUrl = casper.cli.get('comment-url');
-var imageHome = casper.cli.get('image-home');
 var isSizeAvailable = false;
 var isColorAvailable = false;
 
-this.echo('### ' + 'Order id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
-
-var lineItems = order.line_items;
-
-// if quantity on any of the items is greater than 1
-// change it to 1 and add new lineItems to the array for the originalQty-1 items
-
 casper.start();
 
-casper.then(function() {
-  this.echo('### ' + 'Lineitem count [' + lineItems.length + ']');
-});
+var originalLineItemCount = order.line_items.length;
 
-casper.then(function() {
-  this.echo('### Lineitem count [' + lineItems.length + ']');
-});
+// instead of having to rely on searching through the shopping bag to adjust item quantity
+// we create new lineitem entries when the qty for a product is set to greater than 1
 
 casper.then(function() {
   for(var n = 0; n < lineItems.length; n++) {
-
     var qty = lineItems[n].qty;
-
     if(qty > 1) {
       lineItems[n].qty = 1;
       for(var m = 0; m < qty-1; m++) {
@@ -74,30 +203,37 @@ casper.then(function() {
 });
 
 casper.then(function() {
-  this.echo('### ' + 'Total product quantity [' + lineItems.length + ']');
+  logMessage('Order Id [' + order.id + '] Lineitem count [' + originalLineItemCount + '] submitOrder [' + order.submitOrder + ']');
 });
 
-
-// ADD ITEMS BEGIN
+casper.then(function() {
+  logMessage('Item quantity total [' + lineItems.length + ']');
+});
 
 // set user agent to mobile
 casper.userAgent('Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5');
 
+// loop through all lineitems, set size and color, and add to bag
+
 casper.each(lineItems, function(self, lineItem) {
+
+  casper.then(function() {
+    logMessage('Opening [' + lineItem.affiliate_url + ']');
+  });
 
   this.thenOpen(lineItem.affiliate_url, function() {
 
-    this.echo('### ' + this.getTitle());
-
-    // picit(order.id + '-before-anything');
+    logMessage(this.getTitle());
 
     casper.waitForSelector('#buyButtonSubmit', function() {
 
+      logMessage('Buy Button available [true]');
+
       if (lineItem.size) {
 
-        this.echo('### ' + 'Set size to [' + lineItem.size + ']');
-
         casper.then(function() {
+
+          logMessage('Lineitem size [' + lineItem.size + ']');
 
           isSizeAvailable = this.evaluate(function(size) {
 
@@ -115,7 +251,6 @@ casper.each(lineItems, function(self, lineItem) {
               }
             });
 
-            // the color was not found
             return result;
 
           }, lineItem.size);
@@ -123,18 +258,28 @@ casper.each(lineItems, function(self, lineItem) {
         });
 
         casper.then(function() {
-          this.echo('### ' + 'Size availability [' + isSizeAvailable + ']');
+          logMessage('Size available [' + isSizeAvailable + ']');
         });
 
         casper.then(function() {
           if(isSizeAvailable) {
               this.clickLabel(lineItem.size, 'a');
           } else {
-            this.echo('### ERROR ### ' + 'OrderId: ' + order.id + '. The size unavailable: ' + lineItem.size + '. Exiting...');
-            picit(order.id + '-32');
-            this.exit(32);
+            logError('OrderId [' + order.id + '] UNAVAILABLE size [' + lineItem.size + ']');
+            exitProcess(32);
           }
         });
+
+        casper.then(function() {
+          var currentSize = this.evaluate(function() { return $('#dimension1_1 .selected').text(); });
+          if(normalizeString(lineItem.size) === normalizeString(currentSize)) {
+            logMessage('Size [' + lineItem.size + '] set [true]');
+          } else {
+            logMessage('Size [' + lineItem.size + '] set [false]');
+            exitProcess(1);
+          }
+        });
+
       }
 
       if (lineItem.color) {
@@ -144,7 +289,7 @@ casper.each(lineItems, function(self, lineItem) {
 
         casper.then(function() {
 
-          this.echo('### ' + 'Set color to [' + lineItem.color + ']');
+          logMessage('Lineitem color [' + lineItem.color + ']');
 
           isColorAvailable = this.evaluate(function(color) {
 
@@ -172,31 +317,59 @@ casper.each(lineItems, function(self, lineItem) {
         });
 
         casper.then(function() {
-          this.echo('### ' + 'Color availability [' + isColorAvailable + ']');
+          logMessage('Color available [' + isColorAvailable + ']');
         });
 
         casper.then(function() {
           if(isColorAvailable) {
               this.clickLabel(lineItem.color, 'span');
           } else {
-            this.echo('### ERROR ### ' + 'OrderId: ' + order.id + '. The color unavailable: ' + lineItem.color + '. Exiting...');
-            picit(order.id + '-32');
-            this.exit(32);
+            logError('Order Id [' + order.id + '] UNAVAILABLE color [' + lineItem.color + ']');
+            exitProcess(32);
           }
         });
+
+        casper.then(function() {
+          var currentColor = this.evaluate(function() { return $('#dimension2_1 .selected').text(); });
+          if(normalizeString(lineItem.color) === normalizeString(currentColor)) {
+            logMessage('Color [' + lineItem.color + '] set [true]');
+          } else {
+            logMessage('Color [' + lineItem.color + '] set [false]');
+            exitProcess(1);
+          }
+        });
+
       }
 
       casper.then(function() {
-        this.echo('### ' + 'Clicking on [Buy Button]');
+        logMessage('Clicking on [Buy Button]');
         this.click('#buyButtonSubmit');
       });
 
+      // casper.then(function() {
+      //   casper.waitForSelector('a.title', function() {
+
+      //     logMessage('Shopping bag available [true]');
+
+      //     if(normalizeString(casper.fetchText('.title')).indexOf(normalizeString(lineItem.title)) >= 0) {
+      //       logMessage('Item name [' + lineItem.title + '] found in shopping bag [true]');
+      //     } else {
+      //       logError('Item name [' + normalizeString(lineItem.title) + '] found in shopping bag [false] shopping bag text [' + normalizeString(casper.fetchText('.title')) + ']');
+      //       exitProcess(1);
+      //     }
+
+      //   }, function() {
+
+      //     logError('Shopping bag available [false]');
+      //     exitProcess(1);
+
+      //   }, 15000);
+
+      // });
+
     }, function() {
-
-      this.echo('### ERROR ### ' + 'Buy Button available [false]');
-      picit(order.id + '-12');
-      this.exit(12);
-
+      logError('Buy Button available [false]');
+      exitProcess(12);
     });
 
   });
@@ -217,12 +390,11 @@ casper.thenOpen('https://msecure.nordstrom.com/Account/GuestCheckout', function(
 
   casper.then(function() {
     casper.waitForSelector('#EmailAddress', function then() {
-      this.echo('### ' + 'Shipping form available [true]');
+      logMessage('Shipping form available [true]');
     },
     function () {
-      this.echo('### ERROR ### ' + 'Shipping form available [false]');
-      picit(order.id + '-15');
-      casper.exit(15);
+      logError('Shipping form available [false]');
+      exitProcess(15);
     }, 30000);
   });
 
@@ -260,26 +432,25 @@ casper.then(function() {
 });
 
 casper.then(function() {
-  this.echo('### ' + 'Clicking on [Save and Continue]');
+  logMessage('Clicking on [Save and Continue]');
   this.click('#Submit1');
 });
 
 casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
-      this.echo('### ERROR ### ' + 'Validation errors for customer info [true]');
-      picit(order.id + '-34');
-      this.exit(34);
+      logError('Valid customer info [false]');
+      exitProcess(34);
     }, function() {
-      this.echo('### ' + 'Validation errors for customer info [false]');
+      logMessage('Valid customer info [true]');
     }, 30000);
 });
 
 casper.then(function() {
   casper.waitForSelector('#CreditCardId', function () {
-      this.echo('### ' + 'Address confirmation needed [false]');
+      logMessage('Address confirmation needed [false]');
     }, function() {
-      this.echo('### ' + 'Address confirmation needed [true]');
+      logMessage('Address confirmation needed [true]');
       picit(order.id + '-address-confirmation');
       casper.then(function() {
         this.evaluate(function() { $('input[name="actionMode"][value="Use"]').click();
@@ -291,11 +462,10 @@ casper.then(function() {
 
 casper.then(function() {
   casper.waitForSelector('form[action="/OrderReview/SubmitOrder"]', function() {
-    this.echo('### ' + 'Payment form available [true]');
+    logMessage('Payment form available [true]');
   }, function() {
-    this.echo('### ERROR ### ' + 'Payment form available [false]');
-    picit(order.id + '-1');
-    this.exit(1);
+    logError('Payment form available [false]');
+    exitProcess(1);
   }, 30000);
 });
 
@@ -312,20 +482,19 @@ casper.then(function() {
 casper.then(function () {
   casper.waitForSelector('#submitButton', function () {
 
-      this.echo('### ' + 'SubmitOrder is set to [' + order.submitOrder + ']');
+      logMessage('Submit Order [' + order.submitOrder + ']');
 
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
         casper.click('#submitButton');
-        this.echo('### ' + 'Submit button [CLICKED!]');
+        logMessage('Submit Button [CLICKED!]');
       } else {
-        this.echo('### ' + 'Submit Button is [VISIBLE]');
+        logMessage('Submit Button is [VISIBLE]');
       }
 
     }, function() {
-      this.echo('### ERROR ### ' + 'Submit order button not available');
-      picit(order.id + '-18');
-      casper.exit(18);
+      logError('Submit button available [false]');
+      exitProcess(18);
     }, 30000);
 });
 
@@ -337,15 +506,16 @@ casper.then(function() {
 
 casper.then(function () {
 
-  // check for success or errors
   if(order.submitOrder) {
 
-    //TODO: extract confirmation number
     casper.waitForText('Thank you', function () {
 
       var confirmationMsg = 'Nordstrom order number : ';
 
+      logMessage('Confirmation text found [true]');
+
       casper.then(function() {
+
         var currentUrl = this.getCurrentUrl();
 
         if(currentUrl && currentUrl.indexOf('orderNumber=')) {
@@ -355,21 +525,20 @@ casper.then(function () {
           confirmationMsg += 'not found.';
         }
 
-        this.echo('### ' + confirmationMsg);
+        logMessage(confirmationMsg);
       });
 
       if(!confirmationMsg) {
         casper.then(function() {
-          this.echo('### ERROR ### ' + 'Order was submitted but could not find order confirmation text.');
-          picit(order.id + '-20');
-          casper.exit(20);
+          logError('Order submitted [true] Confirmation number found [false]');
+          exitProcess(20);
         });
       }
 
       if(auth && commentUrl) {
 
         casper.then(function() {
-          this.echo('### ' + 'Sending confirmation comment to order with id [' + order.id + ']');
+          logMessage('Sending confirmation comment to order with id [' + order.id + ']');
         });
 
         casper.open(commentUrl, {
@@ -383,28 +552,27 @@ casper.then(function () {
         });
 
         casper.then(function() {
-          this.echo('### ' + 'Order id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
+          logMessage('Order Id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
         });
 
-        } else {
-          casper.then(function() {
-            this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
-          });
-        }
-
-      }, function() {
+      } else {
         casper.then(function() {
-          this.echo('### ERROR ### ' + 'Order was submitted but could not find order confirmation text.');
-          picit(order.id + '-20');
-          casper.exit(20);
+          logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
         });
-      }, 30000);
+      }
+
+    }, function() {
+      casper.then(function() {
+        logError('Confirmation message found [false]');
+        exitProcess(20);
+      });
+    }, 30000);
 
   } else {
 
     if(auth && commentUrl) {
       casper.then(function() {
-        this.echo('### ' + 'Sending confirmation comment to order with id [' + order.id + ']');
+        logMessage('Sending confirmation comment to order with id [' + order.id + ']');
       });
 
       casper.open(commentUrl, {
@@ -418,12 +586,12 @@ casper.then(function () {
       });
 
       casper.then(function() {
-        this.echo('### ' + 'SubmitOrder set to [false], so no [Nordstrom order number] for you!');
+        logMessage('Submit Order [false], so no [Nordstrom order number] for you!');
       });
 
     } else {
       casper.then(function() {
-        this.echo('### ' + 'Could not post confirmation comment. Auth or comment-url unavailable.');
+        logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
       });
     }
   }
