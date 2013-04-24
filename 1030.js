@@ -56,6 +56,10 @@ casper.then(function() {
 });
 
 casper.then(function() {
+  this.echo('### Lineitem count [' + lineItems.length + ']');
+});
+
+casper.then(function() {
   for(var n = 0; n < lineItems.length; n++) {
 
     var qty = lineItems[n].qty;
