@@ -21,8 +21,8 @@ testForm = (function (orderId, formType) {
       });
     },
     function () {
-      this.echo('### ' + 'Error present in ' + formType + ' form.');
-      this.echo('### ' + this.evaluate(function () {
+      this.echo('### ERROR ### ' + 'Error present in ' + formType + ' form.');
+      this.echo('### ERROR ### ' + this.evaluate(function () {
         return $('table.coErrorMessageClass td.text').text();
       }));
       if(formType && (formType === 'shipping')) {

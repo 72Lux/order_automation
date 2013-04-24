@@ -24,8 +24,8 @@ testForm = (function (orderId, formType) {
       });
     },
     function () {
-      this.echo('### ' + 'Error present in ' + formType + ' form.');
-      this.echo('### ' + this.evaluate(function () {
+      this.echo('### ERROR ### ' + 'Error present in ' + formType + ' form.');
+      this.echo('### ERROR ### ' + this.evaluate(function () {
         return $('table.coErrorMessageClass td.text').text();
       }));
       if(formType && (formType === 'shipping')) {
@@ -205,7 +205,7 @@ casper.each(lineItems, function(self, lineItem) {
                 }, { _option : lineItem.size });
 
               } else {
-                this.echo('### ' + 'ERROR: OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
+                this.echo('### ERROR ### ' + 'OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
                 picit(order.id + '-32');
                 this.exit(32);
               }
@@ -215,7 +215,7 @@ casper.each(lineItems, function(self, lineItem) {
               this.echo('### ' + 'Size [' + lineItem.size + '] available in text');
 
             } else {
-              this.echo('### ' + 'ERROR: OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
+              this.echo('### ERROR ### ' + 'OrderId: ' + order.id + ' size [' + lineItem.size + '] unavailable. Exiting...');
               picit(order.id + '-32');
               this.exit(32);
             }
@@ -270,7 +270,7 @@ casper.each(lineItems, function(self, lineItem) {
               this.echo('### ' + 'Color [' + lineItem.color + '] available in text');
 
             } else {
-              this.echo('### ' + 'ERROR: OrderId: ' + order.id + ' color [' + lineItem.color + '] unavailable. Exiting...');
+              this.echo('### ERROR ### ' + 'OrderId: ' + order.id + ' color [' + lineItem.color + '] unavailable. Exiting...');
               picit(order.id + '-32');
               this.exit(32);
             }
@@ -309,7 +309,7 @@ casper.each(lineItems, function(self, lineItem) {
                   'qty0': lineItem.qty
                 }, false);
               } else {
-                this.echo('### ' + 'ERROR: qty is required');
+                this.echo('### ERROR ### ' + 'Required quantity is missing');
                 picit(order.id + '-42');
                 this.exit(42);
               }
@@ -330,7 +330,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             } else {
 
-              this.echo('### ' + 'Product is not in stock');
+              this.echo('### ERROR ### ' + 'Product is not in stock');
               picit(order.id + '-31');
               this.exit(31);
 
@@ -344,7 +344,7 @@ casper.each(lineItems, function(self, lineItem) {
 
     }, function() {
 
-      this.echo('### ' + 'Timed out waiting for add to bag button');
+      this.echo('### ERROR ### ' + 'Add to bag button available [false]');
       picit(order.id + '-12');
       this.exit(12);
 
@@ -391,7 +391,7 @@ casper.then(function () {
 
   }, function() {
 
-    this.echo('### ' + 'ERROR: Anon sign-in button no available. Exiting...');
+    this.echo('### ERROR ### ' + 'Anon sign-in button no available. Exiting...');
     picit(order.id + '-14');
     this.exit(14);
 
@@ -412,7 +412,7 @@ casper.then(function () {
       this.echo('### ' + 'Samples pop-up [true]');
       this.evaluate(function() { gwpSelector.noItems(); });
     } else {
-      this.echo('### ' + 'Samples pop-up [false]');
+      this.echo('### ERROR ### ' + 'Samples pop-up [false]');
     }
   });
 });
@@ -427,7 +427,7 @@ casper.then(function () {
     this.echo('### ' + 'Shipping form available [true]');
   },
   function () {
-    this.echo('### ' + 'Shipping form available [false]');
+    this.echo('### ERROR ### ' + 'Shipping form available [false]');
     picit(order.id + '-15');
     casper.exit(15);
   }, 30000);
@@ -535,7 +535,7 @@ casper.then(function () {
         });
       });
     } else {
-      this.echo('### ' + 'ERROR: Next button not found on shipping form');
+      this.echo('### ERROR ### ' + 'Next button not found on shipping form');
       picit(order.id + '-16');
       this.exit(16);
     }
@@ -562,7 +562,7 @@ casper.then(function () {
     this.echo('### ' + 'Billing form available [true]');
   },
   function () {
-    this.echo('### ' + 'Billing form available [false]');
+    this.echo('### ERROR ### ' + 'Billing form available [false]');
     picit(order.id + '-17');
     casper.exit(17);
   }, 45000);
@@ -639,7 +639,7 @@ casper.then(function () {
       paymentEdit.verifyData($p.attr("pgId"));
     });
   }, function() {
-    this.echo('### ' + 'ERROR: Save payment button not available');
+    this.echo('### ERROR ### ' + 'Save payment button available [false]');
     picit(order.id + '-18');
     this.exit(18);
   }, 30000);
@@ -681,7 +681,7 @@ casper.then(function () {
     }
 
   }, function() {
-    this.echo('### ' + 'ERROR: Submit order button not available');
+    this.echo('### ERROR ### ' + 'Submit order button available [false]');
     picit(order.id + '-18');
     this.exit(18);
   }, 30000);
@@ -732,7 +732,7 @@ casper.then(function () {
 
       } else {
         casper.then(function() {
-          this.echo('### ' + 'ERROR: Could not find order confirmation text.');
+          this.echo('### ERROR ### ' + 'Could not find order confirmation text.');
           picit(order.id + '-20');
           casper.exit(20);
         });
