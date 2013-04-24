@@ -3,7 +3,7 @@ require("utils");
 // capture a snapshot
 picit = (function (filename) {
   filename = imageHome + filename + '.png' || 'default_screen_caps/results.png';
-  this.echo('### ' + 'Saving screen capture [' + filename + ']');
+  casper.echo('### ' + 'Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
@@ -409,6 +409,17 @@ casper.then(function () {
   });
 
   // this.echo('### ' + 'shipping zip length: ' + sa.postal_code.length);
+
+  // casper.then(function() {
+  //   //field-validation-error
+  //   casper.waitForSelector('.field-validation-error', function () {
+  //       this.echo('### ERROR ### ' + 'Validation errors for customer info [true]');
+  //       picit(order.id + '-34');
+  //       this.exit(34);
+  //     }, function() {
+  //       this.echo('### ' + 'Validation errors for customer info [false]');
+  //     }, 30000);
+  // });
 
   testForm(order.id, 'shipping');
 

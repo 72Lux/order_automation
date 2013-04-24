@@ -6,7 +6,7 @@ require("utils");
 // capture a snapshot
 picit = (function (filename) {
   filename = imageHome + '/' + filename + '.png' || 'default_screen_caps/results.png';
-  this.echo('### ' + 'Saving screen capture [' + filename + ']');
+  casper.echo('### ' + 'Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
@@ -24,8 +24,8 @@ testForm = (function (orderId, formType) {
       });
     },
     function () {
-      this.echo('### ERROR ### ' + 'Error present in ' + formType + ' form.');
-      this.echo('### ERROR ### ' + this.evaluate(function () {
+      casper.echo('### ERROR ### ' + 'Error present in ' + formType + ' form.');
+      casper.echo('### ERROR ### ' + casper.evaluate(function () {
         return $('table.coErrorMessageClass td.text').text();
       }));
       if(formType && (formType === 'shipping')) {
@@ -543,7 +543,18 @@ casper.then(function () {
 
   // this.echo('### ' + 'shipping zip length: ' + sa.postal_code.length);
 
-  testForm(order.id, 'shipping');
+  // testForm(order.id, 'shipping');
+
+  casper.then(function() {
+    //field-validation-error
+    casper.waitForSelector('table.coErrorMessageClass', function () {
+        this.echo('### ERROR ### ' + 'Validation errors for shipping form [true]');
+        picit(order.id + '-34');
+        this.exit(34);
+      }, function() {
+        this.echo('### ' + 'Validation errors for shipping form [false]');
+      }, 30000);
+  });
 
 });
 
