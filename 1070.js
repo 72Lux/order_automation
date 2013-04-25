@@ -476,8 +476,12 @@ casper.then(function () {
   });
 });
 
-
 // SAMPLES POP-UP END
+
+
+casper.then(function() {
+  testForm(order.id, 'shopping-bag');
+});
 
 // SHIPPING FORM BEGIN
 
@@ -605,7 +609,9 @@ casper.then(function () {
 
   });
 
-  testForm(order.id, 'shipping');
+  casper.then(function() {
+    testForm(order.id, 'shipping');
+  });
 
 });
 
@@ -707,7 +713,10 @@ casper.then(function () {
 });
 
 // test to see if any errors popped
-testForm(order.id, 'billing');
+
+casper.then(function() {
+  testForm(order.id, 'billing');
+});
 
 // BILLING FORM END
 
