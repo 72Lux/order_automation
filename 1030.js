@@ -68,7 +68,7 @@ var casper = require("casper").create({
     logMessage('an alert was triggered');  // this is used to test whether a size/color combo was actually chosen
     picit('alert');
   },
-  verbose: true,
+  verbose: false,
   logLevel: "debug"
 });
 
