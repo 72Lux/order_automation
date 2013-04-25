@@ -559,6 +559,11 @@ casper.then(function () {
         });
 
         casper.then(function() {
+          logMessage('AUTH [' + auth + '] COMMENT-URL [' + commentUrl + ']');
+        });
+
+        casper.then(function() {
+
           if(auth && commentUrl) {
             casper.thenOpen(commentUrl, {
                 method: 'post',
@@ -575,6 +580,7 @@ casper.then(function () {
             });
           }
         });
+
         casper.then(function() {
           exitProcess(0);
         });
