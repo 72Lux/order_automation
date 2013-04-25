@@ -409,6 +409,10 @@ casper.thenOpen('https://www.neimanmarcus.com/checkout.jsp?perCatId=&catqo=&co=t
   });
 });
 
+casper.then(function() {
+  this.evaluate(function() { jQuery(nm.checkout.init); });
+});
+
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
   casper.waitForSelector('#anonSignInBtn', function () {
