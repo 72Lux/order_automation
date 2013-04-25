@@ -175,6 +175,8 @@ if(order) {
   logMessage('Using testOrder');
 }
 
+var confirmationMsg = '';
+var confirmationUrl = '';
 var sa = order.shipping_address;
 var ba = order.billing_address;
 var pi = order.payment;
@@ -346,6 +348,9 @@ casper.each(lineItems, function(self, lineItem) {
 
       casper.then(function() {
         logMessage('Clicking on [Buy Button]');
+      });
+
+      casper.then(function() {
         this.click('#buyButtonSubmit');
       });
 
@@ -485,121 +490,103 @@ casper.then(function() {
 casper.then(function () {
   casper.waitForSelector('#submitButton', function () {
 
+    casper.then(function() {
       logMessage('Submit Order [' + order.submitOrder + ']');
+    });
+
+    casper.then(function() {
 
       if(order.submitOrder) {
         // TODO: OMG! ARE YOU READY FOR THIS?
-        casper.click('#submitButton');
-        logMessage('Submit Button [CLICKED!]');
-      } else {
-        logMessage('Submit Button is [VISIBLE]');
-      }
-
-    }, function() {
-      logError('Submit button available [false]');
-      exitProcess(18);
-    }, 30000);
-});
-
-casper.then(function() {
-  this.wait(10000, function() {
-    picit(order.id + '-0');
-  });
-});
-
-casper.then(function () {
-
-  if(order.submitOrder) {
-
-    casper.waitForText('Thank you', function () {
-
-      var confirmationMsg = 'Nordstrom order number : ';
-
-      logMessage('Confirmation text found [true]');
-
-      casper.then(function() {
-
-        var currentUrl = this.getCurrentUrl();
-
-        if(currentUrl && currentUrl.indexOf('orderNumber=')) {
-          var orderNumber = currentUrl.substring(currentUrl.indexOf('orderNumber=')+12);
-          confirmationMsg += orderNumber;
-        } else {
-          confirmationMsg += 'not found.';
-        }
-
-        logMessage(confirmationMsg);
-      });
-
-      if(!confirmationMsg) {
         casper.then(function() {
-          logError('Order submitted [true] Confirmation number found [false]');
-          exitProcess(20);
+          casper.click('#submitButton');
         });
-      }
+        casper.then(function() {
+          logMessage('Submit Button [CLICKED!]');
+        });
 
-      if(auth && commentUrl) {
+        casper.then(function() {
+          casper.waitForText('Thank you', function () {
+
+            casper.then(function() {
+              confirmationUrl = this.getCurrentUrl();
+            });
+
+            casper.then(function() {
+              if(confirmationUrl && confirmationUrl.indexOf('orderNumber=')) {
+                var orderNumber = confirmationUrl.substring(confirmationUrl.indexOf('orderNumber=')+12);
+                confirmationMsg = 'Nordstrom order number: ' + orderNumber;
+              } else {
+                confirmationMsg = 'Nordstrom order number not found.';
+              }
+            });
+
+            casper.then(function() {
+              logMessage('Sending confirmation comment to order with id [' + order.id + ']');
+            });
+
+            casper.thenOpen(commentUrl, {
+              method: 'post',
+              data:   {
+                'comment': confirmationMsg
+              },
+              headers: {
+                'Authorization' : auth
+              }
+            });
+
+            casper.then(function() {
+              logMessage('Order Id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
+            });
+
+
+          }, function() {
+            casper.then(function() {
+              logError('Confirmation message found [false]');
+              exitProcess(20);
+            });
+          }, 30000);
+        });
+
+
+      } else {
+        casper.then(function() {
+          logMessage('Submit Button is [VISIBLE]');
+        });
 
         casper.then(function() {
           logMessage('Sending confirmation comment to order with id [' + order.id + ']');
         });
 
-        casper.thenOpen(commentUrl, {
-            method: 'post',
-            data:   {
-              'comment': confirmationMsg
-            },
-            headers: {
-              'Authorization' : auth
-            }
-        });
-
         casper.then(function() {
-          logMessage('Order Id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
+          if(auth && commentUrl) {
+            casper.thenOpen(commentUrl, {
+                method: 'post',
+                data:   {
+                  'comment': 'submitOrder set to false, so no Nordstrom order number for you!'
+                },
+                headers: {
+                  'Authorization' : auth
+                }
+            });
+          } else {
+            casper.then(function() {
+              logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
+            });
+          }
         });
-
-      } else {
         casper.then(function() {
-          logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
+          exitProcess(0);
         });
       }
 
-    }, function() {
-      casper.then(function() {
-        logError('Confirmation message found [false]');
-        exitProcess(20);
-      });
-    }, 30000);
+    });
 
-  } else {
-
-    if(auth && commentUrl) {
-      casper.then(function() {
-        logMessage('Sending confirmation comment to order with id [' + order.id + ']');
-      });
-
-      casper.thenOpen(commentUrl, {
-          method: 'post',
-          data:   {
-            'comment': 'submitOrder set to false, so no Nordstrom order number for you!'
-          },
-          headers: {
-            'Authorization' : auth
-          }
-      });
-
-      casper.then(function() {
-        logMessage('Submit Order [false], so no [Nordstrom order number] for you!');
-      });
-
-    } else {
-      casper.then(function() {
-        logMessage('Could not post confirmation comment. Auth or comment-url unavailable.');
-      });
-    }
-  }
+  }, function() {
+    logError('Submit button available [false]');
+    exitProcess(18);
+  }, 30000);
 });
-
 
 // RUN IIIIIIIIIIIT!
 casper.run();
