@@ -389,7 +389,7 @@ casper.each(lineItems, function(self, lineItem) {
     }, function() {
 
       casper.then(function() {
-        loginError('Add to Cart available [false]');
+        logError('Add to Cart available [false]');
       });
       casper.then(function() {
         exitProcess(12);
