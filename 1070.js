@@ -64,8 +64,10 @@ testForm = (function (orderId, formType) {
       }));
       if(formType && (formType === 'shipping')) {
         exitProcess(34);
-      } else {
+      } else if(formType && (formType === 'shipping')) {
         exitProcess(35);
+      } else {
+        exitProcess(32);
       }
     },
     function () {
