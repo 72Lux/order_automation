@@ -59,40 +59,46 @@ testForm = (function (orderId, formType) {
     },
     function () {
 
-      var errorMsg = '';
-
       casper.then(function() {
-        errorMsg = casper.evaluate(function () { return $('table.coErrorMessageClass td.text').text(); });
+        formErrorMsg = casper.evaluate(function () { return $('table.coErrorMessageClass td.text').text(); });
       });
 
-      casper.thenOpen(commentUrl, {
-        method: 'post',
-        data:   {
-          'comment': 'Error present in [' + formType + '] form [' + errorMsg + ']'
-        },
-        headers: {
-          'Authorization' : auth
-        }
-      }, function() {
-          logMessage('Comment posted [' + errorMsg + ']');
-      });
-
-      casper.then(function() {
-
-        if(formType && (formType === 'shipping')) {
-          exitProcess(34);
-        } else if(formType && (formType === 'shipping')) {
-          exitProcess(35);
-        } else {
-          exitProcess(32);
-        }
-
-      });
     },
     function () {
       logMessage('No errors found on [' + formType + '] form');
     });
   });
+});
+
+// checkFormErrors(order.id, 'shopping-bag')
+checkFormErrors = (function (orderId, formType) {
+
+  if(formErrorMsg) {
+    casper.thenOpen(commentUrl, {
+      method: 'post',
+      data:   {
+        'comment': 'Error present in [' + formType + '] form [' + formErrorMsg + ']'
+      },
+      headers: {
+        'Authorization' : auth
+      }
+    }, function() {
+
+      logMessage('Comment posted [' + formErrorMsg + ']');
+
+      if(formType && (formType === 'shipping')) {
+        exitProcess(34);
+      } else if(formType && (formType === 'shipping')) {
+        exitProcess(35);
+      } else {
+        exitProcess(32);
+      }
+
+    },
+    function () {
+      logMessage('No errors found on [' + formType + '] form');
+    });
+  }
 });
 
 // log exit code
@@ -237,6 +243,7 @@ var pi = order.payment;
 var lineItems = order.line_items;
 var confirmationMsg = '';
 var inStockVisible = false;
+var formErrorMsg = '';
 
 casper.start();
 
@@ -504,6 +511,11 @@ casper.then(function() {
   testForm(order.id, 'shopping-bag');
 });
 
+casper.then(function() {
+  checkFormErrors(order.id, 'shopping-bag');
+});
+
+
 // SHIPPING FORM BEGIN
 
 casper.then(function () {
@@ -634,6 +646,10 @@ casper.then(function () {
     testForm(order.id, 'shipping');
   });
 
+  casper.then(function() {
+    checkFormErrors(order.id, 'shipping');
+  });
+
 });
 
 // SHIPPING FORM END
@@ -737,6 +753,10 @@ casper.then(function () {
 
 casper.then(function() {
   testForm(order.id, 'billing');
+});
+
+casper.then(function() {
+  checkFormErrors(order.id, 'billing');
 });
 
 // BILLING FORM END

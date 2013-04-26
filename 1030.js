@@ -175,6 +175,7 @@ if(order) {
   logMessage('Using testOrder');
 }
 
+var formErrorMsg = '';
 var confirmationMsg = '';
 var confirmationUrl = '';
 var sa = order.shipping_address;
@@ -452,31 +453,30 @@ casper.then(function() {
         logError('Valid customer info [false]');
       });
 
-      var errorMsg = '';
-
       casper.then(function() {
-        errorMsg = this.fetchText('.field-validation-error');
-      });
-
-      casper.thenOpen(commentUrl, {
-        method: 'post',
-        data:   {
-          'comment': 'There was an error found when submitting the customer information form for order id [' + order.id + ']. Error message: ' + errorMsg
-        },
-        headers: {
-          'Authorization' : auth
-        }
-      }, function() {
-          logMessage('Comment posted [' + errorMsg + ']');
-      });
-
-      casper.then(function() {
-        exitProcess(34);
+        formErrorMsg = this.fetchText('.field-validation-error');
       });
 
     }, function() {
       logMessage('Valid customer info [true]');
     }, 30000);
+});
+
+casper.then(function() {
+  if(formErrorMsg) {
+    casper.thenOpen(commentUrl, {
+      method: 'post',
+      data:   {
+        'comment': 'There was an error found when submitting the customer information form for order id [' + order.id + ']. Error message: ' + formErrorMsg
+      },
+      headers: {
+        'Authorization' : auth
+      }
+    }, function() {
+        logMessage('Comment posted [' + formErrorMsg + ']');
+        exitProcess(34);
+    });
+  }
 });
 
 casper.then(function() {
