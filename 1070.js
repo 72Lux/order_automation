@@ -42,7 +42,7 @@ normalizeString = (function (s) {
 });
 
 logMessage = (function (msg) {
-  casper.echo('## ' + msg);
+  casper.echo('## ' + order.id + '-' + retailerId + ' ## ' + msg);
 });
 
 logError = (function (msg) {
@@ -217,6 +217,8 @@ var testOrder = {
 
 // TEST DATA END
 
+var retailerId = '1070';
+
 var order = casper.cli.get('order');
 var auth = casper.cli.get('auth');
 var commentUrl = casper.cli.get('comment-url');
@@ -249,7 +251,7 @@ casper.start();
 
 // ADD ITEMS BEGIN
 casper.then(function() {
-  logMessage('Order Id [' + order.id + '] item count [' + order.line_items.length + '] submitOrder [' + order.submitOrder + ']');
+  logMessage('Order Id [' + order.id + '] Retailer Id [' + retailerId + '] Item Count [' + order.line_items.length + '] Submit Order [' + order.submitOrder + ']');
 });
 
 casper.each(lineItems, function(self, lineItem) {
@@ -856,9 +858,6 @@ casper.then(function () {
             });
           }
         });
-        casper.then(function() {
-          exitProcess(0);
-        });
       }
 
     });
@@ -867,6 +866,11 @@ casper.then(function () {
     logError('Submit button available [false]');
     exitProcess(18);
   }, 30000);
+});
+
+casper.then(function() {
+  logMessage('Exiting process for Order Id [' + order.id + '] Retailer Id [' + retailerId + '] Item Count [' + order.line_items.length + '] Submit Order [' + order.submitOrder + ']');
+  exitProcess(0);
 });
 
 // RUN IIIIIIIIIIIT!
