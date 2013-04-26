@@ -58,7 +58,9 @@ exitProcess = (function (code) {
     code = 1;
   }
   logMessage('Exiting with code [' + code + ']');
-  picit(order.id + '-' + code);
+  if(code) {
+    picit(order.id + '-' + code);
+  }
   casper.exit(code);
 });
 
@@ -544,8 +546,12 @@ casper.then(function () {
                 var orderNumber = confirmationUrl.substring(confirmationUrl.indexOf('orderNumber=')+12);
                 confirmationMsg = 'Nordstrom order number: ' + orderNumber;
               } else {
-                confirmationMsg = 'Nordstrom order number not found.';
+                confirmationMsg = 'Nordstrom order number not found. Full URL: ' + confirmationUrl;
               }
+            });
+
+            casper.then(function() {
+              picit(order.id + '-0');
             });
 
             casper.then(function() {
@@ -579,6 +585,7 @@ casper.then(function () {
       } else {
         casper.then(function() {
           logMessage('Submit Button is [VISIBLE]');
+          picit(order.id + '-0');
         });
 
         casper.then(function() {
