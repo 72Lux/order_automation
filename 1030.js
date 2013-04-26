@@ -238,7 +238,7 @@ casper.each(lineItems, function(self, lineItem) {
 
         casper.then(function() {
 
-          logMessage('Lineitem size [' + lineItem.size + ']');
+          // logMessage('Lineitem size [' + lineItem.size + ']');
 
           isSizeAvailable = this.evaluate(function(size) {
 
@@ -294,7 +294,7 @@ casper.each(lineItems, function(self, lineItem) {
 
         casper.then(function() {
 
-          logMessage('Lineitem color [' + lineItem.color + ']');
+          // logMessage('Lineitem color [' + lineItem.color + ']');
 
           isColorAvailable = this.evaluate(function(color) {
 
@@ -447,8 +447,33 @@ casper.then(function() {
 casper.then(function() {
   //field-validation-error
   casper.waitForSelector('.field-validation-error', function () {
-      logError('Valid customer info [false]');
-      exitProcess(34);
+
+      casper.then(function() {
+        logError('Valid customer info [false]');
+      });
+
+      var errorMsg = '';
+
+      casper.then(function() {
+        errorMsg = this.fetchText('.field-validation-error');
+      });
+
+      casper.thenOpen(commentUrl, {
+        method: 'post',
+        data:   {
+          'comment': 'There was an error found when submitting the customer information form for order id [' + order.id + ']. Error message: ' + errorMsg
+        },
+        headers: {
+          'Authorization' : auth
+        }
+      }, function() {
+          logMessage('Comment posted [' + errorMsg + ']');
+      });
+
+      casper.then(function() {
+        exitProcess(34);
+      });
+
     }, function() {
       logMessage('Valid customer info [true]');
     }, 30000);
