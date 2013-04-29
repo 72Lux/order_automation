@@ -13,8 +13,8 @@ picit = (function (filename) {
   casper.capture(filename, {
     top: 0,
     left: 0,
-    width: 480,
-    height: 2000
+    width: 1024,
+    height: 1024
   });
 });
 
