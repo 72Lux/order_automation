@@ -551,7 +551,7 @@ casper.then(function () {
             });
 
             casper.then(function() {
-              picit(order.id + '-0');
+              picit(retailerId + '-' + order.id + '-0');
             });
 
             casper.then(function() {
