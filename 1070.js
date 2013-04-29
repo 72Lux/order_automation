@@ -42,11 +42,11 @@ normalizeString = (function (s) {
 });
 
 logMessage = (function (msg) {
-  casper.echo('## ' + order.id + '-' + retailerId + ' ## ' + msg);
+  casper.echo(msg);
 });
 
 logError = (function (msg) {
-  casper.echo('## ERROR ' + order.id + '-' + retailerId + ' ## ' + msg);
+  casper.echo(msg);
 });
 
 // test whether any error messages popped up
