@@ -8,7 +8,7 @@ require("utils");
 // screen capture
 picit = (function (filename) {
   if(!imageHome) { imageHome = '/tmp/order_automation'; }
-  filename = imageHome + '/' + filename + '.png' || 'default_screen_caps/results.png';
+  filename = imageHome + '/' + retailerId + filename + '.png' || 'default_screen_caps/results.png';
   logMessage('Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
