@@ -46,7 +46,7 @@ logMessage = (function (msg) {
 });
 
 logError = (function (msg) {
-  casper.echo('## ERROR ## ' + msg);
+  casper.echo('## ERROR ' + order.id + '-' + retailerId + ' ## ' + msg);
 });
 
 // test whether any error messages popped up
