@@ -74,6 +74,17 @@ testForm = (function (orderId, formType) {
 checkFormErrors = (function (orderId, formType) {
 
   if(formErrorMsg) {
+
+    var exitCode = 32;
+
+    if(formType && (formType === 'shipping')) {
+      exitCode = 34;
+    } else if(formType && (formType === 'shipping')) {
+      exitCode = 35;
+    }
+
+    picit(orderId + '-' + exitCode);
+
     casper.thenOpen(commentUrl, {
       method: 'post',
       data:   {
@@ -86,16 +97,8 @@ checkFormErrors = (function (orderId, formType) {
 
       logMessage('Comment posted [' + formErrorMsg + ']');
 
-      if(formType && (formType === 'shipping')) {
-        picit(orderId + '-' + 34);
-        exitProcess(34);
-      } else if(formType && (formType === 'shipping')) {
-        picit(orderId + '-' + 35);
-        exitProcess(35);
-      } else {
-        picit(orderId + '-' + 32);
-        exitProcess(32);
-      }
+      exitProcess(exitCode);
+
 
     },
     function () {
