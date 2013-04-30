@@ -87,10 +87,13 @@ checkFormErrors = (function (orderId, formType) {
       logMessage('Comment posted [' + formErrorMsg + ']');
 
       if(formType && (formType === 'shipping')) {
+        picit(orderId + '-' + 34);
         exitProcess(34);
       } else if(formType && (formType === 'shipping')) {
+        picit(orderId + '-' + 35);
         exitProcess(35);
       } else {
+        picit(orderId + '-' + 32);
         exitProcess(32);
       }
 
@@ -110,7 +113,7 @@ exitProcess = (function (code) {
     code = 1;
   }
   logMessage('Exiting with code [' + code + ']');
-  if(code) {
+  if(code && (code !== 32) && (code !== 34) && (code !== 35)) {
     picit(order.id + '-' + code);
   }
   casper.exit(code);
