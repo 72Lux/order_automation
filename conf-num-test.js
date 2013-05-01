@@ -1,50 +1,30 @@
-// to RUN, provide cookie file at cl :
-// rm test.txt; casperjs --cookies-file=test.txt test.js
+// to run from cli:
+// rm cnum-test.txt; casperjs --cookies-file=cnum-test.txt cnum-test.js
 
 require("utils");
 
-// capture a snapshot
+// HELPER FUNCTIONS
+
+// screen capture
 picit = (function (filename) {
-  filename = '/tmp/order_automation/screen_caps/' + filename + '.png' || 'default_screen_caps/results.png';
-  casper.test.comment('Cheeeeeeese!');
+  if(!imageHome) { imageHome = '.'; }
+  filename = imageHome + '/' + 'cnum-test' + '-' + filename + '.png' || 'default_screen_caps/results.png';
+  logMessage('Saving screen capture [' + filename + ']');
   casper.capture(filename, {
     top: 0,
     left: 0,
-    width: 1024,
-    height: 1024
+    width: 480,
+    height: 2000
   });
 });
 
-// test whether any error messages popped up
-testForm = (function (orderId, formType) {
-  return casper.then(function () {
-    casper.waitFor(function () {
-      return this.evaluate(function () {
-        return document.querySelectorAll('table.coErrorMessageClass').length;
-      });
-    },
-    function () {
-      casper.test.comment('Error present in ' + formType + ' form.');
-      casper.test.comment(this.evaluate(function () {
-        return $('table.coErrorMessageClass td.text').text();
-      }));
-      if(formType && (formType === 'shipping')) {
-        picit(orderId + '-34');
-        this.exit(34);
-      } else {
-        picit(orderId + '-35');
-        this.exit(35);
-      }
-    },
-    function () {
-      casper.test.comment('No errors found on form');
-    });
-  });
-});
+// remove spaces and replace accented characters with corresponding regular ones
+// used when search for string using indexOf
+// the same functions exists in client-utils.js for injection onto client page
+// to make it available for this.evaluate
 
 normalizeString = (function (s) {
   var r = s.toLowerCase();
-
   r = r.replace(new RegExp("\\s", 'g'), "");
   r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
   r = r.replace(new RegExp("æ", 'g'), "ae");
@@ -59,6 +39,29 @@ normalizeString = (function (s) {
   r = r.replace(new RegExp("\\W", 'g'), "");
 
   return r;
+});
+
+logMessage = (function (msg) {
+  casper.echo(msg);
+});
+
+logError = (function (msg) {
+  casper.echo(msg);
+});
+
+// log exit code
+// take screen capture
+// exit process
+exitProcess = (function (code) {
+  if(!code && (code !== 0)) {
+    logError('Exit code not provided. Setting it to 1.');
+    code = 1;
+  }
+  logMessage('Exiting with code [' + code + ']');
+  if(code) {
+    picit(order.id + '-' + code);
+  }
+  casper.exit(code);
 });
 
 var casper = require("casper").create({
@@ -156,12 +159,52 @@ var imageHome = casper.cli.get('image-home');
 
 casper.start();
 
-casper.then(function() {
-  casper.test.comment('Order received! Id: ' + order.id + ' item count: ' + lineItems.length + ' submitOrder: ' + order.submitOrder);
+casper.start('http://combinecouture.com/confirmation-links.html', function() {
+  this.echo("Confirmation page loaded.");
 });
+
+
 casper.then(function() {
-  this.echo('Order received! Id: ' + order.id + ' item count: ' + lineItems.length + ' submitOrder: ' + order.submitOrder);
+  this.click('#n-conf-page');
 });
+
+casper.then(function() {
+  picit('test');
+});
+
+casper.then(function() {
+  casper.waitFor(function() {
+
+      return this.getCurrentUrl().indexOf('orderNumber=') >= 0;
+
+    }, function () {
+
+    casper.then(function() {
+      confirmationUrl = this.getCurrentUrl();
+    });
+
+    casper.then(function() {
+      if(confirmationUrl && confirmationUrl.indexOf('orderNumber=')) {
+        var orderNumber = confirmationUrl.substring(confirmationUrl.indexOf('orderNumber=')+12);
+        confirmationMsg = 'Nordstrom order number: ' + orderNumber;
+      } else {
+        confirmationMsg = 'Nordstrom order number not found. Full URL: ' + confirmationUrl;
+      }
+    });
+
+    casper.then(function() {
+      logMessage('Order Id [' + order.id + '] Nordstrom order number [' + confirmationMsg + ']');
+    });
+
+
+  }, function() {
+    casper.then(function() {
+      logError('Confirmation message found [false]');
+      exitProcess(20);
+    });
+  }, 30000);
+});
+
 casper.then(function() {
   this.exit(0);
 });
