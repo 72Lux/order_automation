@@ -145,10 +145,10 @@ var testOrder = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'Visa',
-    card_number: '4111111111111111',
-    cvv: '123',
-    expiry_month: '12',
+    card_type: 'American Express',
+    card_number: '378282246310005',
+    cvv: '1231',
+    expiry_month: '09',
     expiry_year: '2020'
   },
   line_items: testLineItems
@@ -187,6 +187,7 @@ var ba = order.billing_address;
 var pi = order.payment;
 // For the Nordstrom dropdown 'American Express' needs to be 'AmericanExpress'
 pi.card_type = pi.card_type.replace(/ /g,'');
+pi.expiry_month = parseInt(pi.expiry_month, 10);
 var lineItems = order.line_items;
 
 // Nordstrom uses these numeric codes for the states dropdown.
@@ -511,7 +512,13 @@ casper.then(function() {
 casper.then(function() {
 
   this.fill('form[action="/OrderReview/SubmitOrder"]', {
-    'CreditCardType': pi.card_type,
+    'CreditCardType': pi.card_type
+  }, false);
+});
+
+casper.then(function() {
+
+  this.fill('form[action="/OrderReview/SubmitOrder"]', {
     'CreditCardNumber': pi.card_number,
     'cci': pi.cvv,
     'ExpMonth': pi.expiry_month,
