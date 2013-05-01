@@ -185,6 +185,8 @@ var confirmationUrl = '';
 var sa = order.shipping_address;
 var ba = order.billing_address;
 var pi = order.payment;
+// For the Nordstrom dropdown 'American Express' needs to be 'AmericanExpress'
+pi.card_type = pi.card_type.replace(/ /g,'');
 var lineItems = order.line_items;
 
 // Nordstrom uses these numeric codes for the states dropdown.
@@ -507,6 +509,7 @@ casper.then(function() {
 });
 
 casper.then(function() {
+
   this.fill('form[action="/OrderReview/SubmitOrder"]', {
     'CreditCardType': pi.card_type,
     'CreditCardNumber': pi.card_number,
