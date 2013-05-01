@@ -87,6 +87,29 @@ getSizeRangeLabel = (function (outerIndex) {
   }, outerIndex);
 });
 
+checkSizeVisibility = (function (size) {
+
+  return casper.evaluate(function(size) {
+
+    var result = false;
+
+    $('#dimension1_1 a').each(function(index, value) {
+
+      if(normalizeString($(this).attr('id')).indexOf(normalizeString(size)) >= 0) {
+
+        // check if color is available
+        if(!$(this).hasClass('unavailable')) {
+          result = true;
+          return;
+        }
+      }
+    });
+
+    return result;
+
+  }, size);
+});
+
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   onAlert: function () {
@@ -303,25 +326,7 @@ casper.each(lineItems, function(self, lineItem) {
 
             this.clickLabel(label);
 
-            var isSizeVisible = this.evaluate(function(size) {
-
-              var result = false;
-
-              $('#dimension1_1 a').each(function(index, value) {
-
-                if(normalizeString($(this).attr('id')).indexOf(normalizeString(size)) >= 0) {
-
-                  // check if color is available
-                  if(!$(this).hasClass('unavailable')) {
-                    result = true;
-                    return;
-                  }
-                }
-              });
-
-              return result;
-
-            }, lineItem.size);
+            var isSizeVisible = checkSizeVisibility(lineItem.size);
 
             logMessage('Size visible after clicking on [' + label + '] [' + isSizeVisible + ']');
 
