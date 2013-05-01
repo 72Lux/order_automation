@@ -545,7 +545,9 @@ casper.then(function () {
         });
 
         casper.then(function() {
-          casper.waitForText('Thank you', function () {
+          casper.waitFor(function() {
+            return this.getCurrentUrl().indexOf('orderNumber=') >= 0;
+          }, function () {
 
             casper.then(function() {
               confirmationUrl = this.getCurrentUrl();
@@ -579,7 +581,7 @@ casper.then(function () {
             });
 
             casper.then(function() {
-              logMessage('Order Id [' + order.id + ' Nordstrom order number [' + confirmationMsg + ']');
+              logMessage('Order Id [' + order.id + '] Nordstrom order number [' + confirmationMsg + ']');
             });
 
 

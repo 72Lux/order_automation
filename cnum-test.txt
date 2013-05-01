@@ -1,0 +1,2 @@
+[General]
+cookies="@Variant(\0\0\0\x7f\0\0\0\x16QList<QNetworkCookie>\0\0\0\0\x1\0\0\0\x1\0\0\0iCoreID6=70081367379176101512132; expires=Sun, 30-Apr-2028 03:32:56 GMT; domain=1901.nordstrom.com; path=/)"
