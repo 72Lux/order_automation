@@ -37,3 +37,7 @@ local.txt
 test.txt
 
 1070-test.txt
+
+cnum-size-range-test.txt
+
+*.txt

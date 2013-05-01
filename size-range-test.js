@@ -64,6 +64,29 @@ exitProcess = (function (code) {
   casper.exit(code);
 });
 
+getSizeRangeLabel = (function (outerIndex) {
+
+  return casper.evaluate(function(outerIndex) {
+    var label = '';
+
+    $('.size-range .itemNumberPriceRow').each(function(index) {
+
+      console.log('outerIndex: ' + outerIndex + ' index: ' + index);
+
+      if(outerIndex === index) {
+        label = $(this).attr('filtervalue');
+        console.log('label: ' + label + ' index: ' + index);
+        return false;
+      } else {
+        console.log('no-match');
+      }
+
+    });
+
+    return label;
+  }, outerIndex);
+});
+
 var casper = require("casper").create({
   clientScripts: ["jquery-1.8.3.min.js","lux-client-utils.js"],
   verbose: false,
@@ -252,27 +275,7 @@ casper.each(lineItems, function(self, lineItem) {
 
           for (var i = 0; i < rangeCount; i++) {
 
-            var label = this.evaluate(function(outerIndex) {
-
-              var label = '';
-
-              $('.size-range .itemNumberPriceRow').each(function(index) {
-
-                console.log('outerIndex: ' + outerIndex + ' index: ' + index);
-
-                if(outerIndex === index) {
-                  label = $(this).attr('filtervalue');
-                  console.log('label: ' + label + ' index: ' + index);
-                  return false;
-                } else {
-                  console.log('no-match');
-                }
-
-              });
-
-              return label;
-
-            }, i);
+            var label = getSizeRangeLabel(i);
 
             logMessage('Clicking on size range option [' + label + ']');
 
