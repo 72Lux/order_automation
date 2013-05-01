@@ -280,14 +280,9 @@ casper.each(lineItems, function(self, lineItem) {
 
               $('.size-range .itemNumberPriceRow').each(function(index) {
 
-                console.log('outerIndex: ' + outerIndex + ' index: ' + index);
-
                 if(outerIndex === index) {
                   label = $(this).attr('filtervalue');
-                  console.log('label: ' + label + ' index: ' + index);
                   return false;
-                } else {
-                  console.log('no-match');
                 }
 
               });
@@ -299,7 +294,6 @@ casper.each(lineItems, function(self, lineItem) {
             logMessage('Clicking on size range option [' + label + ']');
 
             this.clickLabel(label);
-            picit('range-selected-' + label);
 
             var isSizeVisible = this.evaluate(function(size) {
 
