@@ -145,10 +145,10 @@ var item1 = {
 testLineItems.push(item1);
 
 var item2 = {
-    title: "Classic Fit Heathered Pique Polo",
-    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429',
-    size: '7(xl)',
-    color: 'ARGENT GREY',
+    title: "Trim Fit Slubbed V-Neck T-Shirt (Men)",
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fjohn-varvatos-star-usa-trim-fit-slubbed-v-neck-t-shirt-men%252F3031069',
+    size: 'Large',
+    color: 'DARK FATIGUE',
     qty: 2
   };
 
@@ -165,20 +165,20 @@ var item3 = {
 testLineItems.push(item3);
 
 var item4 = {
-  name: "Light Support Control Top Sheer Hose (3 for $30)",
-  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fnordstrom-light-support-control-top-sheer-hose-3-for-30%252F2819403',
-  size: 'A',
-  color: 'ALMOST BLACK',
+  name: "'Joelle' Pantyhose",
+  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Foroblu-joelle-pantyhose%252F3340590',
+  size: 'Medium',
+  color: 'BLACK',
   qty: 1
 };
 
 testLineItems.push(item4);
 
 var item5 = {
-  name: "Light Support Control Top Sheer Hose (3 for $30)",
-  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fnordstrom-light-support-control-top-sheer-hose-3-for-30%252F2819403',
-  size: 'Plus',
-  color: 'MEDIUM BEIGE',
+  name: "'Joelle' Pantyhose",
+  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Foroblu-joelle-pantyhose%252F3340590',
+  size: 'Large',
+  color: 'NUDE',
   qty: 1
 };
 
