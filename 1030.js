@@ -41,6 +41,28 @@ normalizeString = (function (s) {
   return r;
 });
 
+// Nordstrom specific credit card mappings
+
+mappedCreditCardType = (function (ccType) {
+
+  logMessage('Incoming ccType [' + ccType + ']');
+
+  var mappedCreditCardTypes = {
+    'Mastercard': 'MasterCard',
+    'Discover': 'DiscoverNovus',
+    'American Express': 'AmericanExpress'
+  };
+
+  if (ccType in mappedCreditCardTypes) {
+    logMessage('Returning ccType [' + mappedCreditCardTypes[ccType] + ']');
+    return mappedCreditCardTypes[ccType];
+  }
+
+  logMessage('Returning ccType [' + ccType + ']');
+  return ccType;
+
+});
+
 logMessage = (function (msg) {
   casper.echo(msg);
 });
@@ -134,55 +156,55 @@ var item0 = {
 
 testLineItems.push(item0);
 
-var item1 = {
-    title: "'Le Lipstique' LipColoring Stick with Brush",
-    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
-    size: 'One Size',
-    color: 'BRONZELLE',
-    qty: 1
-  };
+// var item1 = {
+//     title: "'Le Lipstique' LipColoring Stick with Brush",
+//     affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-le-lipstique-lipcoloring-stick-with-brush%252F2786535',
+//     size: 'One Size',
+//     color: 'BRONZELLE',
+//     qty: 1
+//   };
 
-testLineItems.push(item1);
+// testLineItems.push(item1);
 
-var item2 = {
-    title: "Trim Fit Slubbed V-Neck T-Shirt (Men)",
-    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fjohn-varvatos-star-usa-trim-fit-slubbed-v-neck-t-shirt-men%252F3031069',
-    size: 'Large',
-    color: 'DARK FATIGUE',
-    qty: 2
-  };
+// var item2 = {
+//     title: "Trim Fit Slubbed V-Neck T-Shirt (Men)",
+//     affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fjohn-varvatos-star-usa-trim-fit-slubbed-v-neck-t-shirt-men%252F3031069',
+//     size: 'Large',
+//     color: 'DARK FATIGUE',
+//     qty: 2
+//   };
 
-testLineItems.push(item2);
+// testLineItems.push(item2);
 
-var item3 = {
-    title: "'Tonique Douceur' Alcohol-Free Freshener (6.8 oz.)",
-    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742',
-    size: '6.8 oz',
-    color: '',
-    qty: 2
-  };
+// var item3 = {
+//     title: "'Tonique Douceur' Alcohol-Free Freshener (6.8 oz.)",
+//     affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flancome-tonique-douceur-alcohol-free-freshener-6-8-oz%252F2786742',
+//     size: '6.8 oz',
+//     color: '',
+//     qty: 2
+//   };
 
-testLineItems.push(item3);
+// testLineItems.push(item3);
 
-var item4 = {
-  name: "'Joelle' Pantyhose",
-  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Foroblu-joelle-pantyhose%252F3340590',
-  size: 'Medium',
-  color: 'BLACK',
-  qty: 1
-};
+// var item4 = {
+//   name: "'Joelle' Pantyhose",
+//   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Foroblu-joelle-pantyhose%252F3340590',
+//   size: 'Medium',
+//   color: 'BLACK',
+//   qty: 1
+// };
 
-testLineItems.push(item4);
+// testLineItems.push(item4);
 
-var item5 = {
-  name: "'Joelle' Pantyhose",
-  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Foroblu-joelle-pantyhose%252F3340590',
-  size: 'Large',
-  color: 'NUDE',
-  qty: 1
-};
+// var item5 = {
+//   name: "'Joelle' Pantyhose",
+//   affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Foroblu-joelle-pantyhose%252F3340590',
+//   size: 'Large',
+//   color: 'NUDE',
+//   qty: 1
+// };
 
-testLineItems.push(item5);
+// testLineItems.push(item5);
 
 var testOrder = {
   id: '1030-test-' + new Date().getTime(),
@@ -211,8 +233,8 @@ var testOrder = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'American Express',
-    card_number: '378282246310005',
+    card_type: 'Mastercard',
+    card_number: '5555555555554444',
     cvv: '1231',
     expiry_month: '09',
     expiry_year: '2020'
@@ -390,6 +412,10 @@ casper.each(lineItems, function(self, lineItem) {
       }
 
       if (lineItem.color) {
+
+        // some of our colors are not uppercase
+        // they need to be for nordstrom mobile
+        lineItem.color = lineItem.color.toUpperCase();
 
         // eg: beauty
         // process color

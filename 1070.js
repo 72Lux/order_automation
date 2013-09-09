@@ -41,6 +41,26 @@ normalizeString = (function (s) {
   return r;
 });
 
+// Neiman Marcus cc text mappings
+
+mappedCreditCardType = (function (ccType) {
+
+  logMessage('Incoming ccType [' + ccType + ']');
+
+  var mappedCreditCardTypes = {
+    'Mastercard': 'MasterCard'
+  };
+
+  if (ccType in mappedCreditCardTypes) {
+    logMessage('Returning ccType [' + mappedCreditCardTypes[ccType] + ']');
+    return mappedCreditCardTypes[ccType];
+  }
+
+  logMessage('Returning ccType [' + ccType + ']');
+  return ccType;
+
+});
+
 logMessage = (function (msg) {
   casper.echo(msg);
 });
@@ -147,45 +167,45 @@ var item0 = {
 
 testLineItems.push(item0);
 
-var item1 = {
-  title: "Wing-Tip Chelsea Boot",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPrada-Wing-Tip-Chelsea-Boot%2Fprod146820012_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D600%252526refinements%25253D%26eItemId%3Dprod146820012%26cmCat%3Dproduct',
-  size: '7/8D',
-  color: '',
-  qty: 1
-};
+// var item1 = {
+//   title: "Wing-Tip Chelsea Boot",
+//   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPrada-Wing-Tip-Chelsea-Boot%2Fprod146820012_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D600%252526refinements%25253D%26eItemId%3Dprod146820012%26cmCat%3Dproduct',
+//   size: '7/8D',
+//   color: '',
+//   qty: 1
+// };
 
-testLineItems.push(item1);
+// testLineItems.push(item1);
 
-var item2 = {
-  title: "Gisele Short Pajamas, Eggplant/Pink",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FEberjey-Gisele-Short-Pajamas-Eggplant-Pink%2Fprod152510464_cat10360732__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10360732%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod152510464%26cmCat%3Dproduct',
-  size: 'LARGE/10-12',
-  color: 'EGGPLANT/PINK',
-  qty: 1
-};
+// var item2 = {
+//   title: "Gisele Short Pajamas, Eggplant/Pink",
+//   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FEberjey-Gisele-Short-Pajamas-Eggplant-Pink%2Fprod152510464_cat10360732__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10360732%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod152510464%26cmCat%3Dproduct',
+//   size: 'LARGE/10-12',
+//   color: 'EGGPLANT/PINK',
+//   qty: 1
+// };
 
-testLineItems.push(item2);
+// testLineItems.push(item2);
 
-var item3 = {
-  title: "Pyramid Studded Hobo Bag, Pale Khaki",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FTory-Burch-Pyramid-Studded-Hobo-Bag-Pale-Khaki%2Fprod155700016_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D210%252526refinements%25253D%26eItemId%3Dprod155700016%26cmCat%3Dproduct',
-  size: '',
-  color: '',
-  qty: 1
-};
+// var item3 = {
+//   title: "Pyramid Studded Hobo Bag, Pale Khaki",
+//   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FTory-Burch-Pyramid-Studded-Hobo-Bag-Pale-Khaki%2Fprod155700016_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D210%252526refinements%25253D%26eItemId%3Dprod155700016%26cmCat%3Dproduct',
+//   size: '',
+//   color: '',
+//   qty: 1
+// };
 
-testLineItems.push(item3);
+// testLineItems.push(item3);
 
-var item4 = {
-  title: "The Lipstick",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FKanebo-Sensai-Collection-The-Lipstick%2Fprod92160003_cat10470768__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10470768%252526pageSize%25253D30%252526No%25253D150%252526refinements%25253D%26eItemId%3Dprod92160003%26cmCat%3Dproduct',
-  size: '',
-  color: 'AYA 17',
-  qty: 2
-};
+// var item4 = {
+//   title: "The Lipstick",
+//   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FKanebo-Sensai-Collection-The-Lipstick%2Fprod92160003_cat10470768__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10470768%252526pageSize%25253D30%252526No%25253D150%252526refinements%25253D%26eItemId%3Dprod92160003%26cmCat%3Dproduct',
+//   size: '',
+//   color: 'AYA 17',
+//   qty: 2
+// };
 
-testLineItems.push(item4);
+// testLineItems.push(item4);
 
 var testOrder = {
   id: '1030-test-' + new Date().getTime(),
@@ -214,8 +234,8 @@ var testOrder = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'Visa',
-    card_number: '4111111111111111',
+    card_type: 'Mastercard',
+    card_number: '5555555555554444',
     cvv: '123',
     expiry_month: '12',
     expiry_year: '2020'
@@ -710,8 +730,9 @@ casper.then(function () {
   });
 
   this.evaluate(function (card_type) {
+    logMessage('Setting CC info');
     var $select = $('select#cardtype');
-    var _option = card_type;
+    var _option = mappedCreditCardType(card_type);
     $select.val(_option);
     $select.change();
   }, pi.card_type);
