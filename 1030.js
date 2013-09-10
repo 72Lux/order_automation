@@ -632,7 +632,7 @@ casper.then(function() {
 casper.then(function() {
 
   this.fill('form[action="/OrderReview/SubmitOrder"]', {
-    'CreditCardType': pi.card_type
+    'CreditCardType': mappedCreditCardType(pi.card_type)
   }, false);
 });
 

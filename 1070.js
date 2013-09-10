@@ -730,7 +730,6 @@ casper.then(function () {
   });
 
   this.evaluate(function (card_type) {
-    logMessage('Setting CC info');
     var $select = $('select#cardtype');
     var _option = mappedCreditCardType(card_type);
     $select.val(_option);
