@@ -274,7 +274,7 @@ var sa = order.shipping_address;
 var ba = order.billing_address;
 var pi = order.payment;
 // For the Nordstrom dropdown 'American Express' needs to be 'AmericanExpress'
-pi.card_type = pi.card_type.replace(/ /g,'');
+pi.card_type = mappedCreditCardType(pi.card_type);
 pi.expiry_month = parseInt(pi.expiry_month, 10);
 var lineItems = order.line_items;
 
@@ -632,7 +632,7 @@ casper.then(function() {
 casper.then(function() {
 
   this.fill('form[action="/OrderReview/SubmitOrder"]', {
-    'CreditCardType': mappedCreditCardType(pi.card_type)
+    'CreditCardType': pi.card_type
   }, false);
 });
 

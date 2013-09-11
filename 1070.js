@@ -254,7 +254,7 @@ var imageHome = casper.cli.get('image-home');
 
 // if order is made available on the command line, make sure the other required options are present as well.
 // if there is no --order option available, use the testOrder [the testOrder will not be submitted; order.submitOrder = false]
-
+// Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36
 if(order) {
   if(!auth || !commentUrl || !imageHome) {
     logError('--auth, --comment-url, --image-home are required for a real order to be processed.');
@@ -275,12 +275,16 @@ var confirmationMsg = '';
 var inStockVisible = false;
 var formErrorMsg = '';
 
+pi.card_type = mappedCreditCardType(pi.card_type);
+
 casper.start();
 
 // ADD ITEMS BEGIN
 casper.then(function() {
   logMessage('Order Id [' + order.id + '] Retailer Id [' + retailerId + '] Item Count [' + order.line_items.length + '] Submit Order [' + order.submitOrder + ']');
 });
+
+casper.userAgent('Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36');
 
 casper.each(lineItems, function(self, lineItem) {
 
@@ -503,7 +507,7 @@ casper.then(function () {
       exitProcess(14);
     });
 
-  });
+  }, 30000);
 });
 
 // HEAD TO CHECKOUT END
@@ -733,7 +737,7 @@ casper.then(function () {
 
   this.evaluate(function (card_type) {
     var $select = $('select#cardtype');
-    var _option = mappedCreditCardType(card_type);
+    var _option = card_type;
     $select.val(_option);
     $select.change();
   }, pi.card_type);
