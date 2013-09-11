@@ -167,15 +167,15 @@ var item0 = {
 
 testLineItems.push(item0);
 
-// var item1 = {
-//   title: "Wing-Tip Chelsea Boot",
-//   affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPrada-Wing-Tip-Chelsea-Boot%2Fprod146820012_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D600%252526refinements%25253D%26eItemId%3Dprod146820012%26cmCat%3Dproduct',
-//   size: '7/8D',
-//   color: '',
-//   qty: 1
-// };
+var item1 = {
+  title: "Suede Chukka Boot, Brown",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPRADA-Suede-Chukka-Boot-Brown%2Fprod159140181_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod159140181%26cmCat%3Dproduct',
+  size: '10/11D',
+  color: 'BROWN',
+  qty: 1
+};
 
-// testLineItems.push(item1);
+testLineItems.push(item1);
 
 var item2 = {
   title: "Gisele Short Pajamas, Eggplant/Pink",
@@ -188,10 +188,10 @@ var item2 = {
 testLineItems.push(item2);
 
 var item3 = {
-  title: "Pyramid Studded Hobo Bag, Pale Khaki",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FTory-Burch-Pyramid-Studded-Hobo-Bag-Pale-Khaki%2Fprod155700016_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D210%252526refinements%25253D%26eItemId%3Dprod155700016%26cmCat%3Dproduct',
-  size: '',
-  color: '',
+  title: "Luscious Mini Studded Hobo Bag, Tawny",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FRebecca-Minkoff-Luscious-Mini-Studded-Hobo-Bag-Tawny%2Fprod163170138_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D180%252526refinements%25253D%26eItemId%3Dprod163170138%26cmCat%3Dproduct',
+  size: 'One Size',
+  color: 'TAWNY',
   qty: 1
 };
 
@@ -322,9 +322,9 @@ casper.each(lineItems, function(self, lineItem) {
               exitProcess(32);
             }
           } else if(!isSizeDropdownVisible && normalizeString(sizeText).indexOf(normalizeString(lineItem.size)) >= 0) {
-
             logMessage('Size [' + lineItem.size + '] available in text');
-
+          } else if(lineItem.size.toUpperCase().indexOf("ONE SIZE") >= 0) {
+            logMessage('Size [' + lineItem.size + '] - skipping over selection');
           } else {
             logError('OrderId [' + order.id + '] UNAVAILABLE size [' + lineItem.size + ']');
             exitProcess(32);
@@ -357,6 +357,8 @@ casper.each(lineItems, function(self, lineItem) {
           }
 
           colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
+          fixedColorText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
+
 
           if(isColorDropdownVisible && colorExists) {
 
@@ -368,7 +370,7 @@ casper.each(lineItems, function(self, lineItem) {
               $select.change();
             }, { _option : lineItem.color, _dd : dropdownSelector });
 
-          } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
+          } else if(!isColorDropdownVisible && (normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0 || normalizeString(fixedColorText).indexOf(normalizeString(lineItem.color)) >= 0)) {
 
             logMessage('Color [' + lineItem.color + '] available in text');
 
