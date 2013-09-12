@@ -41,6 +41,28 @@ normalizeString = (function (s) {
   return r;
 });
 
+// Nordstrom specific credit card mappings
+
+mappedCreditCardType = (function (ccType) {
+
+  logMessage('Incoming ccType [' + ccType + ']');
+
+  var mappedCreditCardTypes = {
+    'Mastercard': 'MasterCard',
+    'Discover': 'DiscoverNovus',
+    'American Express': 'AmericanExpress'
+  };
+
+  if (ccType in mappedCreditCardTypes) {
+    logMessage('Returning ccType [' + mappedCreditCardTypes[ccType] + ']');
+    return mappedCreditCardTypes[ccType];
+  }
+
+  logMessage('Returning ccType [' + ccType + ']');
+  return ccType;
+
+});
+
 logMessage = (function (msg) {
   casper.echo(msg);
 });
@@ -145,10 +167,10 @@ var item1 = {
 testLineItems.push(item1);
 
 var item2 = {
-    title: "Classic Fit Heathered Pique Polo",
-    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Flacoste-classic-fit-heathered-pique-polo%252F2907429',
-    size: '7(xl)',
-    color: 'ARGENT GREY',
+    title: "Trim Fit Slubbed V-Neck T-Shirt (Men)",
+    affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fjohn-varvatos-star-usa-trim-fit-slubbed-v-neck-t-shirt-men%252F3031069',
+    size: 'Large',
+    color: 'SALT',
     qty: 2
   };
 
@@ -165,20 +187,20 @@ var item3 = {
 testLineItems.push(item3);
 
 var item4 = {
-  name: "Light Support Control Top Sheer Hose (3 for $30)",
-  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fnordstrom-light-support-control-top-sheer-hose-3-for-30%252F2819403',
-  size: 'A',
-  color: 'ALMOST BLACK',
+  name: "10 Denier Gloss Pantyhose",
+  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252FS%252F3462798',
+  size: 'Medium',
+  color: 'BLACK',
   qty: 1
 };
 
 testLineItems.push(item4);
 
 var item5 = {
-  name: "Light Support Control Top Sheer Hose (3 for $30)",
-  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252Fs%252Fnordstrom-light-support-control-top-sheer-hose-3-for-30%252F2819403',
-  size: 'Plus',
-  color: 'MEDIUM BEIGE',
+  name: "10 Denier Gloss Pantyhose",
+  affiliate_url: 'http://click.linksynergy.com/fs-bin/click?id=v9jIDxMZD/A&u1=&subid=0&tmpid=8156&type=10&offerid=21855&RD_PARM1=http%253A%252F%252Fshop.nordstrom.com%252FS%252F3462798',
+  size: 'Large',
+  color: 'NUDE',
   qty: 1
 };
 
@@ -211,8 +233,8 @@ var testOrder = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'American Express',
-    card_number: '378282246310005',
+    card_type: 'Discover',
+    card_number: '6011111111111117',
     cvv: '1231',
     expiry_month: '09',
     expiry_year: '2020'
@@ -252,7 +274,7 @@ var sa = order.shipping_address;
 var ba = order.billing_address;
 var pi = order.payment;
 // For the Nordstrom dropdown 'American Express' needs to be 'AmericanExpress'
-pi.card_type = pi.card_type.replace(/ /g,'');
+pi.card_type = mappedCreditCardType(pi.card_type);
 pi.expiry_month = parseInt(pi.expiry_month, 10);
 var lineItems = order.line_items;
 
@@ -390,6 +412,10 @@ casper.each(lineItems, function(self, lineItem) {
       }
 
       if (lineItem.color) {
+
+        // some of our colors are not uppercase
+        // they need to be for nordstrom mobile
+        lineItem.color = lineItem.color.toUpperCase();
 
         // eg: beauty
         // process color

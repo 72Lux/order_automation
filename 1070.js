@@ -41,6 +41,26 @@ normalizeString = (function (s) {
   return r;
 });
 
+// Neiman Marcus cc text mappings
+
+mappedCreditCardType = (function (ccType) {
+
+  logMessage('Incoming ccType [' + ccType + ']');
+
+  var mappedCreditCardTypes = {
+    'Mastercard': 'MasterCard'
+  };
+
+  if (ccType in mappedCreditCardTypes) {
+    logMessage('Returning ccType [' + mappedCreditCardTypes[ccType] + ']');
+    return mappedCreditCardTypes[ccType];
+  }
+
+  logMessage('Returning ccType [' + ccType + ']');
+  return ccType;
+
+});
+
 logMessage = (function (msg) {
   casper.echo(msg);
 });
@@ -148,10 +168,10 @@ var item0 = {
 testLineItems.push(item0);
 
 var item1 = {
-  title: "Wing-Tip Chelsea Boot",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPrada-Wing-Tip-Chelsea-Boot%2Fprod146820012_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D600%252526refinements%25253D%26eItemId%3Dprod146820012%26cmCat%3Dproduct',
-  size: '7/8D',
-  color: '',
+  title: "Suede Chukka Boot, Brown",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPRADA-Suede-Chukka-Boot-Brown%2Fprod159140181_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod159140181%26cmCat%3Dproduct',
+  size: '10/11D',
+  color: 'BROWN',
   qty: 1
 };
 
@@ -168,10 +188,10 @@ var item2 = {
 testLineItems.push(item2);
 
 var item3 = {
-  title: "Pyramid Studded Hobo Bag, Pale Khaki",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FTory-Burch-Pyramid-Studded-Hobo-Bag-Pale-Khaki%2Fprod155700016_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D210%252526refinements%25253D%26eItemId%3Dprod155700016%26cmCat%3Dproduct',
-  size: '',
-  color: '',
+  title: "Luscious Mini Studded Hobo Bag, Tawny",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FRebecca-Minkoff-Luscious-Mini-Studded-Hobo-Bag-Tawny%2Fprod163170138_cat40860748__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat40860748%252526pageSize%25253D30%252526No%25253D180%252526refinements%25253D%26eItemId%3Dprod163170138%26cmCat%3Dproduct',
+  size: 'One Size',
+  color: 'TAWNY',
   qty: 1
 };
 
@@ -214,8 +234,8 @@ var testOrder = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'Visa',
-    card_number: '4111111111111111',
+    card_type: 'Mastercard',
+    card_number: '5555555555554444',
     cvv: '123',
     expiry_month: '12',
     expiry_year: '2020'
@@ -234,7 +254,7 @@ var imageHome = casper.cli.get('image-home');
 
 // if order is made available on the command line, make sure the other required options are present as well.
 // if there is no --order option available, use the testOrder [the testOrder will not be submitted; order.submitOrder = false]
-
+// Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36
 if(order) {
   if(!auth || !commentUrl || !imageHome) {
     logError('--auth, --comment-url, --image-home are required for a real order to be processed.');
@@ -255,12 +275,16 @@ var confirmationMsg = '';
 var inStockVisible = false;
 var formErrorMsg = '';
 
+pi.card_type = mappedCreditCardType(pi.card_type);
+
 casper.start();
 
 // ADD ITEMS BEGIN
 casper.then(function() {
   logMessage('Order Id [' + order.id + '] Retailer Id [' + retailerId + '] Item Count [' + order.line_items.length + '] Submit Order [' + order.submitOrder + ']');
 });
+
+casper.userAgent('Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.17 Safari/537.36');
 
 casper.each(lineItems, function(self, lineItem) {
 
@@ -302,9 +326,9 @@ casper.each(lineItems, function(self, lineItem) {
               exitProcess(32);
             }
           } else if(!isSizeDropdownVisible && normalizeString(sizeText).indexOf(normalizeString(lineItem.size)) >= 0) {
-
             logMessage('Size [' + lineItem.size + '] available in text');
-
+          } else if(lineItem.size.toUpperCase().indexOf("ONE SIZE") >= 0) {
+            logMessage('Size [' + lineItem.size + '] - skipping over selection');
           } else {
             logError('OrderId [' + order.id + '] UNAVAILABLE size [' + lineItem.size + ']');
             exitProcess(32);
@@ -337,6 +361,8 @@ casper.each(lineItems, function(self, lineItem) {
           }
 
           colorText = this.evaluate(function() { return $('.lineItemOptionSelect .nsStyle').text(); });
+          fixedColorText = this.evaluate(function() { return $('.lineItemOptionSelect #dd1NonSelect').text(); });
+
 
           if(isColorDropdownVisible && colorExists) {
 
@@ -348,7 +374,7 @@ casper.each(lineItems, function(self, lineItem) {
               $select.change();
             }, { _option : lineItem.color, _dd : dropdownSelector });
 
-          } else if(!isColorDropdownVisible && normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0) {
+          } else if(!isColorDropdownVisible && (normalizeString(colorText).indexOf(normalizeString(lineItem.color)) >= 0 || normalizeString(fixedColorText).indexOf(normalizeString(lineItem.color)) >= 0)) {
 
             logMessage('Color [' + lineItem.color + '] available in text');
 
@@ -481,7 +507,7 @@ casper.then(function () {
       exitProcess(14);
     });
 
-  });
+  }, 30000);
 });
 
 // HEAD TO CHECKOUT END
