@@ -168,20 +168,20 @@ var item0 = {
 testLineItems.push(item0);
 
 var item1 = {
-  title: "Suede Chukka Boot, Brown",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FPRADA-Suede-Chukka-Boot-Brown%2Fprod159140181_cat000550__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat000550%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod159140181%26cmCat%3Dproduct',
-  size: '10/11D',
-  color: 'BROWN',
+  title: "Herringbone Topcoat, Gray",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2FVince-Herringbone-Topcoat-Chunky-Full-Zip-Cardigan-Pleated-Jogger-Pants%2Fprod173560046_cat45790754__%2Fp.prod%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat45790754%252526pageSize%25253D30%252526No%25253D660%252526Ns%25253DPCS_SORT%252526refinements%25253D%26eItemId%3Dprod173560046%26cmCat%3Dproduct',
+  size: 'XX-LARGE',
+  color: 'GRAY',
   qty: 1
 };
 
 testLineItems.push(item1);
 
 var item2 = {
-  title: "Gisele Short Pajamas, Eggplant/Pink",
-  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2Fp%2FEberjey-Gisele-Short-Pajamas-Eggplant-Pink%2Fprod152510464_cat10360732__%2F%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat10360732%252526pageSize%25253D30%252526No%25253D60%252526refinements%25253D%26eItemId%3Dprod152510464%26cmCat%3Dproduct',
-  size: 'LARGE/10-12',
-  color: 'EGGPLANT/PINK',
+  title: "Double-Faced Jersey Leggings",
+  affiliate_url: 'http://click.linksynergy.com/link?id=v9jIDxMZD/A&u1=&type=15&offerid=279712&murl=http%3A%2F%2Fwww.neimanmarcus.com%2FArmani-Collezioni-Double-Faced-Jersey-Leggings%2Fprod152090087_cat47050744__%2Fp.prod%3Ficid%3D%26searchType%3DEndecaDrivenCat%26rte%3D%25252Fcategory.service%25253FitemId%25253Dcat47050744%252526pageSize%25253D30%252526No%25253D120%252526refinements%25253D%26eItemId%3Dprod150660032%26cmCat%3Dproduct',
+  size: '12',
+  color: 'BLACK',
   qty: 1
 };
 
@@ -195,7 +195,7 @@ var item3 = {
   qty: 1
 };
 
-testLineItems.push(item3);
+// testLineItems.push(item3);
 
 var item4 = {
   title: "The Lipstick",
@@ -205,7 +205,7 @@ var item4 = {
   qty: 2
 };
 
-testLineItems.push(item4);
+// testLineItems.push(item4);
 
 var testOrder = {
   id: '1030-test-' + new Date().getTime(),
@@ -234,8 +234,8 @@ var testOrder = {
     phone: '1231231234'
   },
   payment: {
-    card_type: 'Mastercard',
-    card_number: '5555555555554444',
+    card_type: 'visa',
+    card_number: '4111111111111111',
     cvv: '123',
     expiry_month: '12',
     expiry_year: '2020'
@@ -479,7 +479,7 @@ casper.then(function() {
 
 // make sure the anonCheckout button is there and click it
 casper.then(function () {
-  casper.waitForSelector('#anonSignInBtn', function () {
+  casper.waitForSelector('#full-anon-checkout_msk', function () {
 
     casper.then(function() {
         logMessage('Anon sign-in button available [true]');
